@@ -1,7 +1,7 @@
 import CancelledError from './CancelledError';
 import clearFetch from './clearFetch';
 import combineLoadingStates from './combineLoadingStates';
-import createDataServiceMiddleware from './createDataServiceMiddleware';
+import createDataService from './createDataService';
 import createHttpService from './createHttpService';
 import dataServiceReducer from './dataServiceReducer';
 import DeferredPromise from './DeferredPromise';
@@ -25,7 +25,7 @@ export default {
   CancelledError,
   clearFetch,
   combineLoadingStates,
-  createDataServiceMiddleware,
+  createDataService,
   createHttpService,
   dataServiceReducer,
   DeferredPromise,

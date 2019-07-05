@@ -1,5 +1,5 @@
 import Superagent from 'superagent';
-import { DataServiceParams } from '../createDataServiceMiddleware';
+import { DataServiceParams } from '../createDataService';
 
 export interface HttpServiceParams {
   getHeaders: (() => any) | (() => Promise<any>);

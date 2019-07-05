@@ -1,6 +1,6 @@
 import sharedReducer from './sharedReducer';
 import defineFetch from '../defineFetch';
-import { isSuccessAction } from '../createDataServiceMiddleware';
+import { isSuccessAction } from '../createDataService';
 import SUCCESS from '../prefixes/SUCCESS';
 import createActionType from '../createActionType';
 
