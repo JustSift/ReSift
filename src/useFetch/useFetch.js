@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import useRedux from '../useRedux';
+import { useSelector } from 'react-redux';
 import getFetch from '../getFetch';
 import shallowEqual from '../shallowEqual';
 
@@ -25,8 +25,5 @@ export default function useFetch(fetch, options) {
     fetch.meta.key,
   ]);
 
-  return useRedux(state => memoizedGetFetch(fetch, state, options), [
-    fetch.meta.actionCreatorId,
-    fetch.meta.key,
-  ]);
+  return useSelector(state => memoizedGetFetch(fetch, state, options));
 }

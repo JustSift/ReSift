@@ -11,7 +11,7 @@ import isError from './isError';
 import isLoading from './isLoading';
 import isNormal from './isNormal';
 import isUnknown from './isUnknown';
-import ReduxProvider from './ReduxProvider';
+import ResiftProvider from './ResiftProvider';
 import shallowEqual from './shallowEqual';
 import useClearFetch from './useClearFetch';
 import useDispatch from './useDispatch';
@@ -35,7 +35,7 @@ declare const Resift: {
   isLoading: typeof isLoading;
   isNormal: typeof isNormal;
   isUnknown: typeof isUnknown;
-  ReduxProvider: typeof ReduxProvider;
+  ResiftProvider: typeof ResiftProvider;
   shallowEqual: typeof shallowEqual;
   useClearFetch: typeof useClearFetch;
   useDispatch: typeof useDispatch;

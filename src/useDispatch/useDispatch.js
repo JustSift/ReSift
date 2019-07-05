@@ -1,17 +1,10 @@
-import { useContext } from 'react';
+import { useDispatch as useReduxDispatch } from 'react-redux';
 import _get from 'lodash/get';
-import { ReduxContext } from '../ReduxProvider';
 import CLEAR from '../prefixes/CLEAR';
 
 export default function useDispatch() {
-  const store = useContext(ReduxContext);
-  if (!store) {
-    throw new Error(
-      'could not find store in context. in order to `useDispatch` you must add `ReduxProvider` from resift',
-    );
-  }
-
-  if (process.env.NODE_ENV === 'production') return store.dispatch;
+  const dispatch = useReduxDispatch();
+  if (process.env.NODE_ENV === 'production') return dispatch;
 
   return action => {
     const isActionCreator = _get(action, ['meta', 'type']) === 'ACTION_CREATOR';
@@ -25,6 +18,6 @@ export default function useDispatch() {
       throw new Error('[dispatch] you dispatched a make fetch. Ask rico until he writes docs.');
     }
 
-    return store.dispatch(action);
+    return dispatch(action);
   };
 }

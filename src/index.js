@@ -11,7 +11,7 @@ import isError from './isError';
 import isLoading from './isLoading';
 import isNormal from './isNormal';
 import isUnknown from './isUnknown';
-import ReduxProvider from './ReduxProvider';
+import ResiftProvider from './ResiftProvider';
 import shallowEqual from './shallowEqual';
 import useClearFetch from './useClearFetch';
 import useDispatch from './useDispatch';
@@ -35,7 +35,7 @@ export default {
   isLoading,
   isNormal,
   isUnknown,
-  ReduxProvider,
+  ResiftProvider,
   shallowEqual,
   useClearFetch,
   useDispatch,
