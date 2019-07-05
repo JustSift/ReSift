@@ -172,7 +172,7 @@ Object {
 });
 
 describe('handleAction', () => {
-  test('it injects each service with `getCancelled` and `onCancelled`', async () => {
+  test('qit injects each service with `getCancelled` and `onCancelled`', async () => {
     // given
     const exampleServiceCalled = new DeferredPromise();
     const makeActionCreator = defineFetch({
@@ -189,6 +189,8 @@ describe('handleAction', () => {
       expect(typeof params.onCancel).toBe('function');
       expect(typeof params.getCancelled).toBe('function');
       exampleServiceCalled.resolve();
+
+      return _noop;
     };
 
     // when
