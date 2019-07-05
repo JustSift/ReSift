@@ -75,7 +75,7 @@ But before we learn how to use fetches, we gotta learn how to make 'em 👇
 - **`displayName`** – A `string` used to give your fetch readable name in dev tools.
 - **`make`** – A `function` that defines the parameters of the fetch factory. This function must return another configuration object with two keys:
   - **`key`** an array of `string` used to store and retrieve data.
-  - **`fetch`** a function responsible for sending a data request outbound using "fetch services" (discussed in detail)
+  - **`request`** a function responsible for sending a data request outbound using "fetch services" (discussed in detail)
 
 > **Note:** `defineFetch` also takes other parameters. See the API reference for more info (TODO).
 
