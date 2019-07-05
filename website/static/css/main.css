@@ -1,0 +1,29 @@
+html,
+body {
+  font-family: 'Source Sans Pro', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #212121;
+}
+
+.headerTitleWithLogo {
+  font-weight: 900;
+  font-size: 25.46px;
+}
+
+.postHeaderTitle {
+  font-size: 50.92px;
+  font-weight: 900;
+}
+
+h1 {
+  font-size: 36.07px;
+  font-weight: 700;
+}
+
+p {
+  letter-spacing: 0.5px;
+  font-size: 16.97px;
+  font-weight: 400;
+}
