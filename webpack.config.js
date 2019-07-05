@@ -36,5 +36,5 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.json', '.jsx', '.css', '.ts'],
   },
-  externals: ['react', 'react-dom', 'react-redux', 'lodash', 'superagent'],
+  externals: ['react', 'react-dom', 'react-redux'],
 };
