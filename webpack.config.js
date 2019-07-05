@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-  mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
+  mode: 'none',
   entry: './src/index.js',
   output: {
     path: path.resolve(__dirname),
@@ -36,4 +36,5 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.json', '.jsx', '.css', '.ts'],
   },
+  externals: ['react', 'react-dom', 'react-redux', 'react-dom', 'lodash', 'superagent'],
 };

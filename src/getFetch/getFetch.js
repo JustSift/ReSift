@@ -1,4 +1,3 @@
-import { oneLine } from 'common-tags';
 import _get from 'lodash/get';
 import _flatten from 'lodash/flatten';
 import createStoreKey from '../createStoreKey';
@@ -60,10 +59,9 @@ export default function getFetch(fetchActionCreator, state, options) {
   const { actionCreatorId, displayName, key, share } = fetchActionCreator.meta;
   const storeKey = createStoreKey(displayName, actionCreatorId);
   if (!key) {
-    throw new Error(oneLine`
-      Could not find any key for action "${displayName}". If you're using or getting a fetch, ensure
-      that you're passing all the correct parameters.
-    `);
+    throw new Error(
+      `Could not find any key for action "${displayName}". If you're using or getting a fetch, ensure that you're passing all the correct parameters.`,
+    );
   }
 
   const value = _get(state, ['dataService', 'actions', storeKey, key]);
