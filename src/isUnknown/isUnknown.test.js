@@ -16,13 +16,3 @@ describe('only returns true if all loading states are normal', () => {
     expect(isUnknown(UNKNOWN, UNKNOWN, LOADING | UNKNOWN)).toBe(false);
   });
 });
-
-describe('supports the legacy loading state', () => {
-  test('happy path', () => {
-    expect(isUnknown(new LoadingState(States.UNKNOWN))).toBe(true);
-  });
-
-  test('happy path', () => {
-    expect(isUnknown(new LoadingState(States.NORMAL))).toBe(false);
-  });
-});

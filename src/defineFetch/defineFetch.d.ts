@@ -46,7 +46,11 @@ export interface FetchActionFactory<
   };
 }
 
-export interface FetchActionCreator<FetchArgs extends any[], FetchResult, MergeResult> {
+export interface FetchActionCreator<
+  FetchArgs extends any[] = any[],
+  FetchResult = any,
+  MergeResult = any
+> {
   (...args: FetchArgs): FetchAction;
 
   meta: FetchActionMeta;

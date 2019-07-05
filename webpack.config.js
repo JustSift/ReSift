@@ -6,7 +6,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname),
     libraryTarget: 'umd',
-    filename: 'index.js',
+    filename: 'bundle.js',
   },
   module: {
     rules: [

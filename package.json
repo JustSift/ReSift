@@ -23,6 +23,7 @@
     "@babel/preset-env": "^7.5.0",
     "@babel/preset-react": "^7.0.0",
     "@babel/preset-typescript": "^7.3.3",
+    "@types/react": "^16.8.23",
     "babel-loader": "^8.0.6",
     "jest": "^24.8.0",
     "node-fetch": "^2.6.0",
@@ -37,12 +38,14 @@
   },
   "dependencies": {
     "@types/lodash": "^4.14.135",
+    "@types/superagent": "^4.1.2",
     "common-tags": "^1.8.0",
     "lodash": "^4.17.11",
     "shortid": "^2.2.14",
     "superagent": "^5.1.0"
   },
   "peerDependencies": {
+    "@types/react": "^16.8.23",
     "react": "^16.8.6",
     "react-redux": "^7.1.0"
   },

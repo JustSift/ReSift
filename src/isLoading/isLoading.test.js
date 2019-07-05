@@ -16,13 +16,3 @@ describe('returns true if one loading state is loading', () => {
     expect(isLoading(NORMAL, NORMAL, NORMAL)).toBe(false);
   });
 });
-
-describe('supports the legacy loading state', () => {
-  test('happy path', () => {
-    expect(isLoading(new LoadingState(States.LOADING))).toBe(true);
-  });
-
-  test('happy path', () => {
-    expect(isLoading(new LoadingState(States.NORMAL))).toBe(false);
-  });
-});
