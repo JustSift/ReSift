@@ -22,7 +22,8 @@ h1 {
   font-weight: 700;
 }
 
-p {
+p,
+li {
   letter-spacing: 0.5px;
   font-size: 16.97px;
   font-weight: 400;

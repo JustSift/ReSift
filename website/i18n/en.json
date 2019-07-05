@@ -21,9 +21,31 @@
       "doc5": {
         "title": "Fifth Document"
       },
+      "guides/fetch-services": {
+        "title": "Fetch services",
+        "sidebar_label": "Fetch services"
+      },
+      "introduction/installation": {
+        "title": "Installation",
+        "sidebar_label": "Installation"
+      },
       "introduction/overview": {
         "title": "Resift",
         "sidebar_label": "Overview"
+      },
+      "main-concepts/defining-your-first-fetch": {
+        "title": "Defining your first fetch",
+        "sidebar_label": "Defining your first fetch"
+      },
+      "main-concepts/making-sense-of-loading-states": {
+        "title": "main-concepts/making-sense-of-loading-states"
+      },
+      "main-concepts/using-the-http-service": {
+        "title": "main-concepts/using-the-http-service"
+      },
+      "main-concepts/using-your-fetch": {
+        "title": "Using your fetch",
+        "sidebar_label": "Using your fetch"
       }
     },
     "links": {
@@ -33,8 +55,10 @@
     },
     "categories": {
       "Introduction": "Introduction",
-      "First Category": "First Category",
-      "Second Category": "Second Category"
+      "Main Concepts": "Main Concepts",
+      "Guides": "Guides",
+      "Recipes": "Recipes",
+      "First Category": "First Category"
     }
   },
   "pages-strings": {

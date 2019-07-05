@@ -1,8 +1,14 @@
 {
   "docs": {
-    "Introduction": ["introduction/overview"],
-    "First Category": ["doc2"],
-    "Second Category": ["doc3"]
+    "Introduction": ["introduction/overview", "introduction/installation"],
+    "Main Concepts": [
+      "main-concepts/defining-your-first-fetch",
+      "main-concepts/using-your-fetch",
+      "main-concepts/making-sense-of-loading-states",
+      "main-concepts/using-the-http-service"
+    ],
+    "Guides": ["guides/fetch-services"],
+    "Recipes": ["doc3"]
   },
   "docs-other": {
     "First Category": ["doc4", "doc5"]
