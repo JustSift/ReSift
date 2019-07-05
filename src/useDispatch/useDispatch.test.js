@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { createStore } from 'redux';
-import ReduxProvider from '../ReduxProvider';
+import { Provider as ReduxProvider } from 'react-redux';
+import ResiftProvider from '../ResiftProvider';
 import renderer, { act } from 'react-test-renderer';
 
 import useDispatch from './useDispatch';
@@ -33,7 +34,9 @@ test('it dispatches actions to the redux store', done => {
   act(() => {
     renderer.create(
       <ReduxProvider store={store}>
-        <TestComponent />
+        <ResiftProvider>
+          <TestComponent />
+        </ResiftProvider>
       </ReduxProvider>,
     );
   });

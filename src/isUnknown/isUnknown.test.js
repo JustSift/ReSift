@@ -1,7 +1,6 @@
 import UNKNOWN from '../UNKNOWN';
 import LOADING from '../LOADING';
 import isUnknown from './isUnknown';
-import { LoadingState, States } from '../models/LoadingState';
 
 test('identity', () => {
   expect(isUnknown(UNKNOWN)).toBe(true);

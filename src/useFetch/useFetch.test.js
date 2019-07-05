@@ -1,8 +1,8 @@
 import React from 'react';
 import renderer, { act } from 'react-test-renderer';
 import { createStore } from 'redux';
+import { Provider } from 'react-redux';
 
-import ReduxProvider from '../ReduxProvider';
 import defineFetch from '../defineFetch';
 import createActionType from '../createActionType';
 import SUCCESS from '../prefixes/SUCCESS';
@@ -47,9 +47,9 @@ test('it gets the fetch and returns the data and loading state', () => {
   act(() => {
     // when
     renderer.create(
-      <ReduxProvider store={store}>
+      <Provider store={store}>
         <TestComponent />
-      </ReduxProvider>,
+      </Provider>,
     );
   });
 
@@ -125,9 +125,9 @@ test('it bails out of updating if the data does not change', () => {
 
   act(() => {
     renderer.create(
-      <ReduxProvider store={store}>
+      <Provider store={store}>
         <TestComponent />
-      </ReduxProvider>,
+      </Provider>,
     );
 
     // when

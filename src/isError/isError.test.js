@@ -1,7 +1,6 @@
 import ERROR from '../ERROR';
 import LOADING from '../LOADING';
 import isError from './isError';
-import { LoadingState, States } from '../models/LoadingState';
 
 test('identity', () => {
   expect(isError(ERROR)).toBe(true);

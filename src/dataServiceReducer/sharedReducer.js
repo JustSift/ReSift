@@ -4,7 +4,7 @@ import createStoreKey from '../createStoreKey';
 import { isFetchAction } from '../defineFetch';
 import { isSuccessAction } from '../createDataServiceMiddleware';
 
-export default function sharedReducer(state, action) {
+export default function sharedReducer(state = {}, action) {
   if (isFetchAction(action)) {
     const { meta } = action;
     const { displayName, actionCreatorId, key, share } = meta;

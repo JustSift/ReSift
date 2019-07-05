@@ -1,7 +1,6 @@
 import NORMAL from '../NORMAL';
 import LOADING from '../LOADING';
 import isNormal from './isNormal';
-import { LoadingState, States } from '../models/LoadingState';
 
 test('identity', () => {
   expect(isNormal(NORMAL)).toBe(true);
