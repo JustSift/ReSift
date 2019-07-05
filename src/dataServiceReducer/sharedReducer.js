@@ -37,14 +37,14 @@ export default function sharedReducer(state = {}, action) {
     if (!share) return state;
 
     const { namespace } = share;
-    const combine = share.combine || ((_, next) => next);
+    const merge = share.merge || ((_, next) => next);
     const shareKey = createShareKey(namespace, key);
 
     return {
       ...state,
       [shareKey]: {
         ..._get(state, [shareKey]),
-        data: combine(_get(state, [shareKey, 'data']), payload),
+        data: merge(_get(state, [shareKey, 'data']), payload),
       },
     };
   }
