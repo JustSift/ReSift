@@ -11,7 +11,7 @@ A common use case for this are CRUD endpoints that need to update the same data 
 | Prop        | Type             | Default    | Description                                                                                                        |
 | ----------- | ---------------- | ---------- | ------------------------------------------------------------------------------------------------------------------ |
 | `namespace` | string           | required\* | Another `defineFetch` function sharing the same name space will result them sharing the same key to the data store |
-| `merge`     | func(prev, next) | required\* | `merge` adds customizing functionality before the data is applied to the data store.                               |
+| `merge`     | func(prev, next) | -          | `merge` adds customizing functionality before the data is applied to the data store.                               |
 
 &nbsp;
 
