@@ -2,7 +2,7 @@
 
 The `share` property on 'defineFetch' allows other `defineFetch` actions to store data on the same key.
 
-A common use case for this are CRUD endpoints that need to update the same data store key through `get` and `put` http requests.
+A common use case for `share` are CRUD endpoints that need to update the same data store key through `get` and `put` http requests.
 
 ### `share Props`
 

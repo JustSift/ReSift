@@ -13,10 +13,6 @@ import defineFetch from '@sift/resift/defineFetch';
 
 export default defineFetch({
   displayName: 'Get People',
-  share: {
-    namespace: 'people',
-    merge: (previous, next) => ({ ...previous, ...next }),
-  },
   make: () => ({
     key: [],
     request: () => ({ http }) =>
@@ -35,10 +31,6 @@ import defineFetch from '@sift/resift/defineFetch';
 
 export default defineFetch({
   displayName: 'Delete People',
-  share: {
-    namespace: 'people',
-    merge: (previous, next) => ({ ...previous, ...next })
-  },
   make: () => ({
     key: [],
     request: (peopleToDelete: person[]) => async ({ http, dispatch }) => {
