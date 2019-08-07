@@ -60,7 +60,7 @@ export default defineFetch({
 // Example container using `definefetch`s above
 // - component/index.tsx
 
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect } from 'react';
 
 // Required Resift tools
 import useFetch from '@sift/resift/useFetch';
@@ -85,12 +85,9 @@ function Container() {
     dispatch(getPeople());
   }, []);
 
-  const handleDeletePeople = useCallback(
-    (peopleToDelete: person[]) => {
-      dispatch(deletePeople(peopleToDelete));
-    },
-    [deletePeople]
-  );
+  const handleDeletePeople = (peopleToDelete: person[]) => {
+    dispatch(deletePeople(peopleToDelete));
+  };
 
   // `useFetch` subscribes to changes made during the request phase of the dispatch above
   const [people, status] = useFetch(getPeople());

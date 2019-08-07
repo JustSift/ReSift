@@ -187,7 +187,7 @@ export default defineFetch({
 // Example container using `definefetch` above
 // - component/index.tsx
 
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect } from 'react';
 
 // Required Resift tools
 import useFetch from '@sift/resift/useFetch';
@@ -212,12 +212,9 @@ function Container() {
     dispatch(getPerson());
   }, []);
 
-  const handleEditPerson = useCallback(
-    (newPerson: any) => {
-      dispatch(editPerson(newPerson));
-    },
-    [editPerson]
-  );
+  const handleEditPerson = (newPerson: any) => {
+    dispatch(editPerson(newPerson));
+  };
 
   // `useFetch` subscribes to changes made during the request phase of the dispatch above
   // Note: Both on mount and `handleEditPerson` events will change this `person` data.
