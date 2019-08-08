@@ -71,7 +71,7 @@ function Container() {
   // When component mounts the defineFetch's request function will fire.
   useEffect(() => {
     dispatch(getPerson());
-  }, []);
+  }, [dispatch, getPerson]);
 
   // `useFetch` subscribes to changes made during the request phase of the dispatch above
   const [person, status] = useFetch(getPerson());

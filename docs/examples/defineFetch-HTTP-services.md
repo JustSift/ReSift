@@ -29,8 +29,8 @@ import defineFetch from '@sift/resift/defineFetch';
 
 export default defineFetch({
   displayName: 'Get Person',
-  make: (personName: string) => ({
-    key: [personName],
+  make: (personId: string) => ({
+    key: [personId],
     request: () => ({ http }) =>
       return http({
         method: 'GET',
@@ -64,7 +64,7 @@ function Container() {
   useEffect(() => {
     dispatch(getPeople());
     dispatch(getPerson());
-  }, []);
+  }, [dispatch, getPeople, getPerson]);
 
   const [people, getPeopleStatus] = useFetch(getPeople());
   const [person, getPersonStatus] = useFetch(getPerson());
@@ -120,7 +120,7 @@ export default defineFetch({
     request: (personId: string) => ({ http }) =>
       return http({
         method: 'DELETE',
-        route: `/person/personId`,
+        route: `/person/${personId}`,
       }),
   }),
 });
@@ -143,11 +143,9 @@ export default defineFetch({
   displayName: 'Get Person',
   share: {
     namespace: 'person',
-    // Keep data flow as is
-    merge: (previous, next) => ({ ...previous, ...next }),
   },
-  make: (personName: string) => ({
-    key: [personName],
+  make: (personId: string) => ({
+    key: [personId],
     request: () => ({ http }) =>
       return http({
         method: 'GET',
@@ -168,11 +166,11 @@ export default defineFetch({
     namespace: 'person',
     merge: (previous, next) => {
       // Customize and add data
-      return { ...previous, ...next, lastEdited: new Date() }
+      return { ...previous, ...next }
     },
   },
-  make: (personName: string) => ({
-    key: [personName],
+  make: (personId: string) => ({
+    key: [personId],
     request: (personData: any) => ({ http }) =>
       return http({
         method: 'PUT',
@@ -210,7 +208,7 @@ function Container() {
   // When component mounts the defineFetch's request function will fire.
   useEffect(() => {
     dispatch(getPerson());
-  }, []);
+  }, [dispatch, getPerson]);
 
   const handleEditPerson = (newPerson: any) => {
     dispatch(editPerson(newPerson));

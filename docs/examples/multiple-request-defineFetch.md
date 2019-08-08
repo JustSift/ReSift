@@ -41,7 +41,7 @@ export default defineFetch({
             method: 'DELETE',
             route: `/person/${id}`
           }).catch((err: Error) => {
-            errors.push(err);
+            new Error(err);
           });
         })
       );
@@ -49,8 +49,6 @@ export default defineFetch({
       // After completed, fetchPeople again.
       const getPeople = makeGetPeople();
       dispatch(getPeople());
-
-      return errors.length ? errors : null;
     }
   })
 });
@@ -83,7 +81,7 @@ function Container() {
   // When component mounts the defineFetch's request function will fire.
   useEffect(() => {
     dispatch(getPeople());
-  }, []);
+  }, [dispatch, getPeople]);
 
   const handleDeletePeople = (peopleToDelete: person[]) => {
     dispatch(deletePeople(peopleToDelete));

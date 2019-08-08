@@ -91,7 +91,7 @@ function Container() {
   // When component mounts the defineFetch's request function will fire.
   useEffect(() => {
     dispatch(getPerson());
-  }, []);
+  }, [dispatch, getPerson]);
 
   const handleEditPerson = (newPerson: any) => {
     dispatch(editPerson(newPerson));
