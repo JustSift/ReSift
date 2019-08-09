@@ -25,13 +25,17 @@
         "title": "Fetch services",
         "sidebar_label": "Fetch services"
       },
+      "introduction/a-quick-glance": {
+        "title": "A Quick Glance",
+        "sidebar_label": "A Quick Glance"
+      },
       "introduction/installation": {
         "title": "Installation",
         "sidebar_label": "Installation"
       },
-      "introduction/overview": {
-        "title": "Resift",
-        "sidebar_label": "Overview"
+      "introduction/what-is-resift": {
+        "title": "What is ReSift?",
+        "sidebar_label": "What is ReSift?"
       },
       "main-concepts/defining-your-first-fetch": {
         "title": "What's a fetch?",
@@ -46,6 +50,10 @@
       "main-concepts/using-your-fetch": {
         "title": "Using your fetch",
         "sidebar_label": "Using your fetch"
+      },
+      "main-concepts/whats-a-fetch": {
+        "title": "What's a fetch?",
+        "sidebar_label": "What's a fetch?"
       }
     },
     "links": {
