@@ -1,12 +1,12 @@
 ---
 id: defining-your-first-fetch
-title: Defining your first fetch
-sidebar_label: Defining your first fetch
+title: What's a fetch?
+sidebar_label: What's a fetch?
 ---
 
 ## What's a fetch?
 
-A **fetch** (not be confused with [`window.fetch`][0]) is a term we use to encompass everything regarding the state and status of a data request.
+A **fetch** (not be confused with [`window.fetch`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API)) is a term we use to encompass everything regarding the state and status of a data request.
 
 > Disclaimer: As we know, naming things is hard. And for that, we apologize if the terminology in Resift is confusing due to naming collisions.
 >
@@ -68,18 +68,18 @@ The fetch usage will be discussed later in [Using your fetch](using-your-fetch.m
 
 But before we learn how to use fetches, we gotta learn how to make 'em 👇
 
-# `defineFetch` parameters
+## `defineFetch` parameters
 
 `defineFetch` requires a configuration object with two required keys:
 
 - **`displayName`** – A `string` used to give your fetch readable name in dev tools.
 - **`make`** – A `function` that defines the parameters of the fetch factory. This function must return another configuration object with two keys:
-  - **`key`** an array of `string` used to store and retrieve data.
-  - **`request`** a function responsible for sending a data request outbound using "fetch services" (discussed in detail)
+  - **`key`** an array of `string`s used to store and retrieve data.
+  - **`request`** a function responsible for sending a data request outbound using "fetch services" (discussed in detail in an upcoming section)
 
 > **Note:** `defineFetch` also takes other parameters. See the API reference for more info (TODO).
 
-Get person example:
+## Commented example
 
 ```js
 import React, { useEffect } from 'react';
@@ -88,7 +88,7 @@ import { defineFetch, useDispatch, useFetch } from 'resift';
 
 // 1) call `defineFetch` to get a fetch factory
 const makePersonFetch = defineFetch({
-  // 2) pick a display name is human readable that will help you debug
+  // 2) pick a display name that is human readable that will help you debug
   displayName: 'Get Person',
 
   // 3) define `make` — a function that must return
@@ -122,7 +122,8 @@ const makePersonFetch = defineFetch({
 function Person({ personId, expand }) {
   const dispatch = useDispatch();
 
-  // 7) apply the `personId` to get a fetch
+  // 7) apply the `personId` to get a fetch.
+  //    note: this takes in the same 👇arguments as `make` above
   const personFetch = makePersonFetch(personId);
 
   // 8) dispatch the fetch via an effect
@@ -132,6 +133,8 @@ function Person({ personId, expand }) {
 
   // 9) get the data and status via the `useFetch` hook
   const [person, status] = useFetch(personFetch);
+
+  return <>{/* ... */}</>;
 }
 
 Person.propTypes = {
@@ -142,4 +145,19 @@ Person.propTypes = {
 export default Person;
 ```
 
-[0]: https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
+## Breakdown
+
+### 1. use `defineFetch` to create a **fetch factory**
+
+```js
+const fetchFactory = defineFetch({
+  displayName: 'Get Data',
+  make:
+});
+```
+
+### 2. use the fetch factory in your component to get a fetch
+
+### 3. use `useDispatch` to `dispatch` your fetch
+
+### 4. use `useFetch` to get the data and status of your fetch
