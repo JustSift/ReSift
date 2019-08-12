@@ -48,7 +48,7 @@ export default makePersonFetch;
 
 A **fetch factory** is the definition of a type of fetch. When you call a fetch factory, you get a **fetch instance** (aka just a "fetch").
 
-> For now, just know that `defineFetch` returns a fetch factory. We'll cover what goes into defining a fetch in [the next doc](../TODO.md).
+> For now, just know that `defineFetch` returns a fetch factory. We'll cover what goes into defining a fetch [next](./how-to-define-fetches.md).
 
 ## Making a fetch and pulling data from it
 
