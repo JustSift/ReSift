@@ -17,13 +17,13 @@ With every fetch we need to know:
 - If the fetch is related to other fetches so we can ensure they update consistently
 - If the response is an error so we try to recover
 
-These tasks themselves aren't overly complicated but doing them over and over and over again can really take time away from your product.
+These tasks themselves aren't overly complicated but doing them over and over and over again _will_ take time away from your product.
 
 To make matters worse, there's an infinite way to accomplish said tasks, and when working on a team, those differences can be confusing or hard to manage.
 
 ## Introducing ReSift
 
-ReSift is a capable and versatile library for data fetches. ReSift is opinionated where it matters but also pluggable to suit your different data fetching needs.
+As stated above, ReSift is a capable and versatile library for data fetches. ReSift is opinionated where it matters but also pluggable to suit your different data fetching needs.
 
 **Features:**
 
