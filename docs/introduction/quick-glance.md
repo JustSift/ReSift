@@ -1,7 +1,7 @@
 ---
-id: a-quick-glance
-title: A Quick Glance
-sidebar_label: A Quick Glance
+id: quick-glance
+title: Quick glance
+sidebar_label: Quick glance
 ---
 
 ## A fetch is like an order
@@ -76,14 +76,14 @@ You call the fetch factory to get a **fetch instance** (which we usually just re
 
 > This example makes use of [React Hooks](https://reactjs.org/docs/hooks-intro.html). If you're not familiar with React Hooks, these examples may look a bit foreign as they are hooks idiomatic.
 >
-> We recommend using our hooks API but if you're not comfortable, we do offer a [render prop API]() for more compatibility. [(what are render props?)](https://reactjs.org/docs/render-props.html)
+> We recommend using our hooks API but if you're not comfortable, we do offer a way to use this library with [React-Redux's `connect`](../TODO.md) for more compatibility.
 
 `Person.js`
 
 ```js
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { useDispatch, useFetch, isNormal } from 'resift';
+import { useDispatch, useFetch, isNormal, isLoading } from 'resift';
 import makePersonFetch from './makePersonFetch';
 import Spinner from './Spinner';
 
