@@ -2,13 +2,12 @@
   "docs": {
     "Introduction": [
       "introduction/what-is-resift",
-      "introduction/a-quick-glance",
+      "introduction/quick-glance",
       "introduction/installation"
     ],
     "Main Concepts": [
       "main-concepts/whats-a-fetch",
-      "main-concepts/defining-your-first-fetch",
-      "main-concepts/using-your-fetch",
+      "main-concepts/how-to-define-fetches",
       "main-concepts/making-sense-of-loading-states",
       "main-concepts/using-the-http-service"
     ],
