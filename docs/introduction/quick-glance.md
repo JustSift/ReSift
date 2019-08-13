@@ -4,77 +4,11 @@ title: Quick glance
 sidebar_label: Quick glance
 ---
 
-## A fetch is like an order
+After a lot of feedback on these docs, we realized the first thing you all wanted to see was some code.
 
-ReSift has this concept of **["fetches"](../main-concepts/whats-a-fetch.md)** that are loosely analogous to **orders**.
+This quick glance is just that. Without too many words, here are some quick code examples that _show_ how ReSift dispatches requests, gives status updates, and pulls data from memory.
 
-An **order** is an everyday-noun we use to talk about the process of many things revolving around placing and receiving an order including:
-
-- picking out a product to buy
-- picking options/variations of the product
-- placing an order to receive the product
-- getting an order number to track the shipping progress
-
-etc.
-
-This analogy isn't perfect but it helps stage the idea of a fetch as defined by ReSift.
-
----
-
-In ReSift, **a fetch is a noun** (similar to how an _order_ is a noun) used to talk about the process of many things revolving around data fetches.
-
-See the commented code example to get an idea of how ReSift works.
-
-## Commented example
-
-The purpose of this example is to give you a quick introduction to the ideas and APIs of ReSift. It won't explain how to use everything just yet. Stay tuned!
-
----
-
-### Defining a fetch
-
-In order to start making data calls with ReSift, you first need to define your fetch.
-
-Using the order analogy, you can think of defining a fetch like defining a product to order.
-
-`makePersonFetch.js`
-
-```js
-import { defineFetch } from 'resift';
-
-// `makePersonFetch` is a "fetch factory"
-const makePersonFetch = defineFetch({
-  displayName: 'Get Person',
-
-  make: personId => ({
-    key: [personId],
-
-    // The `request` which is responsible for sending off the request
-    request: expand => ({ http }) =>
-      //       the http  👆 service is being "picked off" and used
-      //       to send off the request
-      http({
-        method: 'GET',
-        route: `/people/${personId}`,
-        // this will add the query param `expand` to the request
-        // e.g. `/people/person123?expand=blah
-        query: { expand },
-      }),
-  }),
-});
-
-export default makePersonFetch;
-```
-
----
-
-### Using and dispatching a fetch
-
-When you define a fetch, you create a **fetch factory**.
-
-You call the fetch factory to get a **fetch instance** (which we usually just refer to as a "fetch").
-
-> This example makes use of [React Hooks](https://reactjs.org/docs/hooks-intro.html). If you're not familiar with React Hooks, these examples may look a bit foreign as they are hooks idiomatic.
+> These examples makes use of [React Hooks](https://reactjs.org/docs/hooks-intro.html). If you're not familiar with React Hooks, these examples may look a bit foreign as they are hooks idiomatic.
 >
 > We recommend using our hooks API but if you're not comfortable, we do offer a way to use this library with [React-Redux's `connect`](../TODO.md) for more compatibility.
 
@@ -83,31 +17,38 @@ You call the fetch factory to get a **fetch instance** (which we usually just re
 ```js
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { useDispatch, useFetch, isNormal, isLoading } from 'resift';
+import { useDispatch, useFetch, isLoading } from 'resift';
+import SpinnerOverlay from './SpinnerOverlay';
+
+// import a pre-defined fetch factory
 import makePersonFetch from './makePersonFetch';
-import Spinner from './Spinner';
 
 function Person({ personId, expand }) {
   const dispatch = useDispatch();
 
-  // Apply the `personId` to get a fetch instance.
+  // make a fetch from a fetch factory
   const personFetch = makePersonFetch(personId);
+  // fetches 👆 are nouns
+  //                 this is a 👆 fetch factory
 
-  // To get the data and status of your fetch, use `useFetch`
-  const [person, status] = useFetch(personFetch);
-
-  // Use an effect to watch for fetches in `personId` and
-  // re-fetch accordingly. This also covers the initial call.
+  // use an effect to re-dispatch requests when the fetch itself
+  // or any of the request arguments change (e.g. `expand`)
   useEffect(() => {
-    const request = personFetch(expand);
-    dispatch(request);
+    dispatch(personFetch(expand));
   }, [dispatch, personFetch, expand]);
+
+  // get the data and the status associated with your fetch
+  const [person, status] = useFetch(personFetch);
+  //                          👆
+  // this hook causes re-renders when the status or the response changes
 
   return (
     <div>
-      {/* use the `isLoading` and `isNormal` helpers to show spinners or data */}
-      {isLoading(status) && <Spinner />}
-      {isNormal(status) && <div>Hello, {person.name}!</div>}
+      {/* show a spinner overlay during the initial fetch or any re-fetches */}
+      {isLoading(status) && <SpinnerOverlay />}
+
+      {/* when the response comes back, the person will no longer be null */}
+      {person && <div>Hello, {person.name}!</div>}
     </div>
   );
 }
@@ -118,6 +59,40 @@ Person.propTypes = {
 };
 
 export default Person;
+```
+
+---
+
+`makePersonFetch.js`
+
+```js
+import { defineFetch } from 'resift';
+
+// `makePersonFetch` is a "fetch factory" the defines what this fetches does
+// and how it gets data
+const makePersonFetch = defineFetch({
+  displayName: 'Get Person',
+
+  // These 👇 are the arguments to `makePersonFetch`
+  make: personId => ({
+    key: [personId], // 👈 This tells resift where to save the response
+
+    // The `request` which is responsible for sending off the request
+    //   These 👇 are the arguments when dispatching
+    request: expand => ({ http }) =>
+      //        The http  👆 service is being "picked off" and used
+      //        to send off the request
+      http({
+        method: 'GET',
+        route: `/people/${personId}`,
+        // This will add the query param `expand` to the request
+        // e.g. `/people/person123?expand=blah
+        query: { expand },
+      }),
+  }),
+});
+
+export default makePersonFetch;
 ```
 
 Intrigued? Continue to the [Main Concepts]() to learn more.

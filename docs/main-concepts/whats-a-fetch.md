@@ -8,7 +8,20 @@ sidebar_label: What's a fetch?
 
 ## A fetch is like an order
 
-As stated in the [quick glance](../introduction/quick-glance.md), **fetch is like an order**.
+ReSift has this concept of **fetches** that are loosely analogous to **orders**.
+
+An **order** is a noun we use to talk about the process of many things revolving around placing and receiving an order including:
+
+- picking out a product to buy
+- picking options/variations of the product
+- placing an order to receive the product
+- getting an order number to track the shipping progress
+
+etc.
+
+This analogy isn't perfect but it helps stage the idea of a fetch as defined by ReSift.
+
+---
 
 Much like an order is a noun _and_ a verb, so is our concept of fetches. However in ReSift, we always refer to fetches as _nouns_.
 
