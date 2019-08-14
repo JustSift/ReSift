@@ -10,11 +10,11 @@ sidebar_label: What's a fetch?
 
 ReSift has this concept of **fetches** that are loosely analogous to **orders**.
 
-An **order** is a noun we use to talk about the process of many things revolving around placing and receiving an order including:
+Generally speaking, an **order** is a noun we use to talk about the process of many things revolving around placing and receiving an order including:
 
-- picking out a product to buy
-- picking options/variations of the product
-- placing an order to receive the product
+- defining a product to buy
+- defining the options/variations of a product
+- placing an order to receive a product
 - getting an order number to track the shipping progress
 
 etc.
@@ -23,7 +23,7 @@ This analogy isn't perfect but it helps stage the idea of a fetch as defined by 
 
 ---
 
-Much like an order is a noun _and_ a verb, so is our concept of fetches. However in ReSift, we always refer to fetches as _nouns_.
+**Much like an order is a noun _and_ a verb, so is our concept of fetches.**
 
 In ReSift, fetches are our unit/word that encapsulates everything you need to know about:
 
@@ -35,7 +35,9 @@ In ReSift, fetches are our unit/word that encapsulates everything you need to kn
 
 Similar to how you need to have a product listing before you place an order, you first need to have a fetch defined before you make a request.
 
-To define a fetch, use the function `defineFetch` from ReSift.
+To define a fetch, use the function `defineFetch` from ReSift. Take a look at this next code example to get a sneak peak in to how to define a fetch.
+
+> Don't get too caught up in the example just yet. In the next section, we'll go in depth into [how to define a fetch](./how-to-define-fetches.md).
 
 `makePersonFetch.js`
 
@@ -57,19 +59,24 @@ const makePersonFetch = defineFetch({
 export default makePersonFetch;
 ```
 
-`defineFetch` returns a fetch factory (e.g. `makePersonFetch`).
+`defineFetch` returns a **fetch factory** (e.g. `makePersonFetch`).
 
-A **fetch factory** is the definition of a type of fetch. When you call a fetch factory, you get a **fetch instance** (aka just a "fetch").
+A **fetch factory** is a producer of a type of fetch. When you call a fetch factory, you get a **fetch instance**.
 
-> For now, just know that `defineFetch` returns a fetch factory. We'll cover what goes into defining a fetch [next](./how-to-define-fetches.md).
+```js
+//                    👇 invoke this fetch factory...
+const personFetch = makePersonFetch('person123');
+//            👆
+// ...to get a fetch instance
+```
 
 ## Making a fetch and pulling data from it
 
-In order to make a fetch (remember, fetch is a _noun_ in this case), you need to call the fetch factory with the arguments you define in `make` of `defineFetch`.
+In order to make a fetch instance, you need to call the fetch factory with the arguments you define in `make` of `defineFetch`.
 
-After you make the fetch, you can then use it to pull the data and the status of the request into your component by using the hook `useFetch`.
+After you make the fetch instance, you can then use it to pull the data and the status of the request into your component by using the hook `useFetch`.
 
-> This examples uses [React Hooks](https://reactjs.org/docs/hooks-intro.html). We _highly_ recommend, using our Hooks API, but if you're not using React >= 16.8.x, we also offer a way to use this library with [React-Redux's `connect`](../TODO.md).
+> This examples uses [React Hooks](https://reactjs.org/docs/hooks-intro.html). We highly recommend, using our Hooks API, but if you're not using React >= 16.8.x, we also offer a way to use this library with [React-Redux's `connect`](../TODO.md).
 
 `Person.js`
 
@@ -87,6 +94,7 @@ function Person({ personId }) {
 
   // use the fetch to get the data and status associated to your fetch
   const [data, status] = useFetch(personFetch);
+  // (this 👆 syntax is array destructuring)
 
   return (
     <div>
@@ -104,11 +112,20 @@ Person.propTypes = {
 export default Person;
 ```
 
+`useFetch` is a hook that takes in a fetch instance as an argument and returns an array of length two:
+
+1. The first item is the data associated with the fetch instance or `null` if no data is available
+2. The second item is the status associated with the fetch instance. There are helpers that exist (e.g. `isNormal`, `isLoading`) that you can use to unwrap this value into their different boolean values. [Jump to Making sense of statuses to learn more.](../TODO.md)
+
+Since `useFetch` is a hook, it has the ability to re-render your component when either the data or the status changes.
+
+Use this hook to react to data changes and the different statuses of your fetches.
+
 ## Making a request then dispatching it
 
-The last example showed you how to pull data from a fetch but not how to actually start off the request. In order to send off a request and make the fetch populate with data, you first have to make and dispatch a request.
+The last example showed you how to pull data from a fetch instance but not how to initially dispatch the request when the component first mounts.
 
-Below is a modified example that will fetch the data when the component mounts or the `personId` changes.
+Below is a modified example that will dispatch a request when the `personId` changes (including the first mount).
 
 ```js
 import React, { useEffect } from 'react';
@@ -121,15 +138,12 @@ function Person({ personId }) {
   // `useDispatch` to get back the `dispatch` function
   const dispatch = useDispatch();
 
-  // Apply the `personId` to get a fetch instance.
   const personFetch = makePersonFetch(personId);
-
-  // To get the data and status of your fetch, use `useFetch`
   const [person, status] = useFetch(personFetch);
-  // (this 👆 syntax is array destructuring)
 
   // Use an effect to watch for fetches in `personId` and
-  // re-fetch accordingly. This also covers the initial call.
+  // re-fetch accordingly. This also occurs after the initial mount.
+  // (e.g. `componentDidMount` too)
   useEffect(() => {
     // make the request
     const request = personFetch();
@@ -152,7 +166,13 @@ Person.propTypes = {
 export default Person;
 ```
 
-> In the example, we make the request and dispatch it separately to explain what's going on, however, it's recommended to make the request and dispatch it in the same line:
+In the example above, this component is fetching and re-fetching the person based on the `personId`.
+
+This occurs because of the effect (via `useEffect`) that watches the dependencies array (the second argument of `useEffect`) and calls the callback (the first argument) when any value in the dependencies array changes. [See the official React docs for usage of the Effect Hook for more info.](https://reactjs.org/docs/hooks-effect.html)
+
+In this case, the value `personFetch` will change when the `personId` changes. If `personId` changes, then `personFetch` will change, and that will tell the effect to re-run and send off another request.
+
+> **Small note:** In the example above, we made the request and dispatched it on different lines to explain what's going on, however, it's recommended to make the request and dispatch it in the same line for brevity:
 >
 > ```js
 > useEffect(() => {
@@ -160,12 +180,12 @@ export default Person;
 > }, [dispatch, personFetch]);
 > ```
 
-## The lifecycle of a fetch
+## Summary: The lifecycle of a fetch
 
 1. `defineFetch` returns a **fetch factory** (e.g. `makePersonFetch`)
-2. When `makePersonFetch` is called with identifiers, it returns a **fetch instance** (e.g. `personFetch`)
+2. When `makePersonFetch` is called with a `personId`, it returns a **fetch instance** (e.g. `personFetch`)
 3. Then either:
    1. The fetch can be used to get the data and the status via **`useFetch`**.
       <br />(e.g. `const [data, status] = useFetch(personFetch)`)
-   2. The fetch can be called to get a **request**. That request can be dispatched via **`dispatch`**.
+   2. The fetch instance can be invoked to get a **request**. That request can be dispatched via **`dispatch`**.
       <br />(e.g. `dispatch(personFetch())`)
