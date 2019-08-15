@@ -38,8 +38,8 @@
         "sidebar_label": "What is ReSift?"
       },
       "main-concepts/how-to-define-fetches": {
-        "title": "How to define fetches",
-        "sidebar_label": "How to define fetches"
+        "title": "How to define a fetch",
+        "sidebar_label": "How to define a fetch"
       },
       "main-concepts/making-sense-of-loading-states": {
         "title": "main-concepts/making-sense-of-loading-states"

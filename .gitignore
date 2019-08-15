@@ -3,3 +3,4 @@ bundle.js
 bundle.js.map
 coverage
 .DS_Store
+website/build

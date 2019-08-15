@@ -1,7 +1,7 @@
 ---
 id: how-to-define-fetches
-title: How to define fetches
-sidebar_label: How to define fetches
+title: How to define a fetch
+sidebar_label: How to define a fetch
 ---
 
 The `defineFetch` API has the following shape:
@@ -12,11 +12,11 @@ The `defineFetch` API has the following shape:
 import { defineFetch } from 'resift';
 
 const makePersonFetch = defineFetch({
-  displayName: /* display name */,
-  make: (/* make args */) => ({
-    key: /* key */,
-    request: (/* request args */) => ({ http }) => {
-      /* request body */
+  displayName: /* {display name} */,
+  make: (/* {make args} */) => ({
+    key: /* {key} */,
+    request: (/* {request args} */) => ({ http }) => {
+      /* {request body} */
     },
   }),
 });
@@ -34,13 +34,9 @@ The following sections will go over how to fill out this shape.
 
 ---
 
-## Picking a `displayName`
+## The `displayName`
 
-The display name should be a human readable string to help you debug. These display names are seen in the Redux Dev Tools and can help you get some information when each fetch is dispatched, finished, or finished with errors.
-
-See the [Dev Tools section](../TODO.md) for more info.
-
----
+The display name should be a human readable string to help you debug. These display names are seen in the Redux Dev Tools and can help you get some information when each fetch is dispatched, finished, or finished with errors. [See the Dev Tools section for more info.](../TODO.md)
 
 The suggested naming convention is: **{[CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) operation} {Resource name}**
 
@@ -215,4 +211,15 @@ Now that we know how to define keys, let's learn how to define the request.
 
 ### Make args vs request args
 
-## Suggested naming conventions
+## Suggested naming and file conventions
+
+The suggested convention is to create a separate file for each fetch factory you define and export that fetch factory as the `default` export. Fetches that share similar resources should also share the same folder.
+
+Then the file name should follow these rules:
+
+- If your fetch factory produces multiple fetch instances, then suggested convention is to prefix the name with `make-`. Otherwise, if your fetch is a singleton fetch, you may omit this prefix.
+- If your fetch is performs a mutation (i.e. create, update, delete) then your fetch should contain the word `Create`, `Update`, or `Delete`. If your fetch is a read operation (e.g. `Get`) then you may omit this prefix.
+- The name of the resource in consideration (e.g. `Person`, `Books`) considering whether or not the update or read is plural or not. (e.g. `makePersonFetch` vs `makePeopleFetch`)
+- Lastly, always postfix your name with `-fetch`.
+
+![how to name fetches](/img/how-to-name-fetches.png)
