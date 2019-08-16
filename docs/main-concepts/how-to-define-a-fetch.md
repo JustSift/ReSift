@@ -1,5 +1,5 @@
 ---
-id: how-to-define-fetches
+id: how-to-define-a-fetch
 title: How to define a fetch
 sidebar_label: How to define a fetch
 ---

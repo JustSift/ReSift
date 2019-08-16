@@ -1,6 +1,6 @@
 # ReSift
 
-A Work-in-progress. This will be the home of the open source version of Resift.
+A Work-in-progress. This will be the home of the open source version of ReSift.
 
 There are no released versions yet.
 

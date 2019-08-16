@@ -37,7 +37,7 @@
         "title": "What is ReSift?",
         "sidebar_label": "What is ReSift?"
       },
-      "main-concepts/how-to-define-fetches": {
+      "main-concepts/how-to-define-a-fetch": {
         "title": "How to define a fetch",
         "sidebar_label": "How to define a fetch"
       },

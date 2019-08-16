@@ -37,7 +37,7 @@ Similar to how you need to have a product listing before you place an order, you
 
 To define a fetch, use the function `defineFetch` from ReSift. Take a look at this next code example to get a sneak peak in to how to define a fetch.
 
-> Don't get too caught up in the example just yet. In the next section, we'll go in depth into [how to define a fetch](./how-to-define-fetches.md).
+> Don't get too caught up in the example just yet. In the next section, we'll go in depth into [how to define a fetch](./how-to-define-a-fetch.md).
 
 `makePersonFetch.js`
 

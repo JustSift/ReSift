@@ -9,7 +9,7 @@
 // site configuration options.
 
 const siteConfig = {
-  title: 'Resift', // Title for your website.
+  title: 'ReSift', // Title for your website.
   tagline: 'A state management library for fetches',
   url: 'https://resift.sift.codes', // Your website URL
   baseUrl: '/', // Base URL for your project */
