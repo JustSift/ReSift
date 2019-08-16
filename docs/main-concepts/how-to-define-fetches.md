@@ -269,9 +269,48 @@ const makeUpdatePersonFetch = defineFetch({
 });
 ```
 
-The **data service arguments** pick off (via destructing) a [**data service**](../TODO.md) to use to request data.
+The **data service arguments** pick off (via [destructing](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment#Unpacking_fields_from_objects_passed_as_function_parameter)) a [**data service**](../TODO.md) to use to request data.
 
-Back
+Back in the installation, we [installed the HTTP service](../introduction/installation.md#adding-the-http-service-via-createhttpservice), by adding it to the `services` object and passing that object into the `<ResiftProvider />`.
+
+The services that are installed like this are now accessible under the same key they were installed under. So if we installed the HTTP service under the key of `https` instead of `http`, then we would [destructure](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment#Unpacking_fields_from_objects_passed_as_function_parameter), the key `https` (e.g. `request: () => ({ https }) => /* ... */`).
+
+> Hang tight for now! There is an [in-depth tutorial on data services in a later doc](../TODO.md) that details this more.
+
+### The request body
+
+The request body is the rest of the `request`. It is where you use the data services you've picked off and actually make requests.
+
+```js
+import { defineFetch } from 'resift';
+
+const makePersonFetch = defineFetch({
+  displayName: 'Get Person',
+  make: personId => ({
+    key: [personId],
+    request: () => async ({ http }) => {
+      // 👇👇👇 this is the request body
+      const person = await http({
+        method: 'GET',
+        route: `/people/${personId}`,
+      });
+
+      return person;
+      // 👆👆👆
+    },
+  }),
+});
+```
+
+The example above is removes a lot of shorthand. The request body should return a `Promise`. ReSift will `await` this promise and store the result of it.
+
+Placing `async` before the request body allows you to `await` data services. In fact, you may call these services more than once within one ReSift request.
+
+```js
+import { defineFetch } from 'resift';
+
+TODO example
+```
 
 ## Fetch definition tips
 
