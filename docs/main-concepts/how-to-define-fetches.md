@@ -20,6 +20,8 @@ const makePersonFetch = defineFetch({
     },
   }),
 });
+
+export default makePersonFetch;
 ```
 
 There is:
@@ -50,7 +52,7 @@ e.g.
 
 ---
 
-## The `make` function
+## The `make` function and `key`s
 
 The `make` function defines the functionality of the fetch factory.
 
@@ -59,9 +61,9 @@ There are two types of fetch factories you can make:
 1. A fetch factory that produces many unique fetches
 2. A fetch factory that can only produce one unique fetch
 
-## Defining a fetch factory that produces many different fetches
+### Defining a fetch factory that produces many different fetches
 
-As a refresher, a fetch factory produces a fetch instance like so:
+As a refresher, a fetch factory produces a fetch like so:
 
 ```js
 const personFetch = makePersonFetch('person-id-123');
@@ -89,7 +91,7 @@ function Example() {
 
 The number of unique fetch instances a fetch factory can produce is determined by the number of unique `key` possibilities.
 
-### What is a `key`?
+#### What's a `key`?
 
 The **`key`** is an array of strings (or numbers) that will be used to store and lookup the data and status associated with your fetch.
 
@@ -108,7 +110,7 @@ const makePersonFetch = defineFetch({
 });
 ```
 
-In the `makePersonFetch` example above, when different `personId`s were passed into the fetch factory, they returned different fetches, however if you passed the same `personId` into the fetch factory, you'd get back the same fetch.
+In the `makePersonFetch` `Example` component above, when different `personId`s were passed into the fetch factory, they returned different fetches. However if you passed the same `personId` into the fetch factory, you'd get back the same fetch.
 
 ```js
 const matFetch_1 = makePersonFetch('person-id-mat');
@@ -117,62 +119,13 @@ const matFetch_2 = makePersonFetch('person-id-mat');
 console.log(matFetch_1 === matFetch_2); // true
 ```
 
-> **Technical note:** This works because the fetch factory is [_memoized_](https://en.wikipedia.org/wiki/Memoization) against the key to return the same fetch reference.
+> **Technical Note:** This works because the fetch factory is [_memoized_](https://en.wikipedia.org/wiki/Memoization) against the key to return the same fetch reference.
 
----
+### Defining a fetch factory that can only produce one unique fetch
 
-This means that doing…
+On the flip side, if your `key` is defined as an empty array, then it can only produce one unique fetch because, no matter the fetch factory arguments, there is only one possible key–the empty array.
 
-```js
-const [person, status] = useFetch(personFetch);
-```
-
-…will only return the `person` with the `personId` from this component's props.
-
-This also means that you can have more than once instance of this component, and, as long as each `personId` is different, each `person` and `status` will also be different.
-
-> As a good practice, if your resource has an identifier and could potentially be called with different identifiers, then it's best to use `key`. Otherwise you'll may end up with bugs where one request is interfering with the result of another.
-
-When you define a fetch factory that takes in identifier, you're defining a fetch that is allowed to have more than one fetch instance.
-
-> Remember that a [**fetch instance**](./whats-a-fetch.md#the-lifecycle-of-a-fetch) is used to lookup the data and status associated with your request.
-
-In order to differentiate one fetch instance from another fetch instance from the same fetch factory, use `key`.
-
-`makePersonFetch.js`
-
-```js
-import { defineFetch } from 'resift';
-
-const makePersonFetch = defineFetch({
-  displayName: 'Get Person',
-  make: personId => ({
-    // =====================
-    // THIS 👇 is the `key`
-    key: [personId],
-    //======================
-
-    request: expand => ({ http }) =>
-      http({
-        method: 'GET',
-        route: `/people/${personId}`,
-        query: { expand },
-      }),
-  }),
-});
-
-export default makePersonFetch;
-```
-
----
-
-## Defining a fetch factory that produces one fetch instance
-
-### What is a singleton fetch?
-
-It's also common to have a **singleton fetch** — a fetch that does not take in a dynamic key.
-
-In the code, this means that `key` is an empty array.
+Take a look at this example of a fetch factory that can only produce one unique fetch:
 
 `configurationFetch.js`
 
@@ -182,10 +135,7 @@ import { defineFetch } from 'resift';
 const makeConfigurationFetch = defineFetch({
   displayName: 'Get Configuration',
   make: () => ({
-    // NOTE: this is a "singleton" fetch because the key array is empty
-    //   👇
     key: [],
-
     request: () => ({ http }) =>
       http({
         method: 'GET',
@@ -198,33 +148,136 @@ const configurationFetch = makeConfigurationFetch();
 export default configurationFetch;
 ```
 
-> **NOTE:** The suggested convention for singleton fetches is to call the fetch factory once and then export the resulting fetch because the fetch will not change between fetch factory calls.
->
-> See below for more on [suggested naming conventions](#suggested-naming-conventions)
+In the example above, we're defining a fetch factory to grab some app-wide configuration. There's only one configuration for the current logged-in user so there is no need to provide any keys or identifiers.
 
-`Dashboard.js` (an example component that uses the configuration)
+As a result, the `key` array is empty and whenever we call `makeConfigurationFetch()`, we'll always get back the same fetch instance.
 
-```js
-import React from 'react';
-import { useFetch } from 'resift';
-import configurationFetch from './configurationFetch';
+These fetches that can only produce one fetch instance are called **singleton fetches**.
 
-function Dashboard() {
-  const [configuration, status] = useFetch(configurationFetch);
+> As a good practice, singleton fetch factories should immediately call themselves to produce their singleton fetch (as demonstrated above). This singleton fetch can then be exported and used directly in `useFetch` in other components.
 
-  return /* ... */;
-}
-```
+Now that we know how to define `key`s, let's learn how to define the `request`!
 
 ---
 
-## Defining requests
+## The `make` function and `request`s
 
-Now that we know how to define keys, let's learn how to define the request.
+The `request` function…
+
+```js
+const makePersonFetch = defineFetch({
+  displayName: 'Get Person',
+  make: personId => ({
+    key: [personId],
+
+    // 👇👇👇 (that's this thing)
+    request: () => ({ http }) => http(/* */),
+    // 👆👆👆
+  }),
+});
+```
+
+…defines how to request data from ReSift's [data services](../TODO.md).
+
+You define the `request` function as a [curried function](https://stackoverflow.com/a/36321/5776910) that separates the application of request arguments from the application of [data service](../TODO.md) arguments.
+
+### What are request arguments?
+
+When you [dispatch a request](./whats-a-fetch.md#making-a-request-then-dispatching-it), the first set of arguments of the `request` function become the **request arguments**.
+
+```js
+import { defineFetch } from 'resift';
+
+const makeUpdatePersonFetch = defineFetch({
+  displayName: 'Update Person',
+  make: personId => ({
+    key: [personId],
+
+    // these 👇👇👇
+    request: updatedPerson => ({ http }) =>
+      //      👆👆👆
+      // are the request arguments
+
+      http({
+        method: 'PUT',
+        route: `/people/${personId}`,
+        data: updatedPerson,
+      }),
+  }),
+});
+```
+
+In the above example, `updatedPerson` is the request argument. This means that you must call the fetch instance with an `updatedPerson` in order to dispatch a request.
+
+```js
+import React from 'react';
+import PropTypes from 'prop-types';
+import { useDispatch } from 'resift';
+import getPersonFromForm from './getPersonFromForm';
+
+import makeUpdatePersonFetch from './makeUpdatePersonFetch';
+
+function ExamplePersonForm({ personId }) {
+  const dispatch = useDispatch();
+  const updatePersonFetch = makeUpdatePersonFetch(personId);
+
+  const handleSubmit = e => {
+    const updatedPerson = getPersonFromForm(e);
+
+    // In order to create a request to dispatch, `updatedPerson`
+    // must be passed to the fetch because it's a request argument.
+    //                                  👇👇👇
+    const request = updatePersonFetch(updatedPerson);
+    //                                  👆👆👆
+
+    dispatch(request);
+  };
+
+  return <form onSubmit={handleSubmit}>{/* ... */}</form>;
+}
+
+ExamplePersonForm.propTypes = {
+  personId: PropTypes.string.isRequired,
+};
+
+export default ExamplePersonForm;
+```
+
+### What are data service arguments?
+
+The next set of arguments in the curried `request` function is the [data service](../TODO.md) arguments.
+
+```js
+import { defineFetch } from 'resift';
+
+const makeUpdatePersonFetch = defineFetch({
+  displayName: 'Update Person',
+  make: personId => ({
+    key: [personId],
+
+    //                   these 👇👇👇
+    request: updatedPerson => ({ http }) =>
+      //                       👆👆👆
+      //        are the data service arguments
+
+      http({
+        method: 'PUT',
+        route: `/people/${personId}`,
+        data: updatedPerson,
+      }),
+  }),
+});
+```
+
+The **data service arguments** pick off (via destructing) a [**data service**](../TODO.md) to use to request data.
+
+Back
+
+## Fetch definition tips
 
 ### Make args vs request args
 
-## Suggested naming and file conventions
+### Suggested naming and file conventions
 
 The suggested convention is to create a separate file for each fetch factory you define and export that fetch factory as the `default` export. Fetches that share similar resources should also share the same folder.
 
