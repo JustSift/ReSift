@@ -14,7 +14,7 @@ With every fetch we need to know:
 
 - If the data request is inflight (so we can show a loading indicator)
 - Where to store the data and how to look it up
-- If the fetch is related to other fetches so we can ensure they update consistently
+- If it's related to other fetches so they update consistently
 - If the response is an error so we try to recover
 
 These tasks themselves aren't overly complicated but doing them over and over and over again _will_ take time away from your product.
