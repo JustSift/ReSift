@@ -30,5 +30,6 @@ As stated above, ReSift is a capable and versatile library for data fetches. ReS
 - 💾 Framework for storing and retrieving responses from data requests
 - 📬 Monitoring and updating the status of inflight requests
 - 🔌 Pluggable via custom "fetch services"
+- 🌐 Universal — Share code amongst your apps. Works with React Native!
 - 🎣 Hooks API
 - ⚛️ Optional Redux integration with Redux dev tools support
