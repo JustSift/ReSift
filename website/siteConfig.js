@@ -11,7 +11,7 @@
 const siteConfig = {
   title: 'ReSift', // Title for your website.
   tagline: 'A state management library for fetches',
-  url: 'https://resift.sift.codes', // Your website URL
+  url: 'https://resift.org', // Your website URL
   baseUrl: '/', // Base URL for your project */
   // For github.io type URLs, you would set the url and baseUrl like:
   //   url: 'https://facebook.github.io',
@@ -29,6 +29,7 @@ const siteConfig = {
     { doc: 'introduction/what-is-resift', label: 'Docs' },
     { doc: 'doc4', label: 'API' },
     { page: 'help', label: 'Help' },
+    { href: 'https://github.com/JustSift/ReSift', label: 'GitHub' },
   ],
 
   /* path to images for header/footer */
