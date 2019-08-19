@@ -1,6 +1,7 @@
 import _noop from 'lodash/noop';
 import DeferredPromise from '../DeferredPromise';
 import timer from '../timer';
+import createHttpProxy from '../createHttpProxy';
 
 import createHttpService from '../createHttpService';
 
@@ -61,7 +62,7 @@ afterAll(() => {
   server.close();
 });
 
-test('it throws early with a CancelledError if the request was canceled', async () => {
+test('it throws early with a CanceledError if the request was canceled', async () => {
   // given
   const httpService = createHttpService({
     prefix: `http://localhost:${port}`,
@@ -70,7 +71,7 @@ test('it throws early with a CancelledError if the request was canceled', async 
 
   const http = httpService({
     onCancel: () => {},
-    getCancelled: () => true,
+    getCanceled: () => true,
   });
 
   // when
@@ -81,7 +82,7 @@ test('it throws early with a CancelledError if the request was canceled', async 
     });
     // then
   } catch (err) {
-    expect(err.isCancelledError).toBe(true);
+    expect(err.isCanceledError).toBe(true);
   }
 
   expect(mockHandler).not.toHaveBeenCalled();
@@ -105,7 +106,7 @@ test('it allows requests to be canceled', async () => {
       cancelCallback = callback;
       onCancelCallbackCalled.resolve();
     },
-    getCancelled: () => false,
+    getCanceled: () => false,
   });
 
   // when
@@ -124,7 +125,7 @@ test('it allows requests to be canceled', async () => {
 
   // then
   const error = await catchHandler;
-  expect(error.isCancelledError).toBe(true);
+  expect(error.isCanceledError).toBe(true);
   expect(httpFinishedHandler).not.toHaveBeenCalled();
 });
 
@@ -137,7 +138,7 @@ test('it makes network requests', async () => {
 
   const http = httpService({
     onCancel: _noop,
-    getCancelled: () => false,
+    getCanceled: () => false,
   });
 
   expect(mockHandler).not.toHaveBeenCalled();
@@ -163,7 +164,7 @@ test('it sends the correct headers', async () => {
 
   const http = httpService({
     onCancel: _noop,
-    getCancelled: () => false,
+    getCanceled: () => false,
   });
 
   expect(mockHandler).not.toHaveBeenCalled();
@@ -188,7 +189,7 @@ test('it adds query params', async () => {
 
   const http = httpService({
     onCancel: _noop,
-    getCancelled: () => false,
+    getCanceled: () => false,
   });
 
   expect(mockHandler).not.toHaveBeenCalled();
@@ -213,7 +214,7 @@ test('it throws when there is a 4xx error', async () => {
 
   const http = httpService({
     onCancel: _noop,
-    getCancelled: () => false,
+    getCanceled: () => false,
   });
 
   expect(mockHandler).not.toHaveBeenCalled();
@@ -239,7 +240,7 @@ test("it doesn't throw when ok is implemented", async () => {
 
   const http = httpService({
     onCancel: _noop,
-    getCancelled: () => false,
+    getCanceled: () => false,
   });
 
   expect(mockHandler).not.toHaveBeenCalled();
@@ -265,7 +266,7 @@ test('it sends JSON data', async () => {
 
   const http = httpService({
     onCancel: _noop,
-    getCancelled: () => false,
+    getCanceled: () => false,
   });
 
   expect(mockHandler).not.toHaveBeenCalled();
@@ -295,7 +296,7 @@ test('it receives JSON data', async () => {
 
   const http = httpService({
     onCancel: _noop,
-    getCancelled: () => false,
+    getCanceled: () => false,
   });
 
   expect(mockHandler).not.toHaveBeenCalled();
@@ -319,7 +320,7 @@ test('it gives me access to req', async () => {
 
   const http = httpService({
     onCancel: _noop,
-    getCancelled: () => false,
+    getCanceled: () => false,
   });
 
   const mockReqHandler = jest.fn();
@@ -347,7 +348,7 @@ test('it gets the prefix from an async function', async () => {
 
   const http = httpService({
     onCancel: _noop,
-    getCancelled: () => false,
+    getCanceled: () => false,
   });
 
   expect(mockHandler).not.toHaveBeenCalled();
@@ -364,3 +365,78 @@ test('it gets the prefix from an async function', async () => {
 
 // i think this won't pass because of issues with testing within node
 test.todo('it sends form data');
+
+test('proxies as a mock handler', async () => {
+  // given
+  const exampleObject = { example: 'object' };
+
+  const exampleProxy = createHttpProxy({ path: '/proxy-test' }, handlerParams => {
+    expect(handlerParams).toMatchInlineSnapshot(`
+Object {
+  "getCanceled": [Function],
+  "headers": Object {},
+  "http": [Function],
+  "match": Object {
+    "isExact": true,
+    "params": Object {},
+    "path": "/proxy-test",
+    "url": "/proxy-test",
+  },
+  "onCancel": [Function],
+  "requestParams": Object {
+    "method": "GET",
+    "route": "/proxy-test",
+  },
+}
+`);
+
+    return exampleObject;
+  });
+
+  const httpService = createHttpService({
+    proxies: [exampleProxy],
+  });
+
+  const http = httpService({
+    onCancel: _noop,
+    getCanceled: () => false,
+  });
+
+  // when
+  const data = await http({
+    method: 'GET',
+    route: '/proxy-test',
+  });
+
+  expect(data).toBe(exampleObject);
+});
+
+test('proxies with pass through', async () => {
+  // given
+  let passedThrough = false;
+
+  const exampleProxy = createHttpProxy({ path: '/data' }, ({ http, requestParams }) => {
+    passedThrough = true;
+    return http(requestParams);
+  });
+
+  const httpService = createHttpService({
+    prefix: `http://localhost:${port}`,
+    proxies: [exampleProxy],
+  });
+
+  const http = httpService({
+    onCancel: _noop,
+    getCanceled: () => false,
+  });
+
+  // when
+  const data = await http({
+    method: 'GET',
+    route: '/data',
+  });
+
+  // then
+  expect(passedThrough).toBe(true);
+  expect(data).toEqual({ mock: 'data' });
+});

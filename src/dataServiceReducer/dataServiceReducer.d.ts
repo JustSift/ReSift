@@ -1,9 +1,9 @@
-import { Reducer } from 'redux';
+import _get from 'lodash/get';
+import { combineReducers, Reducer } from 'redux';
+import actions, { ActionsState } from './actionsReducer';
+import shared, { SharedState } from './sharedReducer';
 
-export interface DataServiceState {
-  shared: any;
-  actions: any;
-}
+export type DataServiceState = { shared: SharedState; actions: ActionsState };
 
 declare const dataServiceReducer: Reducer<DataServiceState>;
 

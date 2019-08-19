@@ -1,8 +1,5 @@
-import { useMemo } from 'react';
-import getFetch, { GetFetchOptions } from '../getFetch';
-import shallowEqual from '../shallowEqual';
+import { GetFetchOptions } from '../getFetch';
 import { FetchActionCreator } from '../defineFetch';
-import { DataServiceState } from '../dataServiceReducer';
 
 type Unwrap<T> = T extends Promise<infer U> ? U : T;
 

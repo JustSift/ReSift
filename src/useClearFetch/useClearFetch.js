@@ -1,10 +1,14 @@
+import { useCallback } from 'react';
 import useDispatch from '../useDispatch';
 import clearFetch from '../clearFetch';
 
 export default function useClearFetch() {
   const dispatch = useDispatch();
 
-  return fetch => {
-    dispatch(clearFetch(fetch));
-  };
+  return useCallback(
+    fetch => {
+      dispatch(clearFetch(fetch));
+    },
+    [dispatch],
+  );
 }

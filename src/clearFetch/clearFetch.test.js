@@ -8,7 +8,7 @@ test('it creates a clear fetch action from a fetch with a dynamic key', () => {
     displayName: 'person fetch',
     make: personId => ({
       key: [personId],
-      fetch: () => ({ exampleService }) => exampleService(personId),
+      request: () => ({ exampleService }) => exampleService(personId),
     }),
   });
 
@@ -19,9 +19,9 @@ test('it creates a clear fetch action from a fetch with a dynamic key', () => {
   expect(clearFetchAction).toMatchInlineSnapshot(`
 Object {
   "meta": Object {
-    "actionCreatorId": "test-shortid",
     "conflict": "cancel",
     "displayName": "person fetch",
+    "fetchFactoryId": "test-shortid",
     "key": "key:person123",
     "share": undefined,
     "type": "ACTION_CREATOR",
@@ -36,7 +36,7 @@ test('it creates a clear fetch action from a fetch with a static key', () => {
     displayName: 'test fetch',
     make: () => ({
       key: [],
-      fetch: () => ({ exampleService }) => exampleService(),
+      request: () => ({ exampleService }) => exampleService(),
     }),
   });
 
@@ -47,9 +47,9 @@ test('it creates a clear fetch action from a fetch with a static key', () => {
   expect(clearFetchAction).toMatchInlineSnapshot(`
 Object {
   "meta": Object {
-    "actionCreatorId": "test-shortid",
     "conflict": "cancel",
     "displayName": "test fetch",
+    "fetchFactoryId": "test-shortid",
     "key": "key:",
     "share": undefined,
     "type": "ACTION_CREATOR",
@@ -64,7 +64,7 @@ test('it throws if you try to use a dynamic key like a static key', () => {
     displayName: 'person fetch',
     make: personId => ({
       key: [personId],
-      fetch: () => ({ exampleService }) => exampleService(personId),
+      request: () => ({ exampleService }) => exampleService(personId),
     }),
   });
 

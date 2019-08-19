@@ -16,9 +16,9 @@ export default function actionsReducer(state = {}, action) {
   }
 
   const { meta } = action;
-  const { displayName, actionCreatorId, key, share } = meta;
+  const { displayName, fetchFactoryId, key, share } = meta;
 
-  const storeKey = createStoreKey(displayName, actionCreatorId);
+  const storeKey = createStoreKey(displayName, fetchFactoryId);
 
   if (isFetchAction(action)) {
     return {

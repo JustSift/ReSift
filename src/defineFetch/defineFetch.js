@@ -9,6 +9,7 @@ export function isFetchAction(action) {
 }
 
 function memoize(actionCreatorFactory, make, conflict) {
+  // TODO: may need a way to clear this memo
   const memo = {};
 
   function memoized(...keyArgs) {
@@ -18,14 +19,14 @@ function memoize(actionCreatorFactory, make, conflict) {
       throw new Error('[defineFetch]: `make` must return an object');
     }
 
-    const { key, fetch } = keyResult;
+    const { key, request } = keyResult;
 
     if (!Array.isArray(key)) {
       throw new Error('[defineFetch] `key` must be an array in the object that `make` returns');
     }
-    if (typeof fetch !== 'function') {
+    if (typeof request !== 'function') {
       throw new Error(
-        '[defineFetch] `fetch` must be a function in the object that `make` returns`',
+        '[defineFetch] `request` must be a function in the object that `make` returns`',
       );
     }
 
@@ -42,29 +43,34 @@ function memoize(actionCreatorFactory, make, conflict) {
   return memoized;
 }
 
-export default function defineFetch({ displayName, share, conflict = 'cancel', make }) {
-  const actionCreatorId = shortId();
+export default function defineFetch({
+  displayName,
+  share,
+  conflict = 'cancel',
+  make,
+  staticFetchFactoryId,
+}) {
+  const fetchFactoryId = staticFetchFactoryId || shortId();
 
   if (!displayName) throw new Error('`displayName` is required in `defineFetch`');
   if (!make) throw new Error('`make` is required in `defineFetch`');
 
-  function actionCreatorFactory(...keyArgs) {
-    const keyResult = make(...keyArgs);
+  function fetchFactory(...keyArgs) {
+    const makeResult = make(...keyArgs);
 
-    const { key, fetch } = keyResult;
     const meta = {
-      actionCreatorId,
-      key: `key:${key.join(' | ')}`,
+      fetchFactoryId,
+      key: `key:${makeResult.key.join(' | ')}`,
       displayName,
       share,
       conflict,
     };
 
-    function actionCreator(...fetchArgs) {
-      // the `fetch` is a curried function.
-      // this partially applies the action creator arguments. the resulting `action` function is a
+    function fetch(...requestArgs) {
+      // the `request` is a curried function.
+      // this partially applies the user request arguments. the resulting function is a
       // function that takes in the services object and returns a promise of data
-      const resolvablePayload = fetch(...fetchArgs);
+      const resolvablePayload = makeResult.request(...requestArgs);
 
       if (typeof resolvablePayload !== 'function') {
         throw new Error(
@@ -84,34 +90,36 @@ export default function defineFetch({ displayName, share, conflict = 'cancel', m
         }
       };
 
-      resolvablePayload.getCancelled = () => canceledRef.canceled;
+      resolvablePayload.getCanceled = () => canceledRef.canceled;
 
       resolvablePayload.onCancel = callback => {
         subscribers.push(callback);
       };
 
-      return {
+      const request = {
         type: createActionType(FETCH, meta),
         meta,
         payload: resolvablePayload,
       };
+
+      return request;
     }
 
-    actionCreator.meta = {
+    fetch.meta = {
       ...meta,
       type: 'ACTION_CREATOR',
     };
 
-    return actionCreator;
+    return fetch;
   }
 
-  const memoizedActionCreatorFactory = memoize(actionCreatorFactory, make, conflict);
+  const memoizedFetchFactory = memoize(fetchFactory, make, conflict);
 
-  memoizedActionCreatorFactory.meta = {
-    actionCreatorId,
+  memoizedFetchFactory.meta = {
+    fetchFactoryId,
     displayName,
     type: 'ACTION_CREATOR_FACTORY',
   };
 
-  return memoizedActionCreatorFactory;
+  return memoizedFetchFactory;
 }

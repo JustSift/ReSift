@@ -1,7 +1,12 @@
-import CancelledError from './CancelledError';
+import CanceledError from './CanceledError';
 import clearFetch from './clearFetch';
-import combineLoadingStates from './combineLoadingStates';
+import combineStatuses from './combineStatuses';
+import createActionType from './createActionType';
+import createContextFetch from './createContextFetch';
 import createDataService from './createDataService';
+import createHttpProxy from './createHttpProxy';
+import createShareKey from './createShareKey';
+import createStoreKey from './createStoreKey';
 import createHttpService from './createHttpService';
 import dataServiceReducer from './dataServiceReducer';
 import DeferredPromise from './DeferredPromise';
@@ -22,10 +27,15 @@ import LOADING from './LOADING';
 import UNKNOWN from './UNKNOWN';
 
 export default {
-  CancelledError,
+  CanceledError,
   clearFetch,
-  combineLoadingStates,
+  combineStatuses,
+  createActionType,
+  createContextFetch,
   createDataService,
+  createHttpProxy,
+  createShareKey,
+  createStoreKey,
   createHttpService,
   dataServiceReducer,
   DeferredPromise,

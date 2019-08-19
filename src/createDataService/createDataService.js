@@ -4,7 +4,7 @@ import ERROR from '../prefixes/ERROR';
 import createActionType from '../createActionType';
 import createStoreKey from '../createStoreKey';
 import { isFetchAction } from '../defineFetch';
-import CancelledError from '../CancelledError';
+import CanceledError from '../CanceledError';
 
 export function isSuccessAction(action) {
   if (typeof action !== 'object') return false;
@@ -23,12 +23,12 @@ const requestsToCancel = new WeakSet();
 // function exists simply to encapsulate async/awaits
 export async function handleAction({ state, services, dispatch, action, getState }) {
   const { payload, meta } = action;
-  const { displayName, actionCreatorId, key, conflict } = meta;
+  const { displayName, fetchFactoryId, key, conflict } = meta;
 
   try {
     // `inflight` is the `payload` function of the fetch. it will be defined if there is an action
     // that is currently inflight.
-    const storeKey = createStoreKey(displayName, actionCreatorId);
+    const storeKey = createStoreKey(displayName, fetchFactoryId);
     const inflight = _get(state, ['actions', storeKey, key, 'inflight']);
 
     if (inflight) {
@@ -43,15 +43,15 @@ export async function handleAction({ state, services, dispatch, action, getState
     }
 
     const dispatchService = action => {
-      if (payload.getCancelled()) {
-        throw new CancelledError();
+      if (payload.getCanceled()) {
+        throw new CanceledError();
       }
       return dispatch(action);
     };
 
     const getStateService = () => {
-      if (payload.getCancelled()) {
-        throw new CancelledError();
+      if (payload.getCanceled()) {
+        throw new CanceledError();
       }
       return getState();
     };
@@ -60,7 +60,7 @@ export async function handleAction({ state, services, dispatch, action, getState
     const servicesWithCancel = Object.entries(services).reduce(
       (services, [serviceKey, service]) => {
         services[serviceKey] = service({
-          getCancelled: payload.getCancelled,
+          getCanceled: payload.getCanceled,
           onCancel: payload.onCancel,
         });
         return services;
@@ -72,6 +72,8 @@ export async function handleAction({ state, services, dispatch, action, getState
       },
     );
 
+    // this try-catch set is only to ignore canceled errors
+    // it re-throws any other error
     try {
       const resolved = await payload(servicesWithCancel);
       // since we can't cancel promises, we'll just check if the function was canceled and then
@@ -88,7 +90,7 @@ export async function handleAction({ state, services, dispatch, action, getState
     } catch (error) {
       // it's possible that the `payload` function would reject because of a canceled request.
       // in this case, we'll ignore the request because we were gonna ignore it anyway
-      if (error.isCancelledError) return;
+      if (error.isCanceledError) return;
       if (requestsToCancel.has(payload)) return;
 
       throw error;
@@ -116,14 +118,21 @@ export default function createDataService({ services, onError }) {
       return next(action);
     }
 
-    handleAction({
+    const actionPromise = handleAction({
       state: store.getState().dataService,
       services,
       dispatch: store.dispatch,
       action,
       getState: store.getState,
-    }).catch(onError);
+    }).catch(e => {
+      onError(e);
+      // when awaiting dispatch...
+      //    👇 this is the error that will propagate to the awaiter
+      throw e;
+    });
 
-    return next(action);
+    next(action);
+
+    return actionPromise;
   };
 }
