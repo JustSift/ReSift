@@ -9,9 +9,6 @@ import createContextFetch from './createContextFetch';
 import dataService from '../dataServiceReducer';
 import DeferredPromise from '../DeferredPromise';
 
-// TODO (8/5): this work properly in a real environment but the test is currently always spitting out
-// "Warning: An update to ContextFetchProvider inside a test was not wrapped in act(...)"
-// when react 16.9 goes lives, this false error should _probably_ go away
 test('createContextFetch hooks', async () => {
   const rootReducer = combineReducers({ dataService });
   const handleError = jest.fn();
@@ -60,17 +57,13 @@ test('createContextFetch hooks', async () => {
     create(<App />);
   });
 
-  act(() => {
+  await act(async () => {
     store.dispatch(fetch(5));
+    const result = await gotExampleValue;
+    expect(result).toMatchInlineSnapshot(`5`);
   });
-
-  const result = await gotExampleValue;
-  expect(result).toMatchInlineSnapshot(`5`);
 });
 
-// TODO (8/5): this work properly in a real environment but the test is currently always spitting out
-// "Warning: An update to ContextFetchProvider inside a test was not wrapped in act(...)"
-// when react 16.9 goes lives, this false error should _probably_ go away
 test('render props/no hooks API', async () => {
   const rootReducer = combineReducers({ dataService });
   const handleError = jest.fn();
@@ -124,10 +117,9 @@ test('render props/no hooks API', async () => {
     create(<App />);
   });
 
-  act(() => {
+  await act(async () => {
     store.dispatch(fetch(5));
+    const result = await gotExampleValue;
+    expect(result).toMatchInlineSnapshot(`5`);
   });
-
-  const result = await gotExampleValue;
-  expect(result).toMatchInlineSnapshot(`5`);
 });
