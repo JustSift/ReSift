@@ -2,7 +2,21 @@ import React, { useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { ReactReduxContext, Provider } from 'react-redux';
 import _get from 'lodash/get';
-import createStore from '../createStore';
+
+import { createStore as createReduxStore, combineReducers, applyMiddleware, compose } from 'redux';
+import dataServiceReducer from '../dataServiceReducer';
+
+/**
+ * used to create the store if the store isn't passed down from redux context
+ */
+function createStore(dataService) {
+  const reducer = combineReducers({ dataService: dataServiceReducer });
+  const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+  const enhancers = composeEnhancers(applyMiddleware(dataService));
+  const store = createReduxStore(reducer, enhancers);
+
+  return store;
+}
 
 function ResiftProvider({ children, dataService }) {
   const reduxContextValue = useContext(ReactReduxContext);
@@ -31,7 +45,7 @@ function ResiftProvider({ children, dataService }) {
   }, [storeFromReactRedux, dataService]);
 
   // if the store is the storeFromRedux then we don't need to do anything
-  if (store === storeFromReactRedux) {
+  if (storeFromReactRedux) {
     return children;
   }
 
