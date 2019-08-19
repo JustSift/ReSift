@@ -6,8 +6,9 @@ import CLEAR from '../prefixes/CLEAR';
 export default function useDispatch() {
   const { store } = useContext(ReactReduxContext);
   if (!store) {
+    // TODO: add docs link
     throw new Error(
-      'could not find store in context. in order to `useDispatch` you must add `ReduxProvider` from resift',
+      'could not find store in context. in order to `useDispatch` you must add the respective provider',
     );
   }
 

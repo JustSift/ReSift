@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { createStore } from 'redux';
-import ReduxProvider from '../ReduxProvider';
+import { Provider as ReduxProvider } from 'react-redux';
 import renderer, { act } from 'react-test-renderer';
 
 import useDispatch from './useDispatch';

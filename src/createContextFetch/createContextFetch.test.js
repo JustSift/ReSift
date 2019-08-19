@@ -2,7 +2,7 @@ import React from 'react';
 import _get from 'lodash/get';
 import { act, create } from 'react-test-renderer';
 import defineFetch from '../defineFetch';
-import ReduxProvider from '../ReduxProvider';
+import { Provider as ReduxProvider } from 'react-redux';
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import createDataService from '../createDataService';
 import createContextFetch from './createContextFetch';

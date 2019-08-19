@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import getFetch from '../getFetch';
 import shallowEqual from '../shallowEqual';
