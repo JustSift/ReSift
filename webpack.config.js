@@ -4,9 +4,9 @@ module.exports = {
   mode: 'none',
   entry: './src/index.js',
   output: {
-    path: path.resolve(__dirname),
+    path: path.resolve(__dirname, './build'),
     libraryTarget: 'umd',
-    filename: 'bundle.js',
+    filename: 'index.js',
   },
   module: {
     rules: [

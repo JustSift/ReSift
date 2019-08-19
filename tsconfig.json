@@ -6,12 +6,21 @@
     "declaration": true,
     "strict": true,
     "baseUrl": ".",
-    "emitDeclarationOnly": true,
-    "listEmittedFiles": true,
+    "noEmit": true,
     "paths": {
       "@sift/resift": ["src/index.ts"]
     },
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true
-  }
+  },
+  "include": ["./src/**/*"],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts",
+    "**/*.spec.js",
+    "**/*.test.ts",
+    "**/*.types-test.ts",
+    "**/*.types-test.tsx",
+    "**/*.test.js"
+  ]
 }
