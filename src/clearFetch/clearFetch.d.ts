@@ -1,8 +1,6 @@
-import { FetchActionCreator, FetchActionMeta } from '../defineFetch';
+import { FetchActionCreator } from '../defineFetch';
 
-export interface ClearFetchAction {
-  type: string;
-  meta: FetchActionMeta;
-}
+export type ClearFetchAction = ReturnType<typeof clearFetch>;
+
 export function isClearAction(action: any): action is ClearFetchAction;
-export default function clearFetch(fetch: FetchActionCreator): ClearFetchAction;
+export default function clearFetch(fetch: FetchActionCreator): any;

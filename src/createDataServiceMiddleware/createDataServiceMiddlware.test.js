@@ -1,4 +1,3 @@
-import FETCH from '../prefixes/FETCH';
 import SUCCESS from '../prefixes/SUCCESS';
 import ERROR from '../prefixes/ERROR';
 import timer from '../timer';
@@ -7,13 +6,13 @@ import defineFetch from '../defineFetch';
 import _noop from 'lodash/noop';
 import dataServiceReducer from '../dataServiceReducer';
 import createActionType from '../createActionType';
-import CancelledError from '../CancelledError';
+import CanceledError from '../CanceledError';
 
-import createDataService, {
+import createDataServiceMiddleware, {
   handleAction,
   isSuccessAction,
   isErrorAction,
-} from './createDataService';
+} from './createDataServiceMiddleware';
 
 jest.mock('shortid', () => () => 'test-short-id');
 jest.mock('../timestamp', () => () => 'test-timestamp');
@@ -21,20 +20,20 @@ jest.mock('../timestamp', () => () => 'test-timestamp');
 describe('middleware', () => {
   test('throws if no `services` key', () => {
     expect(() => {
-      createDataService({ services: undefined, onError: undefined });
+      createDataServiceMiddleware({ services: undefined, onError: undefined });
     }).toThrowErrorMatchingInlineSnapshot(`"\`services\` key required"`);
   });
 
   test('throws if no `onError` key', () => {
     expect(() => {
-      createDataService({ services: {}, onError: undefined });
+      createDataServiceMiddleware({ services: {}, onError: undefined });
     }).toThrowErrorMatchingInlineSnapshot(`"\`onError\` callback required"`);
   });
 
   test('it returns a middleware that will call the next action if the action is not a fetch', () => {
     // given
     const mockErrorHandler = jest.fn();
-    const middleware = createDataService({ services: {}, onError: mockErrorHandler });
+    const middleware = createDataServiceMiddleware({ services: {}, onError: mockErrorHandler });
 
     const mockStore = {};
     const mockNext = jest.fn();
@@ -49,19 +48,28 @@ describe('middleware', () => {
     expect(mockErrorHandler).not.toHaveBeenCalled();
   });
 
-  test('it synchronously calls next action after running it through `handleAction`', () => {
+  test('it synchronously calls next action after running it through `handleAction`', async () => {
     // given
     const mockErrorHandler = jest.fn();
-    const middleware = createDataService({ services: {}, onError: mockErrorHandler });
+    const middleware = createDataServiceMiddleware({ services: {}, onError: mockErrorHandler });
 
     const mockStore = {
       getState: () => ({}),
     };
     const mockNext = jest.fn();
-    const mockAction = { type: FETCH, payload: () => {} };
+
+    const fetchFactory = defineFetch({
+      displayName: 'example fetch',
+      make: () => ({
+        key: [],
+        request: () => () => {},
+      }),
+    });
+
+    const mockAction = fetchFactory();
 
     // when
-    middleware(mockStore)(mockNext)(mockAction);
+    await middleware(mockStore)(mockNext)(mockAction);
 
     // then
     expect(mockNext).toHaveBeenCalledTimes(1);
@@ -72,8 +80,8 @@ describe('middleware', () => {
   test('it asynchronously dispatches a SUCCESS', async () => {
     // given
     const mockErrorHandler = jest.fn();
-    const middleware = createDataService({
-      services: { testService: ({ onCancel }) => timer },
+    const middleware = createDataServiceMiddleware({
+      services: { testService: ({ onCancel }) => () => timer(0) },
       onError: mockErrorHandler,
     });
     const mockNext = jest.fn();
@@ -91,11 +99,25 @@ describe('middleware', () => {
       displayName: 'example fetch',
       make: testArg => ({
         key: [testArg],
-        fetch: () => ({ testService }) => testService(testArg),
+        request: () => ({ testService }) => testService(testArg),
       }),
     });
     const fetch = makeFetch('test-arg');
     const action = fetch();
+
+    expect(action).toMatchInlineSnapshot(`
+Object {
+  "meta": Object {
+    "conflict": "cancel",
+    "displayName": "example fetch",
+    "fetchFactoryId": "test-short-id",
+    "key": "key:test-arg",
+    "share": undefined,
+  },
+  "payload": [Function],
+  "type": "@@RESIFT/FETCH | example fetch | test-short-id",
+}
+`);
 
     // when
     middleware(mockStore)(mockNext)(action);
@@ -105,9 +127,9 @@ describe('middleware', () => {
     expect(successAction).toMatchInlineSnapshot(`
 Object {
   "meta": Object {
-    "actionCreatorId": "test-short-id",
     "conflict": "cancel",
     "displayName": "example fetch",
+    "fetchFactoryId": "test-short-id",
     "key": "key:test-arg",
     "share": undefined,
   },
@@ -120,7 +142,7 @@ Object {
   test('it asynchronously dispatches an ERROR if the payload fails and calls onError', async () => {
     // given
     const mockErrorHandler = jest.fn();
-    const middleware = createDataService({ services: {}, onError: mockErrorHandler });
+    const middleware = createDataServiceMiddleware({ services: {}, onError: mockErrorHandler });
     const mockNext = jest.fn();
 
     const dispatchCalled = new DeferredPromise();
@@ -138,7 +160,7 @@ Object {
       displayName: 'example fetch',
       make: testArg => ({
         key: [testArg],
-        fetch: () => async ({ testService }) => {
+        request: () => async ({ testService }) => {
           await timer(0);
           throw testError;
         },
@@ -148,7 +170,11 @@ Object {
     const action = actionCreator();
 
     // when
-    middleware(mockStore)(mockNext)(action);
+    try {
+      await middleware(mockStore)(mockNext)(action);
+    } catch (e) {
+      expect(e).toMatchInlineSnapshot(`[Error: test error]`);
+    }
 
     // then
     const errorAction = await dispatchCalled;
@@ -158,9 +184,9 @@ Object {
 Object {
   "error": true,
   "meta": Object {
-    "actionCreatorId": "test-short-id",
     "conflict": "cancel",
     "displayName": "example fetch",
+    "fetchFactoryId": "test-short-id",
     "key": "key:test-arg",
     "share": undefined,
   },
@@ -172,29 +198,42 @@ Object {
 });
 
 describe('handleAction', () => {
-  test('qit injects each service with `getCancelled` and `onCancelled`', async () => {
+  test('it injects each service with `getCanceled` and `onCanceled`', async () => {
     // given
     const exampleServiceCalled = new DeferredPromise();
     const makeActionCreator = defineFetch({
       displayName: 'test action',
       make: testArg => ({
         key: [testArg],
-        fetch: () => ({ exampleService }) => exampleService(),
+        request: () => ({ exampleService }) => exampleService(),
       }),
     });
     const actionCreator = makeActionCreator('test-arg');
 
-    const exampleService = params => {
+    const exampleService = ({ onCancel, getCanceled }) => () => {
       // then
-      expect(typeof params.onCancel).toBe('function');
-      expect(typeof params.getCancelled).toBe('function');
+      expect(typeof onCancel).toBe('function');
+      expect(typeof getCanceled).toBe('function');
       exampleServiceCalled.resolve();
-
-      return _noop;
     };
 
+    const action = actionCreator();
+    expect(action).toMatchInlineSnapshot(`
+Object {
+  "meta": Object {
+    "conflict": "cancel",
+    "displayName": "test action",
+    "fetchFactoryId": "test-short-id",
+    "key": "key:test-arg",
+    "share": undefined,
+  },
+  "payload": [Function],
+  "type": "@@RESIFT/FETCH | test action | test-short-id",
+}
+`);
+
     // when
-    handleAction({
+    await handleAction({
       state: {},
       services: { exampleService },
       dispatch: _noop,
@@ -212,7 +251,7 @@ describe('handleAction', () => {
       displayName: 'test dispatch service',
       make: () => ({
         key: [],
-        fetch: () => ({ dispatch }) => {
+        request: () => ({ dispatch }) => {
           dispatch({ type: 'TEST_TYPE' });
           return null;
         },
@@ -236,7 +275,7 @@ describe('handleAction', () => {
       displayName: 'action creator',
       make: testArg => ({
         key: [testArg],
-        fetch: () => ({ exampleService }) => exampleService(testArg),
+        request: () => ({ exampleService }) => exampleService(testArg),
       }),
       conflict: 'ignore',
     });
@@ -246,9 +285,9 @@ describe('handleAction', () => {
     expect(initialAction).toMatchInlineSnapshot(`
 Object {
   "meta": Object {
-    "actionCreatorId": "test-short-id",
     "conflict": "ignore",
     "displayName": "action creator",
+    "fetchFactoryId": "test-short-id",
     "key": "key:test arg",
     "share": undefined,
   },
@@ -261,7 +300,7 @@ Object {
     const repeatAction = actionCreator(testArg);
     const mockDispatch = jest.fn();
     const exampleServiceHandler = jest.fn(testArg => null);
-    const exampleService = ({ onCancel, getCancelled }) => exampleServiceHandler;
+    const exampleService = ({ onCancel, getCanceled }) => exampleServiceHandler;
 
     await handleAction({
       action: repeatAction,
@@ -278,7 +317,7 @@ Object {
       displayName: 'action creator',
       make: testArg => ({
         key: [testArg],
-        fetch: () => ({ exampleService }) => exampleService(testArg),
+        request: () => ({ exampleService }) => exampleService(testArg),
       }),
     });
     const testArg = 'test arg';
@@ -287,9 +326,9 @@ Object {
     expect(initialAction).toMatchInlineSnapshot(`
 Object {
   "meta": Object {
-    "actionCreatorId": "test-short-id",
     "conflict": "cancel",
     "displayName": "action creator",
+    "fetchFactoryId": "test-short-id",
     "key": "key:test arg",
     "share": undefined,
   },
@@ -302,7 +341,7 @@ Object {
     const repeatAction = actionCreator(testArg);
     const mockDispatch = jest.fn();
     const exampleServiceHandler = jest.fn(testArg => null);
-    const exampleService = ({ onCancel, getCancelled }) => exampleServiceHandler;
+    const exampleService = ({ onCancel, getCanceled }) => exampleServiceHandler;
 
     await handleAction({
       action: initialAction,
@@ -319,7 +358,7 @@ Object {
     });
 
     expect(exampleServiceHandler).toHaveBeenCalled();
-    expect(initialAction.payload.getCancelled()).toBe(true);
+    expect(initialAction.payload.getCanceled()).toBe(true);
     expect(mockDispatch).toHaveBeenCalledTimes(1);
   });
 
@@ -328,7 +367,7 @@ Object {
       displayName: 'action creator',
       make: testArg => ({
         key: [testArg],
-        fetch: () => ({ exampleService }) => exampleService(testArg),
+        request: () => ({ exampleService }) => exampleService(testArg),
       }),
     });
     const testArg = 'test arg';
@@ -337,9 +376,9 @@ Object {
     expect(initialAction).toMatchInlineSnapshot(`
 Object {
   "meta": Object {
-    "actionCreatorId": "test-short-id",
     "conflict": "cancel",
     "displayName": "action creator",
+    "fetchFactoryId": "test-short-id",
     "key": "key:test arg",
     "share": undefined,
   },
@@ -352,7 +391,7 @@ Object {
 
     const repeatAction = actionCreator(testArg);
     const mockDispatch = jest.fn();
-    const exampleService = ({ onCancel, getCancelled }) => async testArg => {
+    const exampleService = ({ onCancel, getCanceled }) => async testArg => {
       throw new Error('test error');
     };
 
@@ -360,7 +399,7 @@ Object {
     // add the `initialAction.payload` to the `requestsToCancel` set.
     //
     // the `throw new Error('test error');` will still happen but the action handler will swallow
-    // the error because we don't care about errors that happen on cancelled requests
+    // the error because we don't care about errors that happen on canceled requests
     await handleAction({
       action: initialAction,
       dispatch: mockDispatch,
@@ -380,16 +419,16 @@ Object {
       expect(e).toMatchInlineSnapshot(`[Error: test error]`);
     }
 
-    expect(initialAction.payload.getCancelled()).toBe(true);
+    expect(initialAction.payload.getCanceled()).toBe(true);
     expect(mockDispatch).toHaveBeenCalledTimes(1);
   });
 
-  test('conflict cancel with CancelledError', async () => {
+  test('conflict cancel with CanceledError', async () => {
     const makeActionCreator = defineFetch({
       displayName: 'action creator',
       make: testArg => ({
         key: [testArg],
-        fetch: () => ({ exampleService }) => exampleService(testArg),
+        request: () => ({ exampleService }) => exampleService(testArg),
       }),
     });
     const testArg = 'test arg';
@@ -398,9 +437,9 @@ Object {
     expect(initialAction).toMatchInlineSnapshot(`
 Object {
   "meta": Object {
-    "actionCreatorId": "test-short-id",
     "conflict": "cancel",
     "displayName": "action creator",
+    "fetchFactoryId": "test-short-id",
     "key": "key:test arg",
     "share": undefined,
   },
@@ -413,17 +452,17 @@ Object {
 
     const repeatAction = actionCreator(testArg);
     const mockDispatch = jest.fn();
-    const exampleService = ({ onCancel, getCancelled }) => async testArg => {
-      if (getCancelled()) throw new CancelledError();
+    const exampleService = ({ onCancel, getCanceled }) => async testArg => {
+      if (getCanceled()) throw new CanceledError();
       return 'blah';
     };
 
     // this won't throw because the action handler will see that it is currently inflight.
-    // the action handler will call `initialAction.payload.cancel()` making calls to `getCancelled`
+    // the action handler will call `initialAction.payload.cancel()` making calls to `getCanceled`
     // return `true`
     //
-    // when payload gets awaited, the `CancelledError` will be thrown and caught.
-    // in the catch block, the test for `error.isCancelledError` will be true and the catch
+    // when payload gets awaited, the `CanceledError` will be thrown and caught.
+    // in the catch block, the test for `error.isCanceledError` will be true and the catch
     // block will swallow the error
     await handleAction({
       action: initialAction,
@@ -444,7 +483,7 @@ Object {
       expect(e).toMatchInlineSnapshot(`[Error: test error]`);
     }
 
-    expect(initialAction.payload.getCancelled()).toBe(true);
+    expect(initialAction.payload.getCanceled()).toBe(true);
     expect(mockDispatch).toHaveBeenCalledTimes(1);
   });
 });
@@ -463,7 +502,7 @@ describe('isSuccessAction', () => {
       displayName: 'test',
       make: testArg => ({
         key: [testArg],
-        fetch: () => () => {},
+        request: () => () => {},
       }),
     });
     const action = makeActionCreator()();
@@ -486,7 +525,7 @@ describe('isErrorAction', () => {
       displayName: 'test',
       make: testArg => ({
         key: [testArg],
-        fetch: () => () => {},
+        request: () => () => {},
       }),
     });
     const action = makeActionCreator()();

@@ -1,19 +1,21 @@
 import _get from 'lodash/get';
+import _omit from 'lodash/omit';
 import createShareKey from '../createShareKey';
 import createStoreKey from '../createStoreKey';
 import { isFetchAction } from '../defineFetch';
-import { isSuccessAction } from '../createDataService';
+import { isClearAction } from '../clearFetch';
+import { isSuccessAction } from '../createDataServiceMiddleware';
 
 export default function sharedReducer(state = {}, action) {
   if (isFetchAction(action)) {
     const { meta } = action;
-    const { displayName, actionCreatorId, key, share } = meta;
+    const { displayName, fetchFactoryId, key, share } = meta;
 
     // only run this reducer if this action is `share`d
     if (!share) return state;
 
     const { namespace } = share;
-    const storeKey = createStoreKey(displayName, actionCreatorId);
+    const storeKey = createStoreKey(displayName, fetchFactoryId);
     const shareKey = createShareKey(namespace, key);
     const storePathHash = [storeKey, key].join(' | ');
 
@@ -47,6 +49,19 @@ export default function sharedReducer(state = {}, action) {
         data: merge(_get(state, [shareKey, 'data']), payload),
       },
     };
+  }
+
+  if (isClearAction(action)) {
+    const { meta } = action;
+    const { key, share } = meta;
+
+    // only run this reducer if this action is `share`d
+    if (!share) return state;
+
+    const { namespace } = share;
+    const shareKey = createShareKey(namespace, key);
+
+    return _omit(state, shareKey);
   }
 
   return state;

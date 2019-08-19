@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 import getFetch from '../getFetch';
 import shallowEqual from '../shallowEqual';
 
-// would've used a symbol but IE 11
 const neverCalculated = '__NEVER_CALCULATED__';
 
 function memoize(fn) {
@@ -21,9 +20,14 @@ function memoize(fn) {
 
 export default function useFetch(fetch, options) {
   const memoizedGetFetch = useMemo(() => memoize(getFetch), [
-    fetch.meta.actionCreatorId,
+    fetch.meta.fetchFactoryId,
     fetch.meta.key,
   ]);
 
-  return useSelector(state => memoizedGetFetch(fetch, state, options));
+  const selector = useCallback(state => memoizedGetFetch(fetch, state, options), [
+    fetch.meta.fetchFactoryId,
+    fetch.meta.key,
+  ]);
+
+  return useSelector(selector);
 }

@@ -16,7 +16,7 @@ import defineFetch from '../defineFetch';
     displayName: 'test',
     make: (personId: string) => ({
       key: [personId],
-      fetch: (_: Person) => () => exampleObject,
+      request: (_: Person) => () => exampleObject,
     }),
   });
 
@@ -24,12 +24,12 @@ import defineFetch from '../defineFetch';
   const actionCreator = actionCreatorFactory(personId);
   const state = null as any;
 
-  const [data, loadingState] = getFetch(actionCreator, state);
+  const [data, status] = getFetch(actionCreator, state);
 
   if (data) {
     data.fooBarBaz;
   }
-  loadingState as number;
+  status as number;
 };
 
 () => {
@@ -53,7 +53,7 @@ import defineFetch from '../defineFetch';
     },
     make: (personId: string) => ({
       key: [personId],
-      fetch: (_: Person) => () => anotherExampleObject,
+      request: (_: Person) => () => anotherExampleObject,
     }),
   });
 
@@ -61,11 +61,11 @@ import defineFetch from '../defineFetch';
   const actionCreator = actionCreatorFactory(personId);
   const state = null as any;
 
-  const [data, loadingState] = getFetch(actionCreator, state);
+  const [data, status] = getFetch(actionCreator, state);
 
   if (data) {
     data.fooBarBaz;
   }
 
-  loadingState as number;
+  status as number;
 };

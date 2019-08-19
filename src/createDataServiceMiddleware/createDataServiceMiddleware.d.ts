@@ -5,11 +5,11 @@ export interface DataServiceMiddlewareParams {
   onError: (error: Error) => void;
 }
 
-export default function createDataService(params: DataServiceMiddlewareParams): any;
+export default function createDataServiceMiddleware(params: DataServiceMiddlewareParams): any;
 
 export interface DataServiceParams {
   onCancel: (callback: () => void) => void;
-  getCancelled: () => boolean;
+  getCanceled: () => boolean;
 }
 
 export interface DataService<T> {
@@ -28,3 +28,6 @@ export interface ErrorAction {
   payload: Error;
   error: true;
 }
+
+export function isSuccessAction(action: any): action is SuccessAction;
+export function isErrorAction(action: any): action is SuccessAction;

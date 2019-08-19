@@ -1,4 +1,4 @@
-// copied straight from https://github.com/acdlite/recompose/blob/master/src/packages/recompose/shallowEqual.js
+// copied from https://github.com/acdlite/recompose/blob/master/src/packages/recompose/shallowEqual.js
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *

@@ -3,7 +3,7 @@ import actionsReducer from './actionsReducer';
 import createActionType from '../createActionType';
 import SUCCESS from '../prefixes/SUCCESS';
 import ERROR from '../prefixes/ERROR';
-import { isSuccessAction, isErrorAction } from '../createDataService';
+import { isSuccessAction, isErrorAction } from '../createDataServiceMiddleware';
 import clearFetch, { isClearAction } from '../clearFetch';
 
 jest.mock('../timestamp', () => () => 'test-timestamp');
@@ -22,7 +22,7 @@ test('when given a fetch action, it adds an inflight payload to the store', () =
     displayName: 'example fetch',
     make: testArg => ({
       key: [testArg],
-      fetch: () => ({ exampleService }) => exampleService(testArg),
+      request: () => ({ exampleService }) => exampleService(testArg),
     }),
   });
 
@@ -38,9 +38,9 @@ Object {
     "key:test arg": Object {
       "inflight": [Function],
       "meta": Object {
-        "actionCreatorId": "test-shortid",
         "conflict": "cancel",
         "displayName": "example fetch",
+        "fetchFactoryId": "test-shortid",
         "key": "key:test arg",
         "share": undefined,
       },
@@ -58,7 +58,7 @@ test('when given a success action, it adds a success payload and replaces the in
     displayName: 'example action',
     make: testArg => ({
       key: [testArg],
-      fetch: () => ({ exampleService }) => exampleService(testArg),
+      request: () => ({ exampleService }) => exampleService(testArg),
     }),
   });
 
@@ -85,9 +85,9 @@ Object {
       "hadSuccess": true,
       "inflight": undefined,
       "meta": Object {
-        "actionCreatorId": "test-shortid",
         "conflict": "cancel",
         "displayName": "example action",
+        "fetchFactoryId": "test-shortid",
         "key": "key:test arg",
         "share": undefined,
       },
@@ -108,7 +108,7 @@ test('when given a clear action, it removes the sub-store', () => {
     displayName: 'example action',
     make: testArg => ({
       key: [testArg],
-      fetch: () => ({ exampleService }) => exampleService(testArg),
+      request: () => ({ exampleService }) => exampleService(testArg),
     }),
   });
 
@@ -131,9 +131,9 @@ Object {
       "hadSuccess": true,
       "inflight": undefined,
       "meta": Object {
-        "actionCreatorId": "test-shortid",
         "conflict": "cancel",
         "displayName": "example action",
+        "fetchFactoryId": "test-shortid",
         "key": "key:test arg",
         "share": undefined,
       },
@@ -167,7 +167,7 @@ test('when given an error action, it adds an error payload and replaces the infl
     displayName: 'example action',
     make: testArg => ({
       key: [testArg],
-      fetch: () => ({ exampleService }) => exampleService(testArg),
+      request: () => ({ exampleService }) => exampleService(testArg),
     }),
   });
 
@@ -193,9 +193,9 @@ Object {
       "error": true,
       "inflight": undefined,
       "meta": Object {
-        "actionCreatorId": "test-shortid",
         "conflict": "cancel",
         "displayName": "example action",
+        "fetchFactoryId": "test-shortid",
         "key": "key:test arg",
         "share": undefined,
       },

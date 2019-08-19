@@ -1,10 +1,16 @@
-import Superagent from 'superagent';
-import { DataServiceParams } from '../createDataService';
+import request from 'superagent';
+import { DataServiceParams } from '../createDataServiceMiddleware';
+import { HttpProxy } from '../createHttpProxy';
+
+export default function createHttpService(
+  params: HttpServiceParams,
+): (dsParams: DataServiceParams) => (requestParams: HttpParams) => Promise<any>;
 
 export interface HttpServiceParams {
-  getHeaders: (() => any) | (() => Promise<any>);
+  getHeaders?: (() => any) | (() => Promise<any>);
   prefix?: string;
   getPrefix?: (() => string) | (() => Promise<string>);
+  proxies?: HttpProxy[];
 }
 
 export interface HttpParams {
@@ -27,14 +33,10 @@ export interface HttpParams {
       });
   ```
    */
-  ok?: (response: Superagent.Response) => boolean;
+  ok?: (response: request.Response) => boolean;
   /**
    * you can add custom behavior to the superagent req using this callback.
    * it is added before the `req.send` method is called
    */
-  req?: (request: Superagent.SuperAgentRequest) => void;
+  req?: (request: request.SuperAgentRequest) => void;
 }
-
-export default function createHttpService(
-  params: HttpServiceParams,
-): (serviceParams: DataServiceParams) => (httpParams: HttpParams) => any;

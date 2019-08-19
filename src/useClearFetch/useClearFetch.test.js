@@ -15,7 +15,7 @@ test('it returns a function that calls dispatch', () => {
     displayName: 'fetch person',
     make: personId => ({
       key: [personId],
-      fetch: () => ({ exampleService }) => exampleService(),
+      request: () => ({ exampleService }) => exampleService(),
     }),
   });
 
@@ -30,9 +30,9 @@ test('it returns a function that calls dispatch', () => {
   expect(dispatch.mock.calls[0][0]).toMatchInlineSnapshot(`
 Object {
   "meta": Object {
-    "actionCreatorId": "test-short-id",
     "conflict": "cancel",
     "displayName": "fetch person",
+    "fetchFactoryId": "test-short-id",
     "key": "key:person123",
     "share": undefined,
     "type": "ACTION_CREATOR",

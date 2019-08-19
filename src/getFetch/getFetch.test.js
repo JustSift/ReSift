@@ -3,13 +3,13 @@ import defineFetch from '../defineFetch';
 import createActionType from '../createActionType';
 import ERROR from '../prefixes/ERROR';
 import SUCCESS from '../prefixes/SUCCESS';
-import { isErrorAction, isSuccessAction } from '../createDataService';
+import { isErrorAction, isSuccessAction } from '../createDataServiceMiddleware';
 import isError from '../isError';
 import isLoading from '../isLoading';
 import isNormal from '../isNormal';
 import isUnknown from '../isUnknown';
 
-import getFetch, { getLoadingState, arrayShallowEqual } from './getFetch';
+import getFetch, { getStatus, arrayShallowEqual } from './getFetch';
 
 jest.mock('shortid', () => () => 'test-short-id');
 jest.mock('../timestamp', () => () => 'test-timestamp');
@@ -20,19 +20,19 @@ describe('arrayShallowEqual', () => {
   });
 });
 
-describe('getLoadingState', () => {
+describe('getStatus', () => {
   test('unknown', () => {
     // given
     const mockActionState = undefined;
 
     // when
-    const loadingState = getLoadingState(mockActionState);
+    const status = getStatus(mockActionState);
 
     // then
-    expect(isUnknown(loadingState)).toBe(true);
-    expect(isLoading(loadingState)).toBe(false);
-    expect(isNormal(loadingState)).toBe(false);
-    expect(isError(loadingState)).toBe(false);
+    expect(isUnknown(status)).toBe(true);
+    expect(isLoading(status)).toBe(false);
+    expect(isNormal(status)).toBe(false);
+    expect(isError(status)).toBe(false);
   });
   test('loading', () => {
     // given
@@ -42,13 +42,13 @@ describe('getLoadingState', () => {
     };
 
     // when
-    const loadingState = getLoadingState(mockActionState);
+    const status = getStatus(mockActionState);
 
     // then
-    expect(isUnknown(loadingState)).toBe(false);
-    expect(isLoading(loadingState)).toBe(true);
-    expect(isNormal(loadingState)).toBe(false);
-    expect(isError(loadingState)).toBe(false);
+    expect(isUnknown(status)).toBe(false);
+    expect(isLoading(status)).toBe(true);
+    expect(isNormal(status)).toBe(false);
+    expect(isError(status)).toBe(false);
   });
   test('normal', () => {
     // given
@@ -58,13 +58,13 @@ describe('getLoadingState', () => {
     };
 
     // when
-    const loadingState = getLoadingState(mockActionState);
+    const status = getStatus(mockActionState);
 
     // then
-    expect(isUnknown(loadingState)).toBe(false);
-    expect(isLoading(loadingState)).toBe(false);
-    expect(isNormal(loadingState)).toBe(true);
-    expect(isError(loadingState)).toBe(false);
+    expect(isUnknown(status)).toBe(false);
+    expect(isLoading(status)).toBe(false);
+    expect(isNormal(status)).toBe(true);
+    expect(isError(status)).toBe(false);
   });
   test('error', () => {
     // given
@@ -74,13 +74,13 @@ describe('getLoadingState', () => {
     };
 
     // when
-    const loadingState = getLoadingState(mockActionState);
+    const status = getStatus(mockActionState);
 
     // then
-    expect(isUnknown(loadingState)).toBe(false);
-    expect(isLoading(loadingState)).toBe(false);
-    expect(isNormal(loadingState)).toBe(false);
-    expect(isError(loadingState)).toBe(true);
+    expect(isUnknown(status)).toBe(false);
+    expect(isLoading(status)).toBe(false);
+    expect(isNormal(status)).toBe(false);
+    expect(isError(status)).toBe(true);
   });
   test('combined', () => {
     // given
@@ -91,13 +91,13 @@ describe('getLoadingState', () => {
     };
 
     // when
-    const loadingState = getLoadingState(mockActionState);
+    const status = getStatus(mockActionState);
 
     // then
-    expect(isUnknown(loadingState)).toBe(false);
-    expect(isLoading(loadingState)).toBe(false);
-    expect(isNormal(loadingState)).toBe(false);
-    expect(isError(loadingState)).toBe(true);
+    expect(isUnknown(status)).toBe(false);
+    expect(isLoading(status)).toBe(false);
+    expect(isNormal(status)).toBe(false);
+    expect(isError(status)).toBe(true);
   });
 });
 
@@ -154,25 +154,25 @@ Object {
       displayName: 'example fetch',
       make: testArg => ({
         key: [testArg],
-        fetch: () => ({ exampleService }) => exampleService(testArg),
+        request: () => ({ exampleService }) => exampleService(testArg),
       }),
     });
 
     // when
-    const [data, loadingState] = getFetch(actionCreatorFactory('test arg')(), state);
+    const [data, status] = getFetch(actionCreatorFactory('test arg')(), state);
 
     // then
     expect(data).toBe(null);
-    expect(isUnknown(loadingState)).toBe(true);
+    expect(isUnknown(status)).toBe(true);
   });
 
-  test('unshared: returns null with an error loading state if there was an error', () => {
+  test.skip('unshared: returns null with an error status if there was an error', () => {
     // given
     const actionCreatorFactory = defineFetch({
       displayName: 'example fetch',
       make: testArg => ({
         key: [testArg],
-        fetch: () => ({ exampleService }) => exampleService(testArg),
+        request: () => ({ exampleService }) => exampleService(testArg),
       }),
     });
 
@@ -197,7 +197,7 @@ Object {
           "error": true,
           "inflight": undefined,
           "meta": Object {
-            "actionCreatorId": "test-short-id",
+            "fetchFactoryId": "test-short-id",
             "conflict": "cancel",
             "displayName": "example fetch",
             "key": "key:test arg",
@@ -215,11 +215,11 @@ Object {
 `);
 
     // when
-    const [data, loadingState] = getFetch(actionCreatorFactory('test arg'), state);
+    const [data, status] = getFetch(actionCreatorFactory('test arg'), state);
 
     // then
     expect(data).toBe(null);
-    expect(isError(loadingState)).toBe(true);
+    expect(isError(status)).toBe(true);
   });
 
   test('unshared', () => {
@@ -228,7 +228,7 @@ Object {
       displayName: 'example fetch',
       make: testArg => ({
         key: [testArg],
-        fetch: () => ({ exampleService }) => exampleService(testArg),
+        request: () => ({ exampleService }) => exampleService(testArg),
       }),
     });
 
@@ -253,9 +253,9 @@ Object {
           "hadSuccess": true,
           "inflight": undefined,
           "meta": Object {
-            "actionCreatorId": "test-short-id",
             "conflict": "cancel",
             "displayName": "example fetch",
+            "fetchFactoryId": "test-short-id",
             "key": "key:test arg",
             "share": undefined,
           },
@@ -273,7 +273,7 @@ Object {
 `);
 
     // when
-    const [data, loadingState] = getFetch(actionCreatorFactory('test arg'), state);
+    const [data, status] = getFetch(actionCreatorFactory('test arg'), state);
 
     // then
     expect(data).toMatchInlineSnapshot(`
@@ -281,7 +281,9 @@ Object {
   "mock": "data",
 }
 `);
-    expect(isNormal(loadingState)).toBe(true);
-    expect(isLoading(loadingState)).toBe(false);
+    expect(isNormal(status)).toBe(true);
+    expect(isLoading(status)).toBe(false);
   });
+
+  test.todo('static key');
 });
