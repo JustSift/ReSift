@@ -44,7 +44,7 @@
   "dependencies": {
     "@types/lodash": "^4.14.135",
     "@types/superagent": "^4.1.2",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.15",
     "shortid": "^2.2.14",
     "superagent": "^5.1.0"
   },
