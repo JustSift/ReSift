@@ -11,7 +11,7 @@ test('it takes in a fetch action and returns an action type string', () => {
     displayName: 'example fetch',
     make: () => ({
       key: [],
-      fetch: exampleArg => ({ exampleService }) => exampleService(exampleArg),
+      request: exampleArg => ({ exampleService }) => exampleService(exampleArg),
     }),
   });
   const actionCreator = makeActionCreator();

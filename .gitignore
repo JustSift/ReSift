@@ -1,6 +1,5 @@
 node_modules
-bundle.js
-bundle.js.map
+build
 coverage
 .DS_Store
 website/build

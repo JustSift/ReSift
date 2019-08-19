@@ -1,3 +1,3 @@
-export default function createStore(displayName, actionCreatorId) {
-  return `${displayName} | ${actionCreatorId}`;
+export default function createStore(displayName, fetchFactoryId) {
+  return `${displayName} | ${fetchFactoryId}`;
 }

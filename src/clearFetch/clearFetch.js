@@ -8,6 +8,10 @@ export function isClearAction(action) {
   return action.type.startsWith(CLEAR);
 }
 
+// TODO: `defineFetch` creates a memoized "fetch factory" against the key given
+// to it so the fetches can be compared via value equal (e.g. `===`).
+//
+// Investigate: this may be a good place to try to clear memoized fetches
 export default function clearFetch(fetch) {
   const isActionCreatorFactory = _get(fetch, ['meta', 'type']) === 'ACTION_CREATOR_FACTORY';
   if (isActionCreatorFactory) {

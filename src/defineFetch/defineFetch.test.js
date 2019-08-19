@@ -27,7 +27,7 @@ describe('defineFetch', () => {
       displayName: 'something',
       make: id => ({
         key: [id],
-        fetch: () => ({ exampleService }) => exampleService(),
+        request: () => ({ exampleService }) => exampleService(),
       }),
     });
 
@@ -68,13 +68,13 @@ describe('defineFetch', () => {
         displayName: 'something',
         make: id => ({
           key: [id],
-          fetch: 'not a function',
+          request: 'not a function',
         }),
       });
 
       actionCreatorFactory('test-id');
     }).toThrowErrorMatchingInlineSnapshot(
-      `"[defineFetch] \`fetch\` must be a function in the object that \`make\` returns\`"`,
+      `"[defineFetch] \`request\` must be a function in the object that \`make\` returns\`"`,
     );
   });
 
@@ -83,7 +83,7 @@ describe('defineFetch', () => {
       displayName: 'example fetch',
       make: id => ({
         key: [id],
-        fetch: () => ({ exampleService }) => exampleService(),
+        request: () => ({ exampleService }) => exampleService(),
       }),
     });
 
@@ -92,9 +92,9 @@ describe('defineFetch', () => {
     expect(typeof actionCreator).toBe('function');
     expect(actionCreator.meta).toMatchInlineSnapshot(`
 Object {
-  "actionCreatorId": "test-short-id",
   "conflict": "cancel",
   "displayName": "example fetch",
+  "fetchFactoryId": "test-short-id",
   "key": "key:test-id",
   "share": undefined,
   "type": "ACTION_CREATOR",
@@ -107,7 +107,7 @@ Object {
       displayName: 'example payload',
       make: testArg => ({
         key: [testArg],
-        fetch: () => ({ exampleService }) => exampleService(testArg),
+        request: () => ({ exampleService }) => exampleService(testArg),
       }),
     });
 
@@ -116,7 +116,7 @@ Object {
 
     expect(typeof action.payload).toBe('function');
     expect(typeof action.payload.cancel).toBe('function');
-    expect(typeof action.payload.getCancelled).toBe('function');
+    expect(typeof action.payload.getCanceled).toBe('function');
     expect(typeof action.payload.onCancel).toBe('function');
   });
 
@@ -126,14 +126,14 @@ Object {
       displayName: 'example payload',
       make: testArg => ({
         key: [testArg],
-        fetch: () => ({ exampleService }) => exampleService(testArg),
+        request: () => ({ exampleService }) => exampleService(testArg),
       }),
     });
 
     const actionCreator = actionCreatorFactory('test arg');
     const action = actionCreator('test arg');
-    const onCancelledCalled = new DeferredPromise();
-    expect(action.payload.getCancelled()).toBe(false);
+    const onCanceledCalled = new DeferredPromise();
+    expect(action.payload.getCanceled()).toBe(false);
 
     action.payload({
       exampleService: async testArg => {
@@ -143,15 +143,15 @@ Object {
     });
 
     action.payload.onCancel(() => {
-      onCancelledCalled.resolve();
+      onCanceledCalled.resolve();
     });
 
     // when
     action.payload.cancel();
 
     // then
-    await onCancelledCalled;
-    expect(action.payload.getCancelled()).toBe(true);
+    await onCanceledCalled;
+    expect(action.payload.getCanceled()).toBe(true);
   });
 
   test('it memoizes the action creator factory', () => {
@@ -159,7 +159,7 @@ Object {
       displayName: 'action creator',
       make: id => ({
         key: [id],
-        fetch: () => () => {},
+        request: () => () => {},
       }),
     });
 
@@ -184,7 +184,7 @@ describe('isFetchAction', () => {
       displayName: 'test fetch',
       make: testArg => ({
         key: [testArg],
-        fetch: () => ({ exampleService }) => exampleService(),
+        request: () => ({ exampleService }) => exampleService(),
       }),
     });
 
@@ -193,4 +193,24 @@ describe('isFetchAction', () => {
 
     expect(isFetchAction(action)).toBe(true);
   });
+});
+
+test('staticFetchFactoryId', () => {
+  const fetchFactory = defineFetch({
+    displayName: 'Get Example',
+    staticFetchFactoryId: 'example-static-fetch-factory-id',
+    make: () => ({ http }) =>
+      http({
+        method: 'GET',
+        route: '/example',
+      }),
+  });
+
+  expect(fetchFactory.meta).toMatchInlineSnapshot(`
+Object {
+  "displayName": "Get Example",
+  "fetchFactoryId": "example-static-fetch-factory-id",
+  "type": "ACTION_CREATOR_FACTORY",
+}
+`);
 });

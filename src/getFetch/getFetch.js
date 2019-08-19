@@ -13,31 +13,39 @@ import LOADING from '../LOADING';
 import ERROR from '../ERROR';
 import NORMAL from '../NORMAL';
 
-// combining shared loading states is a bit different
-function combineSharedLoadingStates(...loadingStates) {
-  if (loadingStates.every(loadingState => isUnknown(loadingState))) {
+// Combining shared statuses is different because of the `normal` case.
+//
+// With non-shared statuses, the default behavior is only make `isNormal` return true if all the
+// statuses are normal. This is because there could be a loader blocking render until all pieces of
+// data come back.
+//
+// With shared statuses, it makes sense to have `isNormal` return true if only one status is normal
+// (vs all). This is because the shared fetches share the same internal store so if one fetch has
+// the data, it's sufficient for all of them.
+function combineSharedStatuses(...statuses) {
+  if (statuses.every(status => isUnknown(status))) {
     return UNKNOWN;
   }
 
-  const loading = isLoading(...loadingStates) ? LOADING : UNKNOWN;
+  const loading = isLoading(...statuses) ? LOADING : UNKNOWN;
 
-  const normal = loadingStates.some(loadingState => isNormal(loadingState)) ? NORMAL : UNKNOWN;
+  const normal = statuses.some(status => isNormal(status)) ? NORMAL : UNKNOWN;
 
-  const error = isError(...loadingStates) ? ERROR : UNKNOWN;
+  const error = isError(...statuses) ? ERROR : UNKNOWN;
 
   return loading | normal | error;
 }
 
-export function getLoadingState(actionState) {
+export function getStatus(actionState) {
   if (!actionState) return UNKNOWN;
 
   const { hadSuccess, inflight, error } = actionState;
 
-  const inflightLoadingState = inflight ? LOADING : UNKNOWN;
-  const errorLoadingState = error ? ERROR : UNKNOWN;
-  const normalLoadingState = hadSuccess && !error ? NORMAL : UNKNOWN;
+  const inflightStatus = inflight ? LOADING : UNKNOWN;
+  const errorStatus = error ? ERROR : UNKNOWN;
+  const normalStatus = hadSuccess && !error ? NORMAL : UNKNOWN;
 
-  return inflightLoadingState | errorLoadingState | normalLoadingState;
+  return inflightStatus | errorStatus | normalStatus;
 }
 
 export function arrayShallowEqual(a, b) {
@@ -49,6 +57,7 @@ export function arrayShallowEqual(a, b) {
   }
   return true;
 }
+
 export default function getFetch(fetchActionCreator, state, options) {
   if (!fetchActionCreator) throw new Error('first argument, the fetch action, is required');
   if (!state) throw new Error('state is required');
@@ -56,11 +65,13 @@ export default function getFetch(fetchActionCreator, state, options) {
     throw new Error('"dataService" is a required key. pass in the whole store state.');
   }
 
-  const { actionCreatorId, displayName, key, share } = fetchActionCreator.meta;
-  const storeKey = createStoreKey(displayName, actionCreatorId);
+  const { fetchFactoryId, displayName, key, share } = fetchActionCreator.meta;
+  const storeKey = createStoreKey(displayName, fetchFactoryId);
   if (!key) {
     throw new Error(
-      `Could not find any key for action "${displayName}". If you're using or getting a fetch, ensure that you're passing all the correct parameters.`,
+      `Could not find any key for action "${displayName}". If you're using ` +
+        `or getting a fetch, ensure that you're passing all the correct ` +
+        `parameters.`,
     );
   }
 
@@ -70,9 +81,9 @@ export default function getFetch(fetchActionCreator, state, options) {
     if (!value) return [null, UNKNOWN];
 
     const data = value.error ? null : value.payload;
-    const loadingState = getLoadingState(value);
+    const status = getStatus(value);
 
-    return [data, loadingState];
+    return [data, status];
   }
 
   const { namespace } = share;
@@ -84,9 +95,9 @@ export default function getFetch(fetchActionCreator, state, options) {
   const dataServiceValues = Object.values(storeValue.parentActions).map(
     ({ storeKey, key }) => state.dataService.actions[storeKey][key],
   );
-  const sharedLoadingState = combineSharedLoadingStates(...dataServiceValues.map(getLoadingState));
+  const sharedStatus = combineSharedStatuses(...dataServiceValues.map(getStatus));
 
-  const isolatedLoadingState = _get(options, ['isolatedLoadingState'], false);
+  const isolatedStatus = _get(options, ['isolatedStatus'], false);
 
-  return [sharedValue, isolatedLoadingState ? getLoadingState(value) : sharedLoadingState];
+  return [sharedValue, isolatedStatus ? getStatus(value) : sharedStatus];
 }

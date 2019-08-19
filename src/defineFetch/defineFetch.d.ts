@@ -19,9 +19,10 @@ export interface DefineFetchParams<
   displayName: string;
   make: (
     ...keyArgs: KeyArgs
-  ) => { key: string[]; fetch: (...fetchArgs: FetchArgs) => (services: any) => FetchResult };
+  ) => { key: string[]; request: (...fetchArgs: FetchArgs) => (services: any) => FetchResult };
   share?: ShareParams<MergeResult>;
   conflict?: 'cancel' | 'ignore';
+  staticFetchFactoryId?: string;
 }
 
 export interface ShareParams<MergeResult> {
@@ -41,13 +42,13 @@ export interface FetchActionFactory<
   (...args: KeyArgs): FetchActionCreator<FetchArgs, FetchResult, MergeResult>;
 
   meta: {
-    actionCreatorId: string;
+    fetchFactoryId: string;
     displayName: string;
   };
 }
 
 export interface FetchActionCreator<
-  FetchArgs extends any[] = any[],
+  FetchArgs extends any[] = any,
   FetchResult = any,
   MergeResult = any
 > {
@@ -66,14 +67,16 @@ export interface FetchActionPayload<T = any> {
   (services: any): T | Promise<T>;
 
   cancel: () => void;
-  getCancelled: () => boolean;
+  getCanceled: () => boolean;
   onCancel: (callback: () => void) => void;
 }
 
 export interface FetchActionMeta {
-  actionCreatorId: string;
+  fetchFactoryId: string;
   key: string;
   displayName: string;
   share?: ShareParams<any>;
   conflict: 'cancel' | 'ignore';
 }
+
+export function isFetchAction(action: any): action is FetchAction;

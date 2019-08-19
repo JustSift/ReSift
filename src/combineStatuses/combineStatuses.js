@@ -7,12 +7,12 @@ import NORMAL from '../NORMAL';
 import LOADING from '../LOADING';
 import ERROR from '../ERROR';
 
-export default function combineLoadingStates(...loadingStates) {
-  if (isUnknown(...loadingStates)) return UNKNOWN;
+export default function combineStatuses(...statues) {
+  if (isUnknown(...statues)) return UNKNOWN;
 
-  const loading = isLoading(...loadingStates) ? LOADING : UNKNOWN;
-  const normal = isNormal(...loadingStates) ? NORMAL : UNKNOWN;
-  const error = isError(...loadingStates) ? ERROR : UNKNOWN;
+  const loading = isLoading(...statues) ? LOADING : UNKNOWN;
+  const normal = isNormal(...statues) ? NORMAL : UNKNOWN;
+  const error = isError(...statues) ? ERROR : UNKNOWN;
 
   return loading | normal | error;
 }

@@ -1,23 +1,25 @@
 {
   "name": "resift",
-  "version": "0.0.1",
-  "description": "A state state management for data fetches in React",
-  "main": "bundle.js",
+  "version": "0.0.1-alpha.1",
+  "description": "A state management for data fetches in React",
+  "main": "index.js",
   "scripts": {
     "test": "jest --watch",
     "clean": "rimraf node_modules && npm i",
-    "build": "npm run clean && npx webpack -p"
+    "build": "node ./scripts/build.js",
+    "check-types": "npx tsc",
+    "publish": "npm run build && cd build && npm publish && cd .."
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/JustSift/Resift.git"
+    "url": "git+https://github.com/JustSift/ReSift.git"
   },
   "author": "team@justsift.com",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/JustSift/Resift/issues"
+    "url": "https://github.com/JustSift/ReSift/issues"
   },
-  "homepage": "https://github.com/JustSift/Resift#readme",
+  "homepage": "https://github.com/JustSift/ReSift#readme",
   "devDependencies": {
     "@babel/cli": "^7.5.0",
     "@babel/core": "^7.5.0",
@@ -31,10 +33,10 @@
     "jest": "^24.8.0",
     "node-fetch": "^2.6.0",
     "prettier": "^1.18.2",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0",
     "react-redux": "^7.1.0",
-    "react-test-renderer": "^16.8.6",
+    "react-test-renderer": "^16.9.0",
     "redux": "^4.0.1",
     "rimraf": "^2.6.3",
     "typescript": "^3.5.2",
@@ -44,14 +46,14 @@
   "dependencies": {
     "@types/lodash": "^4.14.135",
     "@types/superagent": "^4.1.2",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.15",
     "shortid": "^2.2.14",
     "superagent": "^5.1.0"
   },
   "peerDependencies": {
     "@types/react": "^16.8.23",
     "@types/lodash": "^4.14.135",
-    "react": "^16.8.6",
+    "react": "^16.8.0",
     "react-redux": "^7.1.0"
   },
   "browserslist": [
@@ -59,5 +61,6 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "private": true
 }

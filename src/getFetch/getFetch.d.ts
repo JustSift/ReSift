@@ -8,7 +8,7 @@ type PickResult<FetchResult, MergeResult> = unknown extends MergeResult
   : Unwrap<MergeResult>;
 
 export interface GetFetchOptions {
-  isolatedLoadingState: boolean;
+  isolatedStatus: boolean;
 }
 
 export default function getFetch<FetchResult, MergeResult>(
