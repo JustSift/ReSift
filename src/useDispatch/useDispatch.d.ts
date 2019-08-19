@@ -1,3 +1,3 @@
 import { FetchAction } from '../defineFetch';
 
-export default function useDispatch(): (fetch: FetchAction) => void;
+export default function useDispatch(): (fetch: FetchAction) => Promise<any>;
