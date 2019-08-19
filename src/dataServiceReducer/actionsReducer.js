@@ -2,7 +2,7 @@ import _get from 'lodash/get';
 import createStoreKey from '../createStoreKey';
 import timestamp from '../timestamp';
 import { isFetchAction } from '../defineFetch';
-import { isSuccessAction, isErrorAction } from '../createDataServiceMiddleware';
+import { isSuccessAction, isErrorAction } from '../createDataService';
 import { isClearAction } from '../clearFetch';
 
 export default function actionsReducer(state = {}, action) {

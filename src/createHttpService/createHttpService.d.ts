@@ -1,5 +1,5 @@
 import request from 'superagent';
-import { DataServiceParams } from '../createDataServiceMiddleware';
+import { DataServiceParams } from '../createDataService';
 import { HttpProxy } from '../createHttpProxy';
 
 export default function createHttpService(

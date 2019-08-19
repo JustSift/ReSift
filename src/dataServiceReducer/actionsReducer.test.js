@@ -3,7 +3,7 @@ import actionsReducer from './actionsReducer';
 import createActionType from '../createActionType';
 import SUCCESS from '../prefixes/SUCCESS';
 import ERROR from '../prefixes/ERROR';
-import { isSuccessAction, isErrorAction } from '../createDataServiceMiddleware';
+import { isSuccessAction, isErrorAction } from '../createDataService';
 import clearFetch, { isClearAction } from '../clearFetch';
 
 jest.mock('../timestamp', () => () => 'test-timestamp');

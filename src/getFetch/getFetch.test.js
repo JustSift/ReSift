@@ -3,7 +3,7 @@ import defineFetch from '../defineFetch';
 import createActionType from '../createActionType';
 import ERROR from '../prefixes/ERROR';
 import SUCCESS from '../prefixes/SUCCESS';
-import { isErrorAction, isSuccessAction } from '../createDataServiceMiddleware';
+import { isErrorAction, isSuccessAction } from '../createDataService';
 import isError from '../isError';
 import isLoading from '../isLoading';
 import isNormal from '../isNormal';

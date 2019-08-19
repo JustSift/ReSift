@@ -109,7 +109,7 @@ export async function handleAction({ state, services, dispatch, action, getState
   }
 }
 
-export default function createDataServiceMiddleware({ services, onError }) {
+export default function createDataService({ services, onError }) {
   if (!services) throw new Error('`services` key required');
   if (!onError) throw new Error('`onError` callback required');
 

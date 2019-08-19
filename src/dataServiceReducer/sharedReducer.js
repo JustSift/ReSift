@@ -4,7 +4,7 @@ import createShareKey from '../createShareKey';
 import createStoreKey from '../createStoreKey';
 import { isFetchAction } from '../defineFetch';
 import { isClearAction } from '../clearFetch';
-import { isSuccessAction } from '../createDataServiceMiddleware';
+import { isSuccessAction } from '../createDataService';
 
 export default function sharedReducer(state = {}, action) {
   if (isFetchAction(action)) {

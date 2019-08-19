@@ -8,11 +8,11 @@ import dataServiceReducer from '../dataServiceReducer';
 import createActionType from '../createActionType';
 import CanceledError from '../CanceledError';
 
-import createDataServiceMiddleware, {
+import createDataService, {
   handleAction,
   isSuccessAction,
   isErrorAction,
-} from './createDataServiceMiddleware';
+} from './createDataService';
 
 jest.mock('shortid', () => () => 'test-short-id');
 jest.mock('../timestamp', () => () => 'test-timestamp');
@@ -20,20 +20,20 @@ jest.mock('../timestamp', () => () => 'test-timestamp');
 describe('middleware', () => {
   test('throws if no `services` key', () => {
     expect(() => {
-      createDataServiceMiddleware({ services: undefined, onError: undefined });
+      createDataService({ services: undefined, onError: undefined });
     }).toThrowErrorMatchingInlineSnapshot(`"\`services\` key required"`);
   });
 
   test('throws if no `onError` key', () => {
     expect(() => {
-      createDataServiceMiddleware({ services: {}, onError: undefined });
+      createDataService({ services: {}, onError: undefined });
     }).toThrowErrorMatchingInlineSnapshot(`"\`onError\` callback required"`);
   });
 
   test('it returns a middleware that will call the next action if the action is not a fetch', () => {
     // given
     const mockErrorHandler = jest.fn();
-    const middleware = createDataServiceMiddleware({ services: {}, onError: mockErrorHandler });
+    const middleware = createDataService({ services: {}, onError: mockErrorHandler });
 
     const mockStore = {};
     const mockNext = jest.fn();
@@ -51,7 +51,7 @@ describe('middleware', () => {
   test('it synchronously calls next action after running it through `handleAction`', async () => {
     // given
     const mockErrorHandler = jest.fn();
-    const middleware = createDataServiceMiddleware({ services: {}, onError: mockErrorHandler });
+    const middleware = createDataService({ services: {}, onError: mockErrorHandler });
 
     const mockStore = {
       getState: () => ({}),
@@ -80,7 +80,7 @@ describe('middleware', () => {
   test('it asynchronously dispatches a SUCCESS', async () => {
     // given
     const mockErrorHandler = jest.fn();
-    const middleware = createDataServiceMiddleware({
+    const middleware = createDataService({
       services: { testService: ({ onCancel }) => () => timer(0) },
       onError: mockErrorHandler,
     });
@@ -142,7 +142,7 @@ Object {
   test('it asynchronously dispatches an ERROR if the payload fails and calls onError', async () => {
     // given
     const mockErrorHandler = jest.fn();
-    const middleware = createDataServiceMiddleware({ services: {}, onError: mockErrorHandler });
+    const middleware = createDataService({ services: {}, onError: mockErrorHandler });
     const mockNext = jest.fn();
 
     const dispatchCalled = new DeferredPromise();

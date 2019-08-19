@@ -1,5 +1,5 @@
 import { FetchAction, FetchActionMeta } from '../defineFetch';
-import { SuccessAction, ErrorAction } from '../createDataServiceMiddleware';
+import { SuccessAction, ErrorAction } from '../createDataService';
 import { ClearFetchAction } from '../clearFetch';
 
 type ResiftAction = SuccessAction | ErrorAction | FetchAction | ClearFetchAction;

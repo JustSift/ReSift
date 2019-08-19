@@ -4,7 +4,7 @@ import { act, create } from 'react-test-renderer';
 import defineFetch from '../defineFetch';
 import ReduxProvider from '../ReduxProvider';
 import { createStore, combineReducers, applyMiddleware } from 'redux';
-import createDataServiceMiddleware from '../createDataServiceMiddleware';
+import createDataService from '../createDataService';
 import createContextFetch from './createContextFetch';
 import dataService from '../dataServiceReducer';
 import DeferredPromise from '../DeferredPromise';
@@ -15,7 +15,7 @@ import DeferredPromise from '../DeferredPromise';
 test('createContextFetch hooks', async () => {
   const rootReducer = combineReducers({ dataService });
   const handleError = jest.fn();
-  const dataServiceMiddleware = createDataServiceMiddleware({ onError: handleError, services: {} });
+  const dataServiceMiddleware = createDataService({ onError: handleError, services: {} });
   const store = createStore(rootReducer, {}, applyMiddleware(dataServiceMiddleware));
   const gotExampleValue = new DeferredPromise();
 
@@ -74,7 +74,7 @@ test('createContextFetch hooks', async () => {
 test('render props/no hooks API', async () => {
   const rootReducer = combineReducers({ dataService });
   const handleError = jest.fn();
-  const dataServiceMiddleware = createDataServiceMiddleware({ onError: handleError, services: {} });
+  const dataServiceMiddleware = createDataService({ onError: handleError, services: {} });
   const store = createStore(rootReducer, {}, applyMiddleware(dataServiceMiddleware));
   const gotExampleValue = new DeferredPromise();
 

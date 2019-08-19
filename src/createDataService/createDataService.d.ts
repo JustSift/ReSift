@@ -5,7 +5,7 @@ export interface DataServiceMiddlewareParams {
   onError: (error: Error) => void;
 }
 
-export default function createDataServiceMiddleware(params: DataServiceMiddlewareParams): any;
+export default function createDataService(params: DataServiceMiddlewareParams): any;
 
 export interface DataServiceParams {
   onCancel: (callback: () => void) => void;
