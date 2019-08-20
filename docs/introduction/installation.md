@@ -10,7 +10,7 @@ sidebar_label: Installation
 npm i -s resift redux react-redux
 ```
 
-> Redux 5 and React-Redux >= 7.1 are required peer dependencies to ReSift
+> Redux 4 and React-Redux >= 7.1 are required peer dependencies to ReSift
 
 ## Creating the data service and HTTP service
 
