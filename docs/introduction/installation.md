@@ -12,12 +12,12 @@ npm i -s resift redux react-redux
 
 > Redux 5 and React-Redux >= 7.1 are required peer dependencies to ReSift
 
-## Adding the HTTP Service via `createHttpService`
+## Creating the data service and HTTP service
 
-`http.js`
+`dataService.js`
 
 ```js
-import { createHttpService } from 'resift';
+import { createHttpService, createDataService } from 'resift';
 
 const http = createHttpService({
   prefix: '/api',
@@ -30,7 +30,16 @@ const http = createHttpService({
   },
 });
 
-export default http;
+const services = { http };
+
+const dataService = createDataService({
+  services,
+  onError: e => {
+    throw e;
+  },
+});
+
+export default dataService;
 ```
 
 ## Adding the `<ResiftProvider />`
@@ -41,19 +50,11 @@ export default http;
 import React from 'react';
 import { ResiftProvider } from 'resift';
 import RestOfYourApplication from '...';
-import http from './http';
-
-const services = { http };
+import dataService from './dataService';
 
 function App() {
-  const handleError = e => {
-    // Make sure not to swallow any errors.
-    // Use this `onError` callback to report errors that happen during data fetches
-    console.error(e);
-  };
-
   return (
-    <ResiftProvider services={services} onError={handleError}>
+    <ResiftProvider dataService={dataService}>
       <RestOfYourApplication />
     </ResiftProvider>
   );
