@@ -16,14 +16,14 @@ export default function useDispatch() {
 
   return useCallback(
     action => {
-      const isActionCreator = _get(action, ['meta', 'type']) === 'FETCH_INSTANCE';
-      const isActionCreatorFactory = _get(action, ['meta', 'type']) === 'FETCH_INSTANCE_FACTORY';
+      const isFetchInstance = _get(action, ['meta', 'type']) === 'FETCH_INSTANCE';
+      const isFetchFactory = _get(action, ['meta', 'type']) === 'FETCH_INSTANCE_FACTORY';
       const isClearAction = _get(action, ['type'], '').startsWith(CLEAR);
 
-      if (isActionCreator && !isClearAction) {
+      if (isFetchInstance && !isClearAction) {
         throw new Error('[dispatch] you dispatched a fetch. Ask rico until he writes docs.');
       }
-      if (isActionCreatorFactory) {
+      if (isFetchFactory) {
         throw new Error('[dispatch] you dispatched a make fetch. Ask rico until he writes docs.');
       }
 
