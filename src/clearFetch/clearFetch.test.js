@@ -24,7 +24,7 @@ Object {
     "fetchFactoryId": "test-shortid",
     "key": "key:person123",
     "share": undefined,
-    "type": "ACTION_CREATOR",
+    "type": "FETCH_INSTANCE",
   },
   "type": "@@RESIFT/CLEAR | person fetch | test-shortid",
 }
@@ -52,7 +52,7 @@ Object {
     "fetchFactoryId": "test-shortid",
     "key": "key:",
     "share": undefined,
-    "type": "ACTION_CREATOR",
+    "type": "FETCH_INSTANCE",
   },
   "type": "@@RESIFT/CLEAR | test fetch | test-shortid",
 }

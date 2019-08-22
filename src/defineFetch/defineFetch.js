@@ -107,7 +107,7 @@ export default function defineFetch({
 
     fetch.meta = {
       ...meta,
-      type: 'ACTION_CREATOR',
+      type: 'FETCH_INSTANCE',
     };
 
     return fetch;
@@ -118,7 +118,7 @@ export default function defineFetch({
   memoizedFetchFactory.meta = {
     fetchFactoryId,
     displayName,
-    type: 'ACTION_CREATOR_FACTORY',
+    type: 'FETCH_INSTANCE_FACTORY',
   };
 
   return memoizedFetchFactory;

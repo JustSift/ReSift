@@ -16,8 +16,8 @@ export default function useDispatch() {
 
   return useCallback(
     action => {
-      const isActionCreator = _get(action, ['meta', 'type']) === 'ACTION_CREATOR';
-      const isActionCreatorFactory = _get(action, ['meta', 'type']) === 'ACTION_CREATOR_FACTORY';
+      const isActionCreator = _get(action, ['meta', 'type']) === 'FETCH_INSTANCE';
+      const isActionCreatorFactory = _get(action, ['meta', 'type']) === 'FETCH_INSTANCE_FACTORY';
       const isClearAction = _get(action, ['type'], '').startsWith(CLEAR);
 
       if (isActionCreator && !isClearAction) {

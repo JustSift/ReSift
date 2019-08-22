@@ -97,7 +97,7 @@ Object {
   "fetchFactoryId": "test-short-id",
   "key": "key:test-id",
   "share": undefined,
-  "type": "ACTION_CREATOR",
+  "type": "FETCH_INSTANCE",
 }
 `);
   });
@@ -210,7 +210,7 @@ test('staticFetchFactoryId', () => {
 Object {
   "displayName": "Get Example",
   "fetchFactoryId": "example-static-fetch-factory-id",
-  "type": "ACTION_CREATOR_FACTORY",
+  "type": "FETCH_INSTANCE_FACTORY",
 }
 `);
 });
