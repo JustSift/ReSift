@@ -145,13 +145,13 @@ describe('getFetch', () => {
   test("throws if a fetch instance wasn't passed in", () => {
     const state = { dataService: dataServiceReducer({}, {}) };
     expect(state).toMatchInlineSnapshot(`
-                                                                        Object {
-                                                                          "dataService": Object {
-                                                                            "actions": Object {},
-                                                                            "shared": Object {},
-                                                                          },
-                                                                        }
-                                                `);
+      Object {
+        "dataService": Object {
+          "actions": Object {},
+          "shared": Object {},
+        },
+      }
+    `);
 
     const makeMyFetch = defineFetch({
       displayName: 'Get My Fetch',
@@ -172,13 +172,13 @@ describe('getFetch', () => {
     // given
     const state = { dataService: dataServiceReducer({}, {}) };
     expect(state).toMatchInlineSnapshot(`
-                  Object {
-                    "dataService": Object {
-                      "actions": Object {},
-                      "shared": Object {},
-                    },
-                  }
-            `);
+      Object {
+        "dataService": Object {
+          "actions": Object {},
+          "shared": Object {},
+        },
+      }
+    `);
 
     const makeExampleFetch = defineFetch({
       displayName: 'example fetch',
@@ -222,29 +222,29 @@ describe('getFetch', () => {
     const errorState = dataServiceReducer(initialState, errorAction);
 
     expect(errorState).toMatchInlineSnapshot(`
-            Object {
-              "actions": Object {
-                "Example Fetch | test-short-id": Object {
-                  "key:": Object {
-                    "error": true,
-                    "inflight": undefined,
-                    "meta": Object {
-                      "conflict": "cancel",
-                      "displayName": "Example Fetch",
-                      "fetchFactoryId": "test-short-id",
-                      "key": "key:",
-                      "share": undefined,
-                      "type": "FETCH_INSTANCE",
-                    },
-                    "payload": Object {},
-                    "shared": false,
-                    "updatedAt": "test-timestamp",
-                  },
-                },
+      Object {
+        "actions": Object {
+          "Example Fetch | test-short-id": Object {
+            "key:": Object {
+              "error": true,
+              "inflight": undefined,
+              "meta": Object {
+                "conflict": "cancel",
+                "displayName": "Example Fetch",
+                "fetchFactoryId": "test-short-id",
+                "key": "key:",
+                "share": undefined,
+                "type": "FETCH_INSTANCE",
               },
-              "shared": Object {},
-            }
-        `);
+              "payload": Object {},
+              "shared": false,
+              "updatedAt": "test-timestamp",
+            },
+          },
+        },
+        "shared": Object {},
+      }
+    `);
 
     const [data, status] = getFetch(fetch, { dataService: errorState });
 
@@ -301,54 +301,54 @@ describe('getFetch', () => {
     const successState = dataServiceReducer(initialState, successAction);
 
     expect(successState).toMatchInlineSnapshot(`
-                              Object {
-                                "actions": Object {
-                                  "Example | test-short-id": Object {
-                                    "key:": Object {
-                                      "error": false,
-                                      "hadSuccess": true,
-                                      "inflight": undefined,
-                                      "meta": Object {
-                                        "conflict": "cancel",
-                                        "displayName": "Example",
-                                        "fetchFactoryId": "test-short-id",
-                                        "key": "key:",
-                                        "share": Object {
-                                          "namespace": "example",
-                                        },
-                                        "type": "FETCH_INSTANCE",
-                                      },
-                                      "payload": Object {
-                                        "foo": "bar",
-                                      },
-                                      "shared": true,
-                                      "updatedAt": "test-timestamp",
-                                    },
-                                  },
-                                },
-                                "shared": Object {
-                                  "example | key:": Object {
-                                    "data": Object {
-                                      "foo": "bar",
-                                    },
-                                    "parentActions": Object {
-                                      "Example | test-short-id | key:": Object {
-                                        "key": "key:",
-                                        "storeKey": "Example | test-short-id",
-                                      },
-                                    },
-                                  },
-                                },
-                              }
-                    `);
+      Object {
+        "actions": Object {
+          "Example | test-short-id": Object {
+            "key:": Object {
+              "error": false,
+              "hadSuccess": true,
+              "inflight": undefined,
+              "meta": Object {
+                "conflict": "cancel",
+                "displayName": "Example",
+                "fetchFactoryId": "test-short-id",
+                "key": "key:",
+                "share": Object {
+                  "namespace": "example",
+                },
+                "type": "FETCH_INSTANCE",
+              },
+              "payload": Object {
+                "foo": "bar",
+              },
+              "shared": true,
+              "updatedAt": "test-timestamp",
+            },
+          },
+        },
+        "shared": Object {
+          "example | key:": Object {
+            "data": Object {
+              "foo": "bar",
+            },
+            "parentActions": Object {
+              "Example | test-short-id | key:": Object {
+                "key": "key:",
+                "storeKey": "Example | test-short-id",
+              },
+            },
+          },
+        },
+      }
+    `);
 
     const [data, status] = getFetch(fetch, { dataService: successState });
 
     expect(data).toMatchInlineSnapshot(`
-                                    Object {
-                                      "foo": "bar",
-                                    }
-                        `);
+      Object {
+        "foo": "bar",
+      }
+    `);
 
     expect(isNormal(status)).toBe(true);
   });
