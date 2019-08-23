@@ -105,185 +105,253 @@ describe('getFetch', () => {
   test('throws if there is no fetch action', () => {
     expect(() => {
       getFetch();
-    }).toThrowErrorMatchingInlineSnapshot(`"first argument, the fetch action, is required"`);
+    }).toThrowErrorMatchingInlineSnapshot(`"[getFetch] First argument, the fetch, is required"`);
   });
 
   test('throws if there is no state', () => {
     expect(() => {
       const actionCreator = defineFetch({
-        displayName: 'test',
-        key: 'test',
-        // eslint-disable-next-line
-        action: () => ({}) => {},
+        displayName: 'Test',
+        make: () => ({
+          key: [],
+          request: () => () => {},
+        }),
       });
 
       const noState = undefined;
 
       getFetch(actionCreator(), noState);
-    }).toThrowErrorMatchingInlineSnapshot(`"\`make\` is required in \`defineFetch\`"`);
+    }).toThrowErrorMatchingInlineSnapshot(`"[getFetch] State argument is required"`);
   });
 
   test('throws if there is no data service key', () => {
     expect(() => {
       const actionCreator = defineFetch({
-        displayName: 'test',
-        key: 'test',
-        // eslint-disable-next-line
-        action: () => ({}) => {},
+        displayName: 'Test',
+        make: () => ({
+          key: [],
+          request: () => () => {},
+        }),
       });
 
       const noState = {};
 
       getFetch(actionCreator(), noState);
-    }).toThrowErrorMatchingInlineSnapshot(`"\`make\` is required in \`defineFetch\`"`);
+    }).toThrowErrorMatchingInlineSnapshot(
+      `"[getFetch] \\"dataService\\" is a required key. pass in the whole store state."`,
+    );
   });
 
-  test("returns null and UNKNOWN if the values isn't in the store", () => {
+  test("throws if a fetch instance wasn't passed in", () => {
+    const state = { dataService: dataServiceReducer({}, {}) };
+    expect(state).toMatchInlineSnapshot(`
+                                                                        Object {
+                                                                          "dataService": Object {
+                                                                            "actions": Object {},
+                                                                            "shared": Object {},
+                                                                          },
+                                                                        }
+                                                `);
+
+    const makeMyFetch = defineFetch({
+      displayName: 'Get My Fetch',
+      make: () => ({
+        key: [],
+        request: () => () => {},
+      }),
+    });
+
+    expect(() => {
+      getFetch(makeMyFetch, state);
+    }).toThrowErrorMatchingInlineSnapshot(
+      `"[getFetch] expected to see a fetch instance in get fetch."`,
+    );
+  });
+
+  test("unshared: returns null and UNKNOWN if the values isn't in the store", () => {
     // given
     const state = { dataService: dataServiceReducer({}, {}) };
     expect(state).toMatchInlineSnapshot(`
-Object {
-  "dataService": Object {
-    "actions": Object {},
-    "shared": Object {},
-  },
-}
-`);
+                  Object {
+                    "dataService": Object {
+                      "actions": Object {},
+                      "shared": Object {},
+                    },
+                  }
+            `);
 
-    const actionCreatorFactory = defineFetch({
+    const makeExampleFetch = defineFetch({
       displayName: 'example fetch',
       make: testArg => ({
         key: [testArg],
         request: () => ({ exampleService }) => exampleService(testArg),
       }),
     });
+    const exampleFetch = makeExampleFetch('test arg');
 
     // when
-    const [data, status] = getFetch(actionCreatorFactory('test arg')(), state);
+    const [data, status] = getFetch(exampleFetch, state);
 
     // then
     expect(data).toBe(null);
     expect(isUnknown(status)).toBe(true);
   });
 
-  test.skip('unshared: returns null with an error status if there was an error', () => {
-    // given
-    const actionCreatorFactory = defineFetch({
-      displayName: 'example fetch',
-      make: testArg => ({
-        key: [testArg],
-        request: () => ({ exampleService }) => exampleService(testArg),
+  test('unshared: returns null and ERROR if the value is an error', () => {
+    const makeFetch = defineFetch({
+      displayName: 'Example Fetch',
+      make: () => ({
+        key: [],
+        request: () => () => {},
       }),
     });
 
-    const fetchAction = actionCreatorFactory('test arg')();
+    const fetch = makeFetch();
+    const { meta } = fetch;
 
+    const error = {};
+
+    const initialState = dataServiceReducer({}, {});
     const errorAction = {
-      type: createActionType(ERROR, fetchAction.meta),
-      meta: fetchAction.meta,
-      payload: new Error('test error'),
+      type: createActionType(ERROR, meta),
+      meta,
+      payload: error,
       error: true,
     };
 
-    expect(isErrorAction(errorAction)).toBe(true);
+    const errorState = dataServiceReducer(initialState, errorAction);
 
-    const state = { dataService: dataServiceReducer({}, errorAction) };
-    expect(state).toMatchInlineSnapshot(`
-Object {
-  "dataService": Object {
-    "actions": Object {
-      "example fetch | test-short-id": Object {
-        "key:test arg": Object {
-          "error": true,
-          "inflight": undefined,
-          "meta": Object {
-            "fetchFactoryId": "test-short-id",
-            "conflict": "cancel",
-            "displayName": "example fetch",
-            "key": "key:test arg",
-            "share": undefined,
-          },
-          "payload": [Error: test error],
-          "shared": false,
-          "updatedAt": "test-timestamp",
-        },
-      },
-    },
-    "shared": Object {},
-  },
-}
-`);
+    expect(errorState).toMatchInlineSnapshot(`
+            Object {
+              "actions": Object {
+                "Example Fetch | test-short-id": Object {
+                  "key:": Object {
+                    "error": true,
+                    "inflight": undefined,
+                    "meta": Object {
+                      "conflict": "cancel",
+                      "displayName": "Example Fetch",
+                      "fetchFactoryId": "test-short-id",
+                      "key": "key:",
+                      "share": undefined,
+                      "type": "FETCH_INSTANCE",
+                    },
+                    "payload": Object {},
+                    "shared": false,
+                    "updatedAt": "test-timestamp",
+                  },
+                },
+              },
+              "shared": Object {},
+            }
+        `);
 
-    // when
-    const [data, status] = getFetch(actionCreatorFactory('test arg'), state);
+    const [data, status] = getFetch(fetch, { dataService: errorState });
 
-    // then
     expect(data).toBe(null);
     expect(isError(status)).toBe(true);
   });
 
-  test('unshared', () => {
-    // given
-    const actionCreatorFactory = defineFetch({
-      displayName: 'example fetch',
-      make: testArg => ({
-        key: [testArg],
-        request: () => ({ exampleService }) => exampleService(testArg),
+  test("shared: returns null and UNKNOWN if the values aren't the in the shared store", () => {
+    const state = { dataService: dataServiceReducer({}, {}) };
+
+    const makeMyFetch = defineFetch({
+      displayName: 'My Fetch',
+      share: { namespace: 'example' },
+      make: () => ({
+        key: [],
+        request: () => () => {},
       }),
     });
 
-    const fetchAction = actionCreatorFactory('test arg')();
+    const myFetch = makeMyFetch();
 
-    const successAction = {
-      type: createActionType(SUCCESS, fetchAction.meta),
-      meta: fetchAction.meta,
-      payload: { mock: 'data' },
-    };
+    const result = getFetch(myFetch, state);
 
-    expect(isSuccessAction(successAction)).toBe(true);
-
-    const state = { dataService: dataServiceReducer({}, successAction) };
-    expect(state).toMatchInlineSnapshot(`
-Object {
-  "dataService": Object {
-    "actions": Object {
-      "example fetch | test-short-id": Object {
-        "key:test arg": Object {
-          "error": false,
-          "hadSuccess": true,
-          "inflight": undefined,
-          "meta": Object {
-            "conflict": "cancel",
-            "displayName": "example fetch",
-            "fetchFactoryId": "test-short-id",
-            "key": "key:test arg",
-            "share": undefined,
-          },
-          "payload": Object {
-            "mock": "data",
-          },
-          "shared": false,
-          "updatedAt": "test-timestamp",
-        },
-      },
-    },
-    "shared": Object {},
-  },
-}
-`);
-
-    // when
-    const [data, status] = getFetch(actionCreatorFactory('test arg'), state);
-
-    // then
-    expect(data).toMatchInlineSnapshot(`
-Object {
-  "mock": "data",
-}
-`);
-    expect(isNormal(status)).toBe(true);
-    expect(isLoading(status)).toBe(false);
+    expect(result).toMatchInlineSnapshot(`
+      Array [
+        null,
+        0,
+      ]
+    `);
   });
 
-  test.todo('static key');
+  test('shared: returns a shared state if the fetch is shared', () => {
+    const makeFetch = defineFetch({
+      displayName: 'Example',
+      share: { namespace: 'example' },
+      make: () => ({
+        key: [],
+        request: () => () => ({ foo: 'bar' }),
+      }),
+    });
+
+    const fetch = makeFetch();
+
+    const initialState = dataServiceReducer({}, fetch());
+
+    const { meta } = fetch;
+
+    const successAction = {
+      type: createActionType(SUCCESS, meta),
+      meta,
+      payload: { foo: 'bar' },
+    };
+
+    const successState = dataServiceReducer(initialState, successAction);
+
+    expect(successState).toMatchInlineSnapshot(`
+                              Object {
+                                "actions": Object {
+                                  "Example | test-short-id": Object {
+                                    "key:": Object {
+                                      "error": false,
+                                      "hadSuccess": true,
+                                      "inflight": undefined,
+                                      "meta": Object {
+                                        "conflict": "cancel",
+                                        "displayName": "Example",
+                                        "fetchFactoryId": "test-short-id",
+                                        "key": "key:",
+                                        "share": Object {
+                                          "namespace": "example",
+                                        },
+                                        "type": "FETCH_INSTANCE",
+                                      },
+                                      "payload": Object {
+                                        "foo": "bar",
+                                      },
+                                      "shared": true,
+                                      "updatedAt": "test-timestamp",
+                                    },
+                                  },
+                                },
+                                "shared": Object {
+                                  "example | key:": Object {
+                                    "data": Object {
+                                      "foo": "bar",
+                                    },
+                                    "parentActions": Object {
+                                      "Example | test-short-id | key:": Object {
+                                        "key": "key:",
+                                        "storeKey": "Example | test-short-id",
+                                      },
+                                    },
+                                  },
+                                },
+                              }
+                    `);
+
+    const [data, status] = getFetch(fetch, { dataService: successState });
+
+    expect(data).toMatchInlineSnapshot(`
+                                    Object {
+                                      "foo": "bar",
+                                    }
+                        `);
+
+    expect(isNormal(status)).toBe(true);
+  });
+
+  test('shared: isolated loading states', () => {});
 });

@@ -58,22 +58,21 @@ export function arrayShallowEqual(a, b) {
   return true;
 }
 
-export default function getFetch(fetchActionCreator, state, options) {
-  if (!fetchActionCreator) throw new Error('first argument, the fetch action, is required');
-  if (!state) throw new Error('state is required');
+export default function getFetch(fetch, state, options) {
+  if (!fetch) throw new Error('[getFetch] First argument, the fetch, is required');
+  if (!state) throw new Error('[getFetch] State argument is required');
   if (!state.dataService) {
-    throw new Error('"dataService" is a required key. pass in the whole store state.');
+    throw new Error('[getFetch] "dataService" is a required key. pass in the whole store state.');
   }
 
-  const { fetchFactoryId, displayName, key, share } = fetchActionCreator.meta;
-  const storeKey = createStoreKey(displayName, fetchFactoryId);
-  if (!key) {
-    throw new Error(
-      `Could not find any key for action "${displayName}". If you're using ` +
-        `or getting a fetch, ensure that you're passing all the correct ` +
-        `parameters.`,
-    );
+  const isFetchInstance = _get(fetch, ['meta', 'type']) === 'FETCH_INSTANCE';
+  if (!isFetchInstance) {
+    throw new Error('[getFetch] expected to see a fetch instance in get fetch.');
   }
+
+  const { fetchFactoryId, displayName, key, share } = fetch.meta;
+
+  const storeKey = createStoreKey(displayName, fetchFactoryId);
 
   const value = _get(state, ['dataService', 'actions', storeKey, key]);
 
