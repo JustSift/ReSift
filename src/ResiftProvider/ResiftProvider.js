@@ -18,44 +18,33 @@ function createStore(dataService) {
   return store;
 }
 
-function ResiftProvider({ children, dataService }) {
-  const reduxContextValue = useContext(ReactReduxContext);
-  const storeFromReactRedux = _get(reduxContextValue, ['store']);
+function ResiftProvider({ children, dataService, suppressOutsideReduxWarning }) {
+  const sawReduxContext = !!useContext(ReactReduxContext);
 
   if (process.env.NODE_ENV !== 'production') {
-    if (dataService && storeFromReactRedux) {
+    if (sawReduxContext && !suppressOutsideReduxWarning) {
       console.warn(
-        "[ResiftProvider] you shouldn't provide the `dataService` prop to the provider if you wrap in the redux `<Provider>`. TODO: make docs for this",
+        // TODO: add docs
+        "[ResiftProvider] Saw an outside Redux context in this tree. If you're using Redux in your application, you don't need to wrap your app in the ResiftProvider.",
       );
     }
+  }
 
-    if (!storeFromReactRedux && !dataService) {
-      throw new Error(
-        '[ResiftProvider] `dataService` was not passed to `<ResiftProvider />`. TODO: make docs for this',
-      );
-    }
+  if (!dataService) {
+    throw new Error('[ResiftProvider] `dataService` missing from props.');
   }
 
   const store = useMemo(() => {
-    if (storeFromReactRedux) {
-      return storeFromReactRedux;
-    }
-
     return createStore(dataService);
-  }, [storeFromReactRedux, dataService]);
+  }, [dataService]);
 
-  // if the store is the storeFromRedux then we don't need to do anything
-  if (storeFromReactRedux) {
-    return children;
-  }
-
-  // otherwise wrap in provider
   return <Provider store={store}>{children}</Provider>;
 }
 
 ResiftProvider.propTypes = {
   children: PropTypes.node,
-  dataService: PropTypes.func,
+  dataService: PropTypes.func.isRequired,
+  suppressOutsideReduxWarning: PropTypes.bool,
 };
 
 export default ResiftProvider;
