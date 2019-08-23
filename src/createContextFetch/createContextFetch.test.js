@@ -9,6 +9,18 @@ import createContextFetch from './createContextFetch';
 import dataService from '../dataServiceReducer';
 import DeferredPromise from '../DeferredPromise';
 
+// see here...
+// https://github.com/facebook/react/issues/11098#issuecomment-370614347
+// ...for why these exist. not an ideal solution imo but it works
+beforeEach(() => {
+  jest.spyOn(console, 'error');
+  global.console.error.mockImplementation(() => {});
+});
+
+afterEach(() => {
+  global.console.error.mockRestore();
+});
+
 test('createContextFetch hooks', async () => {
   const rootReducer = combineReducers({ dataService });
   const handleError = jest.fn();
@@ -62,6 +74,50 @@ test('createContextFetch hooks', async () => {
     const result = await gotExampleValue;
     expect(result).toMatchInlineSnapshot(`5`);
   });
+});
+
+test('createContextFetch hooks throws when there is no context value', async () => {
+  const gotError = new DeferredPromise();
+
+  class ErrorBoundary extends React.Component {
+    componentDidCatch(e) {
+      gotError.resolve(e);
+    }
+
+    render() {
+      return this.props.children;
+    }
+  }
+
+  const makeFetch = defineFetch({
+    displayName: 'Example',
+    make: () => ({
+      key: [],
+      request: () => () => {},
+    }),
+  });
+  const fetch = makeFetch();
+
+  const { useContextFetch } = createContextFetch(fetch);
+
+  function ExampleComponent() {
+    useContextFetch();
+    return null;
+  }
+
+  await act(async () => {
+    create(
+      <ErrorBoundary>
+        <ExampleComponent />
+      </ErrorBoundary>,
+    );
+    await gotError;
+  });
+
+  const error = await gotError;
+  expect(error.message).toMatchInlineSnapshot(
+    `"[createContextFetch] could not find global fetch context. Did you forget to wrap this tree with the provider?"`,
+  );
 });
 
 test('render props/no hooks API', async () => {

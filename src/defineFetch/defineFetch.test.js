@@ -78,6 +78,24 @@ describe('defineFetch', () => {
     );
   });
 
+  test("it throws if `request` doesn't return a function", () => {
+    const makeFetch = defineFetch({
+      displayName: 'Example',
+      make: () => ({
+        key: [],
+        request: () => 'not a function',
+      }),
+    });
+
+    const fetch = makeFetch();
+
+    expect(() => {
+      fetch();
+    }).toThrowErrorMatchingInlineSnapshot(
+      `"[defineFetch] Expected \`fetch\` to return a curried function"`,
+    );
+  });
+
   test('the action creator factory returns an action creator with meta', () => {
     const actionCreatorFactory = defineFetch({
       displayName: 'example fetch',
@@ -91,15 +109,15 @@ describe('defineFetch', () => {
 
     expect(typeof actionCreator).toBe('function');
     expect(actionCreator.meta).toMatchInlineSnapshot(`
-Object {
-  "conflict": "cancel",
-  "displayName": "example fetch",
-  "fetchFactoryId": "test-short-id",
-  "key": "key:test-id",
-  "share": undefined,
-  "type": "ACTION_CREATOR",
-}
-`);
+      Object {
+        "conflict": "cancel",
+        "displayName": "example fetch",
+        "fetchFactoryId": "test-short-id",
+        "key": "key:test-id",
+        "share": undefined,
+        "type": "FETCH_INSTANCE",
+      }
+    `);
   });
 
   test('the payload function should include the cancellation mechanism', () => {
@@ -172,6 +190,9 @@ Object {
 });
 
 describe('isFetchAction', () => {
+  test('falsy value', () => {
+    expect(isFetchAction(null)).toBe(false);
+  });
   test('negative path', () => {
     const action = {
       type: 'something else',
@@ -207,10 +228,10 @@ test('staticFetchFactoryId', () => {
   });
 
   expect(fetchFactory.meta).toMatchInlineSnapshot(`
-Object {
-  "displayName": "Get Example",
-  "fetchFactoryId": "example-static-fetch-factory-id",
-  "type": "ACTION_CREATOR_FACTORY",
-}
-`);
+    Object {
+      "displayName": "Get Example",
+      "fetchFactoryId": "example-static-fetch-factory-id",
+      "type": "FETCH_INSTANCE_FACTORY",
+    }
+  `);
 });

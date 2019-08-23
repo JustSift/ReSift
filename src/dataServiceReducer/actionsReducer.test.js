@@ -33,23 +33,23 @@ test('when given a fetch action, it adds an inflight payload to the store', () =
   const newState = actionsReducer(previousState, action);
 
   expect(newState).toMatchInlineSnapshot(`
-Object {
-  "example fetch | test-shortid": Object {
-    "key:test arg": Object {
-      "inflight": [Function],
-      "meta": Object {
-        "conflict": "cancel",
-        "displayName": "example fetch",
-        "fetchFactoryId": "test-shortid",
-        "key": "key:test arg",
-        "share": undefined,
+    Object {
+      "example fetch | test-shortid": Object {
+        "key:test arg": Object {
+          "inflight": [Function],
+          "meta": Object {
+            "conflict": "cancel",
+            "displayName": "example fetch",
+            "fetchFactoryId": "test-shortid",
+            "key": "key:test arg",
+            "share": undefined,
+          },
+          "shared": false,
+          "updatedAt": "test-timestamp",
+        },
       },
-      "shared": false,
-      "updatedAt": "test-timestamp",
-    },
-  },
-}
-`);
+    }
+  `);
 });
 
 test('when given a success action, it adds a success payload and replaces the inflight', () => {
@@ -78,33 +78,33 @@ test('when given a success action, it adds a success payload and replaces the in
 
   // then
   expect(newState).toMatchInlineSnapshot(`
-Object {
-  "example action | test-shortid": Object {
-    "key:test arg": Object {
-      "error": false,
-      "hadSuccess": true,
-      "inflight": undefined,
-      "meta": Object {
-        "conflict": "cancel",
-        "displayName": "example action",
-        "fetchFactoryId": "test-shortid",
-        "key": "key:test arg",
-        "share": undefined,
+    Object {
+      "example action | test-shortid": Object {
+        "key:test arg": Object {
+          "error": false,
+          "hadSuccess": true,
+          "inflight": undefined,
+          "meta": Object {
+            "conflict": "cancel",
+            "displayName": "example action",
+            "fetchFactoryId": "test-shortid",
+            "key": "key:test arg",
+            "share": undefined,
+          },
+          "payload": Object {
+            "mock": "data",
+          },
+          "shared": false,
+          "updatedAt": "test-timestamp",
+        },
       },
-      "payload": Object {
-        "mock": "data",
-      },
-      "shared": false,
-      "updatedAt": "test-timestamp",
-    },
-  },
-}
-`);
+    }
+  `);
 });
 
 test('when given a clear action, it removes the sub-store', () => {
   // given
-  const makeActionCreator = defineFetch({
+  const makeFetch = defineFetch({
     displayName: 'example action',
     make: testArg => ({
       key: [testArg],
@@ -112,53 +112,98 @@ test('when given a clear action, it removes the sub-store', () => {
     }),
   });
 
-  const actionCreator = makeActionCreator('test arg');
-  const fetchAction = actionCreator('test arg');
+  const oneFetch = makeFetch('one');
+  const twoFetch = makeFetch('two');
 
-  const successAction = {
-    type: createActionType(SUCCESS, fetchAction.meta),
-    meta: fetchAction.meta,
-    payload: { mock: 'data' },
+  const oneFetchSuccess = {
+    type: createActionType(SUCCESS, oneFetch.meta),
+    meta: oneFetch.meta,
+    payload: { mock: 'one' },
   };
 
-  expect(isSuccessAction(successAction)).toBe(true);
-  const successState = actionsReducer({}, successAction);
-  expect(successState).toMatchInlineSnapshot(`
-Object {
-  "example action | test-shortid": Object {
-    "key:test arg": Object {
-      "error": false,
-      "hadSuccess": true,
-      "inflight": undefined,
-      "meta": Object {
-        "conflict": "cancel",
-        "displayName": "example action",
-        "fetchFactoryId": "test-shortid",
-        "key": "key:test arg",
-        "share": undefined,
-      },
-      "payload": Object {
-        "mock": "data",
-      },
-      "shared": false,
-      "updatedAt": "test-timestamp",
-    },
-  },
-}
-`);
+  const twoFetchSuccess = {
+    type: createActionType(SUCCESS, twoFetch.meta),
+    meta: twoFetch.meta,
+    payload: { mock: 'two' },
+  };
 
-  const clearAction = clearFetch(actionCreator('test arg'));
+  const oneState = actionsReducer({}, oneFetchSuccess);
+  const state = actionsReducer(oneState, twoFetchSuccess);
+
+  expect(state).toMatchInlineSnapshot(`
+    Object {
+      "example action | test-shortid": Object {
+        "key:one": Object {
+          "error": false,
+          "hadSuccess": true,
+          "inflight": undefined,
+          "meta": Object {
+            "conflict": "cancel",
+            "displayName": "example action",
+            "fetchFactoryId": "test-shortid",
+            "key": "key:one",
+            "share": undefined,
+            "type": "FETCH_INSTANCE",
+          },
+          "payload": Object {
+            "mock": "one",
+          },
+          "shared": false,
+          "updatedAt": "test-timestamp",
+        },
+        "key:two": Object {
+          "error": false,
+          "hadSuccess": true,
+          "inflight": undefined,
+          "meta": Object {
+            "conflict": "cancel",
+            "displayName": "example action",
+            "fetchFactoryId": "test-shortid",
+            "key": "key:two",
+            "share": undefined,
+            "type": "FETCH_INSTANCE",
+          },
+          "payload": Object {
+            "mock": "two",
+          },
+          "shared": false,
+          "updatedAt": "test-timestamp",
+        },
+      },
+    }
+  `);
+
+  const clearAction = clearFetch(oneFetch('test arg'));
   expect(isClearAction(clearAction)).toBe(true);
 
   // when
-  const clearState = actionsReducer(successState, clearAction);
+  const clearState = actionsReducer(state, clearAction);
 
   // then
   expect(clearState).toMatchInlineSnapshot(`
-Object {
-  "example action | test-shortid": Object {},
-}
-`);
+    Object {
+      "example action | test-shortid": Object {
+        "key:two": Object {
+          "error": false,
+          "hadSuccess": true,
+          "inflight": undefined,
+          "meta": Object {
+            "conflict": "cancel",
+            "displayName": "example action",
+            "fetchFactoryId": "test-shortid",
+            "key": "key:two",
+            "share": undefined,
+            "type": "FETCH_INSTANCE",
+          },
+          "payload": Object {
+            "mock": "two",
+          },
+          "shared": false,
+          "updatedAt": "test-timestamp",
+        },
+      },
+    }
+  `);
 });
 
 test('when given an error action, it adds an error payload and replaces the inflight', () => {
@@ -187,23 +232,23 @@ test('when given an error action, it adds an error payload and replaces the infl
 
   // then
   expect(newState).toMatchInlineSnapshot(`
-Object {
-  "example action | test-shortid": Object {
-    "key:test arg": Object {
-      "error": true,
-      "inflight": undefined,
-      "meta": Object {
-        "conflict": "cancel",
-        "displayName": "example action",
-        "fetchFactoryId": "test-shortid",
-        "key": "key:test arg",
-        "share": undefined,
+    Object {
+      "example action | test-shortid": Object {
+        "key:test arg": Object {
+          "error": true,
+          "inflight": undefined,
+          "meta": Object {
+            "conflict": "cancel",
+            "displayName": "example action",
+            "fetchFactoryId": "test-shortid",
+            "key": "key:test arg",
+            "share": undefined,
+          },
+          "payload": [Error: test error],
+          "shared": false,
+          "updatedAt": "test-timestamp",
+        },
       },
-      "payload": [Error: test error],
-      "shared": false,
-      "updatedAt": "test-timestamp",
-    },
-  },
-}
-`);
+    }
+  `);
 });
