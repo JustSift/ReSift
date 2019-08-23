@@ -19,11 +19,6 @@ export default function clearFetch(fetch) {
       '[clearFetch] you tried to pass an action creatorFactory to clearFetch. Ask rico until he write docs.',
     );
   }
-  if (!fetch.meta.key) {
-    throw new Error(
-      '`clearFetch` expected to see a key. Are you using a fetch with a dynamic key like a static key?',
-    );
-  }
 
   return {
     type: createActionType(CLEAR, fetch.meta),
