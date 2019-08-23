@@ -4,7 +4,7 @@
   "description": "A state management for data fetches in React",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --coverage --coverageReporters=text-lcov | coveralls",
     "clean": "rimraf node_modules && npm i",
     "build": "node ./scripts/build.js",
     "check-types": "npx tsc",
@@ -29,6 +29,7 @@
     "@babel/preset-typescript": "^7.3.3",
     "@types/react": "^16.8.23",
     "babel-loader": "^8.0.6",
+    "coveralls": "^3.0.6",
     "express": "^4.17.1",
     "jest": "^24.9.0",
     "node-fetch": "^2.6.0",
