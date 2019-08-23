@@ -4,13 +4,14 @@ import { ReactReduxContext } from 'react-redux';
 import CLEAR from '../prefixes/CLEAR';
 
 export default function useDispatch() {
-  const { store } = useContext(ReactReduxContext);
-  if (!store) {
+  const contextValue = useContext(ReactReduxContext);
+  if (!contextValue) {
     // TODO: add docs link
     throw new Error(
-      'could not find store in context. in order to `useDispatch` you must add the respective provider',
+      '[useDispatch] Could not find the respective context. In order to `useDispatch` you must add the respective provider.',
     );
   }
+  const { store } = contextValue;
 
   if (process.env.NODE_ENV === 'production') return store.dispatch;
 
@@ -21,10 +22,16 @@ export default function useDispatch() {
       const isClearAction = _get(action, ['type'], '').startsWith(CLEAR);
 
       if (isFetchInstance && !isClearAction) {
-        throw new Error('[dispatch] you dispatched a fetch. Ask rico until he writes docs.');
+        // TODO: add docs for this
+        throw new Error(
+          "[useDispatch] You dispatched a fetch instance without calling it when you should've dispatched a request.",
+        );
       }
       if (isFetchFactory) {
-        throw new Error('[dispatch] you dispatched a make fetch. Ask rico until he writes docs.');
+        throw new Error(
+          // TODO: add docs for this
+          "[useDispatch] You dispatched a fetch factory when you should've dispatched a request.",
+        );
       }
 
       return store.dispatch(action);
