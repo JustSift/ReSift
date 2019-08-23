@@ -22,7 +22,7 @@ import NORMAL from '../NORMAL';
 // With shared statuses, it makes sense to have `isNormal` return true if only one status is normal
 // (vs all). This is because the shared fetches share the same internal store so if one fetch has
 // the data, it's sufficient for all of them.
-function combineSharedStatuses(...statuses) {
+export function combineSharedStatuses(...statuses) {
   if (statuses.every(status => isUnknown(status))) {
     return UNKNOWN;
   }
@@ -46,16 +46,6 @@ export function getStatus(actionState) {
   const normalStatus = hadSuccess && !error ? NORMAL : UNKNOWN;
 
   return inflightStatus | errorStatus | normalStatus;
-}
-
-export function arrayShallowEqual(a, b) {
-  if (a.length !== b.length) return false;
-  for (let i = 0; i < a.length; i += 1) {
-    const x = a[i];
-    const y = b[i];
-    if (x !== y) return false;
-  }
-  return true;
 }
 
 export default function getFetch(fetch, state, options) {

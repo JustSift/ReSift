@@ -1,24 +1,21 @@
 import dataServiceReducer from '../dataServiceReducer';
 import defineFetch from '../defineFetch';
 import createActionType from '../createActionType';
-import ERROR from '../prefixes/ERROR';
-import SUCCESS from '../prefixes/SUCCESS';
-import { isErrorAction, isSuccessAction } from '../createDataService';
+import RESIFT_ERROR from '../prefixes/ERROR';
+import RESIFT_SUCCESS from '../prefixes/SUCCESS';
+import UNKNOWN from '../UNKNOWN';
+import NORMAL from '../NORMAL';
+import LOADING from '../LOADING';
+import ERROR from '../ERROR';
 import isError from '../isError';
 import isLoading from '../isLoading';
 import isNormal from '../isNormal';
 import isUnknown from '../isUnknown';
 
-import getFetch, { getStatus, arrayShallowEqual } from './getFetch';
+import getFetch, { getStatus, combineSharedStatuses } from './getFetch';
 
 jest.mock('shortid', () => () => 'test-short-id');
 jest.mock('../timestamp', () => () => 'test-timestamp');
-
-describe('arrayShallowEqual', () => {
-  test('returns false when the lengths are not the same', () => {
-    expect(arrayShallowEqual([], [1])).toBe(false);
-  });
-});
 
 describe('getStatus', () => {
   test('unknown', () => {
@@ -34,6 +31,7 @@ describe('getStatus', () => {
     expect(isNormal(status)).toBe(false);
     expect(isError(status)).toBe(false);
   });
+
   test('loading', () => {
     // given
     const mockActionState = {
@@ -50,6 +48,7 @@ describe('getStatus', () => {
     expect(isNormal(status)).toBe(false);
     expect(isError(status)).toBe(false);
   });
+
   test('normal', () => {
     // given
     const mockActionState = {
@@ -66,6 +65,7 @@ describe('getStatus', () => {
     expect(isNormal(status)).toBe(true);
     expect(isError(status)).toBe(false);
   });
+
   test('error', () => {
     // given
     const mockActionState = {
@@ -82,6 +82,7 @@ describe('getStatus', () => {
     expect(isNormal(status)).toBe(false);
     expect(isError(status)).toBe(true);
   });
+
   test('combined', () => {
     // given
     const mockActionState = {
@@ -98,6 +99,53 @@ describe('getStatus', () => {
     expect(isLoading(status)).toBe(false);
     expect(isNormal(status)).toBe(false);
     expect(isError(status)).toBe(true);
+  });
+});
+
+describe('combineSharedStatuses', () => {
+  describe('if all statuses is unknown then the resulting status is also unknown', () => {
+    test('positive', () => {
+      const combined = combineSharedStatuses(UNKNOWN, UNKNOWN);
+      expect(isUnknown(combined)).toBe(true);
+    });
+    test('negative', () => {
+      const combined = combineSharedStatuses(UNKNOWN, NORMAL);
+      expect(isUnknown(combined)).toBe(false);
+    });
+  });
+
+  describe('if one status is loading, the combined status is also loading', () => {
+    test('positive', () => {
+      const combined = combineSharedStatuses(NORMAL, LOADING);
+      expect(isLoading(combined)).toBe(true);
+    });
+    test('negative', () => {
+      const combined = combineSharedStatuses(NORMAL, ERROR);
+      expect(isLoading(combined)).toBe(false);
+    });
+  });
+
+  describe('if one status is normal, the combined status is also normal', () => {
+    //      this is the desired behavior because shared fetches share the same state
+    test('positive', () => {
+      const combined = combineSharedStatuses(NORMAL, LOADING);
+      expect(isNormal(combined)).toBe(true);
+    });
+    test('negative', () => {
+      const combined = combineSharedStatuses(LOADING, ERROR);
+      expect(isNormal(combined)).toBe(false);
+    });
+  });
+
+  describe('if one status is error, the combined status is also error', () => {
+    test('positive', () => {
+      const combined = combineSharedStatuses(ERROR, LOADING);
+      expect(isError(combined)).toBe(true);
+    });
+    test('negative', () => {
+      const combined = combineSharedStatuses(NORMAL, LOADING);
+      expect(isError(combined)).toBe(false);
+    });
   });
 });
 
@@ -213,7 +261,7 @@ describe('getFetch', () => {
 
     const initialState = dataServiceReducer({}, {});
     const errorAction = {
-      type: createActionType(ERROR, meta),
+      type: createActionType(RESIFT_ERROR, meta),
       meta,
       payload: error,
       error: true,
@@ -293,7 +341,7 @@ describe('getFetch', () => {
     const { meta } = fetch;
 
     const successAction = {
-      type: createActionType(SUCCESS, meta),
+      type: createActionType(RESIFT_SUCCESS, meta),
       meta,
       payload: { foo: 'bar' },
     };
@@ -353,5 +401,112 @@ describe('getFetch', () => {
     expect(isNormal(status)).toBe(true);
   });
 
-  test('shared: isolated loading states', () => {});
+  test('shared: isolated status', () => {
+    // if isolatedStatus is true, it will grab the isolated status vs calculating
+    // a shared status from the parent actions
+    const makeFetchOne = defineFetch({
+      displayName: 'Example One',
+      share: { namespace: 'example' },
+      make: () => ({
+        key: [],
+        request: () => () => {},
+      }),
+    });
+
+    const makeFetchTwo = defineFetch({
+      displayName: 'Example Two',
+      share: { namespace: 'example' },
+      make: () => ({
+        key: [],
+        request: () => () => {},
+      }),
+    });
+
+    const oneFetch = makeFetchOne();
+    const twoFetch = makeFetchTwo();
+
+    const stateOne = dataServiceReducer({}, oneFetch());
+    const stateTwo = dataServiceReducer(stateOne, twoFetch());
+
+    const { meta } = oneFetch;
+    const successActionOne = {
+      type: createActionType(RESIFT_SUCCESS, meta),
+      meta,
+      payload: { one: 'done' },
+    };
+
+    const finalState = dataServiceReducer(stateTwo, successActionOne);
+
+    expect(finalState).toMatchInlineSnapshot(`
+      Object {
+        "actions": Object {
+          "Example One | test-short-id": Object {
+            "key:": Object {
+              "error": false,
+              "hadSuccess": true,
+              "inflight": undefined,
+              "meta": Object {
+                "conflict": "cancel",
+                "displayName": "Example One",
+                "fetchFactoryId": "test-short-id",
+                "key": "key:",
+                "share": Object {
+                  "namespace": "example",
+                },
+                "type": "FETCH_INSTANCE",
+              },
+              "payload": Object {
+                "one": "done",
+              },
+              "shared": true,
+              "updatedAt": "test-timestamp",
+            },
+          },
+          "Example Two | test-short-id": Object {
+            "key:": Object {
+              "inflight": [Function],
+              "meta": Object {
+                "conflict": "cancel",
+                "displayName": "Example Two",
+                "fetchFactoryId": "test-short-id",
+                "key": "key:",
+                "share": Object {
+                  "namespace": "example",
+                },
+              },
+              "shared": true,
+              "updatedAt": "test-timestamp",
+            },
+          },
+        },
+        "shared": Object {
+          "example | key:": Object {
+            "data": Object {
+              "one": "done",
+            },
+            "parentActions": Object {
+              "Example One | test-short-id | key:": Object {
+                "key": "key:",
+                "storeKey": "Example One | test-short-id",
+              },
+              "Example Two | test-short-id | key:": Object {
+                "key": "key:",
+                "storeKey": "Example Two | test-short-id",
+              },
+            },
+          },
+        },
+      }
+    `);
+
+    const isolatedStatus = getFetch(
+      oneFetch,
+      { dataService: finalState },
+      { isolatedStatus: true },
+    )[1];
+    expect(isLoading(isolatedStatus)).toBe(false);
+
+    const sharedStatus = getFetch(oneFetch, { dataService: finalState })[1];
+    expect(isLoading(sharedStatus)).toBe(true);
+  });
 });
