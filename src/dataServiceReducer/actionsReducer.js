@@ -73,17 +73,14 @@ export default function actionsReducer(state = {}, action) {
     };
   }
 
-  if (isClearAction(action)) {
-    return {
-      ...state,
-      [storeKey]: Object.entries(_get(state, [storeKey], {}))
-        .filter(([k]) => k !== key)
-        .reduce((acc, [key, value]) => {
-          acc[key] = value;
-          return acc;
-        }, {}),
-    };
-  }
-
-  return state;
+  // otherwise must be a clear action because of the first if statement
+  return {
+    ...state,
+    [storeKey]: Object.entries(_get(state, [storeKey], {}))
+      .filter(([k]) => k !== key)
+      .reduce((acc, [key, value]) => {
+        acc[key] = value;
+        return acc;
+      }, {}),
+  };
 }

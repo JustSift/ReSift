@@ -3,13 +3,9 @@
  * or the string literal `'TIMER'` if that argument is not present
  */
 export default function timer(milliseconds, id) {
-  return new Promise((resolve, reject) => {
-    try {
-      setTimeout(() => {
-        resolve(id || 'TIMER');
-      }, milliseconds);
-    } catch (e) {
-      reject(e);
-    }
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve(id === undefined ? 'TIMER' : id);
+    }, milliseconds);
   });
 }

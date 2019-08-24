@@ -73,9 +73,8 @@ export default function defineFetch({
       const resolvablePayload = makeResult.request(...requestArgs);
 
       if (typeof resolvablePayload !== 'function') {
-        throw new Error(
-          '[defineFetch] expected `fetch` to return a curried function. See https://resift.sift.codes',
-        );
+        // TODO: add docs
+        throw new Error('[defineFetch] Expected `fetch` to return a curried function');
       }
 
       // cancellation mechanism
@@ -107,7 +106,7 @@ export default function defineFetch({
 
     fetch.meta = {
       ...meta,
-      type: 'ACTION_CREATOR',
+      type: 'FETCH_INSTANCE',
     };
 
     return fetch;
@@ -118,7 +117,7 @@ export default function defineFetch({
   memoizedFetchFactory.meta = {
     fetchFactoryId,
     displayName,
-    type: 'ACTION_CREATOR_FACTORY',
+    type: 'FETCH_INSTANCE_FACTORY',
   };
 
   return memoizedFetchFactory;

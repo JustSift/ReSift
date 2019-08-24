@@ -1,5 +1,6 @@
 import defineFetch from '../defineFetch';
-import clearFetch from './clearFetch';
+import clearFetch, { isClearAction } from './clearFetch';
+import CLEAR from '../prefixes/CLEAR';
 
 jest.mock('shortid', () => () => 'test-shortid');
 
@@ -24,7 +25,7 @@ Object {
     "fetchFactoryId": "test-shortid",
     "key": "key:person123",
     "share": undefined,
-    "type": "ACTION_CREATOR",
+    "type": "FETCH_INSTANCE",
   },
   "type": "@@RESIFT/CLEAR | person fetch | test-shortid",
 }
@@ -52,7 +53,7 @@ Object {
     "fetchFactoryId": "test-shortid",
     "key": "key:",
     "share": undefined,
-    "type": "ACTION_CREATOR",
+    "type": "FETCH_INSTANCE",
   },
   "type": "@@RESIFT/CLEAR | test fetch | test-shortid",
 }
@@ -71,4 +72,13 @@ test('it throws if you try to use a dynamic key like a static key', () => {
   expect(() => clearFetch(personFetch)).toThrowErrorMatchingInlineSnapshot(
     `"[clearFetch] you tried to pass an action creatorFactory to clearFetch. Ask rico until he write docs."`,
   );
+});
+
+describe('isClearAction', () => {
+  test('positive path', () => {
+    expect(isClearAction({ type: CLEAR })).toBe(true);
+  });
+  test('negative path', () => {
+    expect(isClearAction(0)).toBe(false);
+  });
 });

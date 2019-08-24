@@ -36,7 +36,7 @@ Object {
     "fetchFactoryId": "test-short-id",
     "key": "key:person123",
     "share": undefined,
-    "type": "ACTION_CREATOR",
+    "type": "FETCH_INSTANCE",
   },
   "type": "@@RESIFT/CLEAR | fetch person | test-short-id",
 }
