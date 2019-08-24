@@ -16,4 +16,6 @@ export default class DeferredPromise {
     this.catch = this._promise.catch.bind(this._promise);
     this.finally = this._promise.finally.bind(this._promise);
   }
+
+  [Symbol.toStringTag] = 'Promise';
 }
