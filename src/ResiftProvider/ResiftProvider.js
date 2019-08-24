@@ -1,7 +1,6 @@
 import React, { useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { ReactReduxContext, Provider } from 'react-redux';
-import _get from 'lodash/get';
 
 import { createStore as createReduxStore, combineReducers, applyMiddleware, compose } from 'redux';
 import dataServiceReducer from '../dataServiceReducer';

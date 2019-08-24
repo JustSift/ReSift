@@ -15,6 +15,7 @@ export default function useDispatch() {
 
   if (process.env.NODE_ENV === 'production') return store.dispatch;
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   return useCallback(
     action => {
       const isFetchInstance = _get(action, ['meta', 'type']) === 'FETCH_INSTANCE';

@@ -1,5 +1,4 @@
 import _get from 'lodash/get';
-import _flatten from 'lodash/flatten';
 import createStoreKey from '../createStoreKey';
 import createShareKey from '../createShareKey';
 
