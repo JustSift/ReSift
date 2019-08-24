@@ -10,7 +10,7 @@ This quick glance is just that. Without too many words, here are some quick code
 
 > These examples makes use of [React Hooks](https://reactjs.org/docs/hooks-intro.html). If you're not familiar with React Hooks, these examples may look a bit foreign as they are hooks idiomatic.
 >
-> We recommend using our hooks API but if you're not comfortable, we do offer a way to use this library with [React-Redux's `connect`](../TODO.md) for more compatibility.
+> We recommend using our hooks API, but if you're not comfortable, we do offer a way to use this library with [React-Redux's `connect`](../TODO.md) for more compatibility.
 
 `Person.js`
 
@@ -68,8 +68,8 @@ export default Person;
 ```js
 import { defineFetch } from 'resift';
 
-// `makePersonFetch` is a "fetch factory" the defines what this fetches does
-// and how it gets data
+// `makePersonFetch` is a "fetch factory" which defines what this fetch does and
+// how it gets data
 const makePersonFetch = defineFetch({
   displayName: 'Get Person',
 

@@ -13,17 +13,17 @@ When you start to develop a React application, you soon realize that there is a 
 With every fetch we need to know:
 
 - If the data request is inflight (so we can show a loading indicator)
-- Where to store the data and how to look it up
+- Where the resulting data will be stored, and how to later retrieve it
 - If it's related to other fetches so they update consistently
-- If the response is an error so we try to recover
+- If the response was an error so we can try to recover
 
-These tasks themselves aren't overly complicated but doing them over and over and over again _will_ take time away from your product.
+These tasks themselves aren't overly complicated, but doing them over and over and over again _will_ take time away from your product.
 
-To make matters worse, there's an infinite way to accomplish said tasks, and when working on a team, those differences can be confusing or hard to manage.
+To make matters worse, there are an infinite number of ways to accomplish said tasks, and managing these differences while working on a team can be confusing and hard to manage.
 
 ## Introducing ReSift
 
-As stated above, ReSift is a capable and versatile library for data fetches. ReSift is opinionated where it matters but also pluggable to suit your different data fetching needs.
+ReSift is a capable and versatile library for data fetches. ReSift is opinionated where it matters but also pluggable to suit your different data fetching needs.
 
 **Features:**
 
