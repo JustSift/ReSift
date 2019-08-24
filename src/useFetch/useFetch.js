@@ -1,5 +1,6 @@
 import { useMemo, useCallback } from 'react';
 import { useSelector } from 'react-redux';
+import objectHash from 'object-hash';
 import getFetch from '../getFetch';
 import shallowEqual from '../shallowEqual';
 
@@ -18,15 +19,16 @@ function memoize(fn) {
   return returnPreviousIfUnchanged;
 }
 
-export default function useFetch(fetch, options) {
-  const memoizedGetFetch = useMemo(() => memoize(getFetch), [
-    fetch.meta.fetchFactoryId,
-    fetch.meta.key,
-  ]);
+export default function useFetch(fetch, options = {}) {
+  const memoizedGetFetch = useMemo(() => memoize(getFetch), []);
 
-  const selector = useCallback(state => memoizedGetFetch(fetch, state, options), [
-    fetch.meta.fetchFactoryId,
-    fetch.meta.key,
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const memoizedOptions = useMemo(() => options, [objectHash(options)]);
+
+  const selector = useCallback(state => memoizedGetFetch(fetch, state, memoizedOptions), [
+    fetch,
+    memoizedOptions,
+    memoizedGetFetch,
   ]);
 
   return useSelector(selector);

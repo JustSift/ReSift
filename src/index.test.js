@@ -33,7 +33,7 @@ test('basic lifecycle', async () => {
 
     useEffect(() => {
       dispatch(personFetch());
-    }, [personFetch]);
+    }, [personFetch, dispatch]);
 
     useEffect(() => effectHandler({ person, status }));
 

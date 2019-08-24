@@ -84,6 +84,9 @@ export default function defineFetch({
       resolvablePayload.cancel = () => {
         canceledRef.canceled = true;
 
+        // don't know there's this false positive
+        // https://github.com/eslint/eslint/issues/12117
+        // eslint-disable-next-line no-unused-vars
         for (const subscriber of subscribers) {
           subscriber();
         }
