@@ -44,6 +44,10 @@
       "main-concepts/making-sense-of-loading-states": {
         "title": "main-concepts/making-sense-of-loading-states"
       },
+      "main-concepts/sharing-state-between-fetches": {
+        "title": "Sharing state between fetches",
+        "sidebar_label": "Sharing state between fetches"
+      },
       "main-concepts/using-the-http-service": {
         "title": "main-concepts/using-the-http-service"
       },

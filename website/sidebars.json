@@ -8,6 +8,7 @@
     "Main Concepts": [
       "main-concepts/whats-a-fetch",
       "main-concepts/how-to-define-a-fetch",
+      "main-concepts/sharing-state-between-fetches",
       "main-concepts/making-sense-of-loading-states",
       "main-concepts/using-the-http-service"
     ],
