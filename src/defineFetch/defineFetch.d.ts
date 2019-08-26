@@ -11,8 +11,6 @@ export default function defineFetch<
   params: DefineFetchParams<KeyArgs, FetchArgs, FetchResult, MergeResult>,
 ): FetchActionFactory<KeyArgs, FetchArgs, FetchResult, MergeResult>;
 
-// test one two
-
 /**
  * @docs `DefineFetchParams`
  * the shape of the parameter object that goes into `defineFetch`
@@ -31,12 +29,7 @@ export interface DefineFetchParams<
   /**
    * this is make.
    */
-  make: (
-    ...keyArgs: KeyArgs
-  ) => {
-    key: string[];
-    request: (...fetchArgs: FetchArgs) => (services: any) => FetchResult;
-  };
+  make: (...keyArgs: KeyArgs) => MakeObject<FetchArgs, FetchResult>;
 
   /**
    * this is share
@@ -44,6 +37,15 @@ export interface DefineFetchParams<
   share?: ShareParams<MergeResult>;
   conflict?: 'cancel' | 'ignore';
   staticFetchFactoryId?: string;
+}
+
+/**
+ * @docs `MakeObject`
+ * When defining the `make` function in `defineFetch`, you must return this object.
+ */
+interface MakeObject<FetchArgs extends any[], FetchResult> {
+  key: string[];
+  request: (...fetchArgs: FetchArgs) => (services: any) => FetchResult;
 }
 
 /**
@@ -55,7 +57,7 @@ export interface ShareParams<MergeResult> {
 }
 
 /**
- * @docs `FetchFactory`
+ * @docs `FetchActionFactory`
  * the result of calling `defineFetch` is a factory that returns an action creator with meta data
  */
 export type FetchActionFactory<
