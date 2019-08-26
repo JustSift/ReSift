@@ -2,24 +2,100 @@ const fs = require('fs');
 const path = require('path');
 const generateApiDoc = require('./generate-api-doc');
 
-const defineFetchDoc = fs
-  .readFileSync(path.resolve(__dirname, '../src/defineFetch/defineFetch.d.ts'))
-  .toString();
+const exampleDoc = `
+// this should turn everything that has the @docs directive into markdown
+
+/**
+ * @docs This is a title
+ * 
+ * This is a description. The output should have no generics.
+ */
+function test<T>(t: T): number
+
+/**
+ * @docs Test Interface
+ * 
+ * This interface should turn into a table
+ */
+interface Test {
+  /**
+   * this is a description of foo
+   */
+  foo: string;
+  bar?: number;
+  complex: {
+    a: Date;
+    b: Animal;
+  };
+}
+
+/**
+ * @docs \`Animal\`
+ * makes a sound
+ */
+interface Animal {
+  makeSound(): string;
+}
+
+/**
+ * this won't be included because it doesn't have the directive
+ */
+function boo(): number;
+
+/**
+ * @docs Other code test
+ * this will have its generics removed
+ */
+type OtherCode<Cool, Generic, Thing> = Cool & Generic & Thing;
+`;
 
 it('works', () => {
-  const apiDoc = generateApiDoc('defineFetch.js', defineFetchDoc);
+  const apiDoc = generateApiDoc('exampleDoc', exampleDoc);
 
-  console.log(apiDoc);
-  // expect(apiDoc).toMatchInlineSnapshot(`
-  //   "defineFetch.js API
+  expect(apiDoc).toMatchInlineSnapshot(`
+    "---
+    id: example-doc
+    title: exampleDoc API
+    sidebar_label: exampleDoc
+    ---
 
-  //       this is a thing
-  //   /
+    > These docs are auto-generated from typings files (\`*.d.ts\`).
 
-  //           \`\`\`ts
+    ## This is a title
 
-  //           \`\`\`
-  //   the shape of the parameter object that goes into \`defineFetch\`
-  //   /"
-  // `);
+    This is a description. The output should have no generics.
+
+    \`\`\`ts
+    // this should turn everything that has the @docs directive into markdown
+
+    function test(t: T): number;
+    \`\`\`
+
+    ## Test Interface
+
+    This interface should turn into a table
+
+    | Name    | Description                  | Type                                          | Required |
+    | ------- | ---------------------------- | --------------------------------------------- | -------- |
+    | foo     | this is a description of foo | <code>string</code>                           | yes      |
+    | bar     |                              | <code>number</code>                           | no       |
+    | complex |                              | <code>{<br> a: Date<br> b: Animal<br>}</code> | yes      |
+
+    ## \`Animal\`
+
+    makes a sound
+
+    | Name      | Description | Type                | Required |
+    | --------- | ----------- | ------------------- | -------- |
+    | makeSound |             | <code>string</code> | yes      |
+
+    ## Other code test
+
+    this will have its generics removed
+
+    \`\`\`ts
+    type OtherCode = Cool & Generic & Thing;
+    \`\`\`
+    "
+  `);
 });

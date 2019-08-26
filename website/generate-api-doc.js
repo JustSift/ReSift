@@ -202,7 +202,7 @@ function generateApiDoc(filename, contents) {
       return { name, description, type, required };
     }
 
-    function newLineToBr(str = '') {
+    function newLineToBr(str) {
       return str.replace(/\n/g, '<br>');
     }
 
