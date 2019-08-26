@@ -12,10 +12,19 @@
       "main-concepts/making-sense-of-loading-states",
       "main-concepts/using-the-http-service"
     ],
-    "Guides": ["guides/fetch-services"],
-    "Recipes": ["doc3"]
+    "Guides": [
+      "guides/fetch-services"
+    ],
+    "Recipes": [
+      "doc3"
+    ]
   },
-  "docs-other": {
-    "First Category": ["doc4", "doc5"]
+  "api-docs": {
+    "About": [
+      "api/about-api-docs"
+    ],
+    "API": [
+      "api/define-fetch"
+    ]
   }
 }

@@ -5,6 +5,14 @@
     "previous": "Previous",
     "tagline": "A state management library for fetches",
     "docs": {
+      "api/about-api-docs": {
+        "title": "About API docs",
+        "sidebar_label": "About these docs"
+      },
+      "api/define-fetch": {
+        "title": "defineFetch API",
+        "sidebar_label": "defineFetch"
+      },
       "doc1": {
         "title": "Latin-ish",
         "sidebar_label": "Example Page"
@@ -74,7 +82,8 @@
       "Main Concepts": "Main Concepts",
       "Guides": "Guides",
       "Recipes": "Recipes",
-      "First Category": "First Category"
+      "About": "About",
+      "API": "API"
     }
   },
   "pages-strings": {

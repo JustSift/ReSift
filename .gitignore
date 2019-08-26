@@ -3,3 +3,5 @@ build
 coverage
 .DS_Store
 website/build
+docs/api/**/*
+!docs/api/about-api-docs.md

@@ -1,10 +1,18 @@
 const ts = require('typescript');
 const { flatten } = require('lodash');
-const { stripIndents } = require('common-tags');
+const { stripIndents, stripIndent } = require('common-tags');
 const prettier = require('prettier');
 const table = require('markdown-table');
 
 function generateApiDoc(filename, contents) {
+  function camelToDashed(camel) {
+    return camel
+      .split('')
+      .map(letter => (letter.toUpperCase() === letter ? `-${letter}` : letter))
+      .join('')
+      .toLowerCase();
+  }
+
   function formatCode(code) {
     return prettier
       .format(code, {
@@ -194,11 +202,20 @@ function generateApiDoc(filename, contents) {
       return { name, description, type, required };
     }
 
+    function newLineToBr(str = '') {
+      return str.replace(/\n/g, '<br>');
+    }
+
     return table([
       ['Name', 'Description', 'Type', 'Required'],
       ...propertyNodes
         .map(parseProperty)
-        .map(({ name, description, type, required }) => [name, description, type, required]),
+        .map(({ name, description, type, required }) => [
+          newLineToBr(name),
+          newLineToBr(description),
+          `<code>${newLineToBr(type.replace(/\|/g, '&#124;'))}</code>`,
+          newLineToBr(required ? 'yes' : 'no'),
+        ]),
     ]);
   }
 
@@ -216,8 +233,18 @@ function generateApiDoc(filename, contents) {
     );
   }
 
-  function getFormattedCode() {
-    return 'formatted code';
+  function getFormattedCode(node) {
+    return formatCode(
+      getText(node)
+        // remove js doc comments
+        .replace(/\/\*\*[\s\S]*\*\//g, '')
+        // remove generics (bc they are confusing for non-ts users)
+        .replace(/<[^<>]*>/g, '')
+        // remove export keyword
+        .replace(/\s?export\s/g, '')
+        // remove default keyword
+        .replace(/\s?default\s/g, ''),
+    );
   }
 
   const apiBlocks = flatten(getChildren(rootNode).map(child => findApiBlocks(child, rootNode)));
@@ -228,6 +255,7 @@ function generateApiDoc(filename, contents) {
     if (apiBlock.kind === ts.SyntaxKind.InterfaceDeclaration) {
       return stripIndents`
         ## ${title}
+
         ${body}
 
         ${getTableFromInterface(apiBlock)}
@@ -237,6 +265,7 @@ function generateApiDoc(filename, contents) {
     if (apiBlock.kind === ts.SyntaxKind.FunctionDeclaration) {
       return stripIndents`
         ## ${title}
+
         ${body}
 
         \`\`\`ts
@@ -247,6 +276,7 @@ function generateApiDoc(filename, contents) {
 
     return stripIndents`
       ## ${title}
+
       ${body}
 
       \`\`\`ts
@@ -255,13 +285,23 @@ function generateApiDoc(filename, contents) {
     `;
   });
 
-  return stripIndents`
-    # \`${filename}\` API
+  return prettier.format(
+    stripIndents`
+    ---
+    id: ${camelToDashed(filename)}
+    title: ${filename} API
+    sidebar_label: ${filename}
+    ---
 
     > These docs are auto-generated from the typings files (\`*.d.ts\`).
 
     ${markdownBlocks.join('\n\n')}
-  `;
+  `,
+    {
+      singleQuote: true,
+      parser: 'markdown',
+    },
+  );
 }
 
 module.exports = generateApiDoc;
