@@ -219,20 +219,6 @@ function generateApiDoc(filename, contents) {
     ]);
   }
 
-  function getFormattedFunction(node) {
-    return formatCode(
-      getText(node)
-        // remove js doc comments
-        .replace(/\/\*\*[\s\S]*\*\//g, '')
-        // remove generics (bc they are confusing for non-ts users)
-        .replace(/<[^<>]*>/g, '')
-        // remove export keyword
-        .replace(/\s?export\s/g, '')
-        // remove default keyword
-        .replace(/\s?default\s/g, ''),
-    );
-  }
-
   function getFormattedCode(node) {
     return formatCode(
       getText(node)
@@ -262,18 +248,6 @@ function generateApiDoc(filename, contents) {
       `;
     }
 
-    if (apiBlock.kind === ts.SyntaxKind.FunctionDeclaration) {
-      return stripIndents`
-        ## ${title}
-
-        ${body}
-
-        \`\`\`ts
-        ${getFormattedFunction(apiBlock)}
-        \`\`\`
-      `;
-    }
-
     return stripIndents`
       ## ${title}
 
@@ -293,7 +267,7 @@ function generateApiDoc(filename, contents) {
     sidebar_label: ${filename}
     ---
 
-    > These docs are auto-generated from the typings files (\`*.d.ts\`).
+    > These docs are auto-generated from typings files (\`*.d.ts\`).
 
     ${markdownBlocks.join('\n\n')}
   `,
