@@ -7,6 +7,16 @@ const table = require('markdown-table');
 function generateApiDoc(filename, contents) {
   function formatCode(code) {
     return prettier
+      .format(code, {
+        singleQuote: true,
+        semi: false,
+        parser: 'typescript',
+      })
+      .trim();
+  }
+
+  function formatCodeForTypes(code) {
+    return prettier
       .format(`declare const thing: ${code}`, {
         singleQuote: true,
         semi: false,
@@ -174,7 +184,7 @@ function generateApiDoc(filename, contents) {
       }
 
       function formatType(typeStr) {
-        return formatCode(typeStr.replace(/<[^<>]*>/g, ''));
+        return formatCodeForTypes(typeStr.replace(/<[^<>]*>/g, ''));
       }
 
       const type = formatType(findType(node).trim());
@@ -184,15 +194,26 @@ function generateApiDoc(filename, contents) {
       return { name, description, type, required };
     }
 
-    return table(
-      propertyNodes
+    return table([
+      ['Name', 'Description', 'Type', 'Required'],
+      ...propertyNodes
         .map(parseProperty)
         .map(({ name, description, type, required }) => [name, description, type, required]),
-    );
+    ]);
   }
 
-  function getFormattedFunction() {
-    return 'formatted function';
+  function getFormattedFunction(node) {
+    return formatCode(
+      getText(node)
+        // remove js doc comments
+        .replace(/\/\*\*[\s\S]*\*\//g, '')
+        // remove generics (bc they are confusing for non-ts users)
+        .replace(/<[^<>]*>/g, '')
+        // remove export keyword
+        .replace(/\s?export\s/g, '')
+        // remove default keyword
+        .replace(/\s?default\s/g, ''),
+    );
   }
 
   function getFormattedCode() {
