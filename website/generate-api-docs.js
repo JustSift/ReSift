@@ -83,7 +83,7 @@ async function main() {
   }
 
   const sidebars = JSON.parse(
-    (await readFile(path.resolve(__dirname, '../website/sidebars.json'))).toString(),
+    (await readFile(path.resolve(__dirname, './sidebars.json'))).toString(),
   );
 
   const docIds = docFileNames.map(docPath => {
@@ -103,10 +103,7 @@ async function main() {
     },
   };
 
-  await writeFile(
-    path.resolve(__dirname, '../website/sidebars.json'),
-    JSON.stringify(newSidebars, null, 2),
-  );
+  await writeFile(path.resolve(__dirname, './sidebars.json'), JSON.stringify(newSidebars, null, 2));
 }
 
 main()
