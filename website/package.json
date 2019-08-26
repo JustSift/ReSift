@@ -8,7 +8,7 @@
     "version": "docusaurus-version",
     "rename-version": "docusaurus-rename-version"
   },
-  "devDependencies": {
+  "dependencies": {
     "common-tags": "^1.8.0",
     "docusaurus": "^1.11.1",
     "lodash": "^4.17.15",
