@@ -1,8 +1,21 @@
 const ts = require('typescript');
 const { flatten } = require('lodash');
 const { stripIndents } = require('common-tags');
+const prettier = require('prettier');
+const table = require('markdown-table');
 
 function generateApiDoc(filename, contents) {
+  function formatCode(code) {
+    return prettier
+      .format(`declare const thing: ${code}`, {
+        singleQuote: true,
+        semi: false,
+        parser: 'typescript',
+      })
+      .substring('declare const thing: '.length)
+      .trim();
+  }
+
   /**
    * @return {ts.Node[]}
    */
@@ -37,25 +50,8 @@ function generateApiDoc(filename, contents) {
     return flatten(children.map(child => findApiBlocks(child, node)));
   }
 
-  function getMarkdownFromJsDoc(node) {
-    function getJsDocText(node) {
-      if (node.kind === ts.SyntaxKind.JSDocComment) {
-        const text = getText(node);
-        if (text.includes('@docs')) {
-          return text;
-        }
-      }
-
-      return getChildren(node).find(child => getJsDocText(child));
-    }
-
-    const jsDocText = getText(getJsDocText(node));
-
-    if (!jsDocText) {
-      throw new Error('no jsdoc text found');
-    }
-
-    const body = jsDocText
+  function getTextFromJsDocComment(comment) {
+    return comment
       .split('\n')
       .filter(line => !line.toLowerCase().includes('@docs'))
       .map(line => {
@@ -71,7 +67,31 @@ function generateApiDoc(filename, contents) {
         return '';
       })
       .map(x => x.trim())
-      .join('\n');
+      .join('\n')
+      .trim();
+  }
+
+  function getMarkdownFromJsDoc(node) {
+    function getJsDocText(node) {
+      if (node.kind === ts.SyntaxKind.JSDocComment) {
+        const text = getText(node);
+        if (text.includes('@docs')) {
+          return text;
+        }
+      }
+
+      const children = getChildren(node);
+      for (const child of children) {
+        const text = getJsDocText(child);
+        if (text) return text;
+      }
+
+      return '';
+    }
+
+    const jsDocText = getJsDocText(node);
+    if (!jsDocText) throw new Error('no jsdoc text found');
+    const body = getTextFromJsDocComment(jsDocText);
 
     const titleMatch = /@docs(.*)/.exec(jsDocText);
     if (!titleMatch) throw new Error('no header match');
@@ -80,16 +100,103 @@ function generateApiDoc(filename, contents) {
     return { title, body };
   }
 
-  function getTableFromInterface() {
-    return '';
+  function getTableFromInterface(node) {
+    function findProperties(node) {
+      if (node.kind === ts.SyntaxKind.PropertySignature) return [node];
+      if (node.kind === ts.SyntaxKind.MethodSignature) return [node];
+
+      return flatten(getChildren(node).map(child => findProperties(child)));
+    }
+
+    const propertyNodes = findProperties(node);
+
+    function parseProperty(node) {
+      function findFirstIdentifier(node) {
+        if (node.kind === ts.SyntaxKind.Identifier) {
+          return node;
+        }
+
+        const children = getChildren(node);
+
+        for (const child of children) {
+          const firstIdentifer = findFirstIdentifier(child);
+          if (firstIdentifer) return firstIdentifer;
+        }
+
+        return null;
+      }
+
+      const firstIdentifierNode = findFirstIdentifier(node);
+      if (!firstIdentifierNode) throw new Error('could not find identifier');
+
+      const name = getText(firstIdentifierNode)
+        .replace(/\n/g, '')
+        .replace(/\/\*\*[\s\S]*\*\//g, '')
+        .replace(/\s/g, '');
+
+      function findDescription(node) {
+        function getJsDocNode(node) {
+          if (node.kind === ts.SyntaxKind.JSDocComment) return node;
+
+          const children = getChildren(node);
+          for (const child of children) {
+            const node = getJsDocNode(child);
+            if (node) return node;
+          }
+
+          return null;
+        }
+
+        const jsDocNode = getJsDocNode(node);
+        if (!jsDocNode) return '';
+
+        return getTextFromJsDocComment(getText(jsDocNode));
+      }
+      const description = findDescription(node);
+
+      function findType(node) {
+        function getColonPosition(node) {
+          if (node.kind === ts.SyntaxKind.ColonToken) return node.pos;
+
+          const children = getChildren(node);
+          for (const child of children) {
+            const pos = getColonPosition(child);
+            if (pos) return pos;
+          }
+
+          return null;
+        }
+
+        const colonPosition = getColonPosition(node);
+        if (!colonPosition) throw new Error('could not find type');
+
+        return contents.substring(colonPosition + 1, node.end);
+      }
+
+      function formatType(typeStr) {
+        return formatCode(typeStr.replace(/<[^<>]*>/g, ''));
+      }
+
+      const type = formatType(findType(node).trim());
+
+      const required = !getChildren(node).find(child => child.kind === ts.SyntaxKind.QuestionToken);
+
+      return { name, description, type, required };
+    }
+
+    return table(
+      propertyNodes
+        .map(parseProperty)
+        .map(({ name, description, type, required }) => [name, description, type, required]),
+    );
   }
 
   function getFormattedFunction() {
-    return '';
+    return 'formatted function';
   }
 
   function getFormattedCode() {
-    return '';
+    return 'formatted code';
   }
 
   const apiBlocks = flatten(getChildren(rootNode).map(child => findApiBlocks(child, rootNode)));
@@ -128,7 +235,9 @@ function generateApiDoc(filename, contents) {
   });
 
   return stripIndents`
-    # ${filename} API
+    # \`${filename}\` API
+
+    > These docs are auto-generated from the typings files (\`*.d.ts\`).
 
     ${markdownBlocks.join('\n\n')}
   `;
