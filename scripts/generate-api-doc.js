@@ -1,6 +1,6 @@
 const ts = require('typescript');
 const { flatten } = require('lodash');
-const { stripIndents, stripIndent } = require('common-tags');
+const { stripIndents } = require('common-tags');
 const prettier = require('prettier');
 const table = require('markdown-table');
 
