@@ -8,6 +8,6 @@ type PickResult<FetchResult, MergeResult> = unknown extends MergeResult
   : Unwrap<MergeResult>;
 
 export default function useFetch<FetchResult, MergeResult>(
-  fetch: FetchActionCreator<any, FetchResult, MergeResult>,
+  fetch: null | FetchActionCreator<any, FetchResult, MergeResult>,
   options?: GetFetchOptions,
 ): [PickResult<FetchResult, MergeResult> | null, number];
