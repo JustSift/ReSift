@@ -1,13 +1,12 @@
 import { useMemo, useCallback } from 'react';
 import { useSelector } from 'react-redux';
+import objectHash from 'object-hash';
 import getFetch from '../getFetch';
 import shallowEqual from '../shallowEqual';
 import UNKNOWN from '../UNKNOWN';
-import _get from 'lodash/get';
 
 const neverCalculated = '__NEVER_CALCULATED__';
 const emptyResult = [null, UNKNOWN];
-const emptySelector = () => emptyResult;
 
 function memoize(fn) {
   let previous = neverCalculated;
@@ -22,16 +21,16 @@ function memoize(fn) {
   return returnPreviousIfUnchanged;
 }
 
-export default function useFetch(fetch, options) {
-  const fetchFactoryId = _get(fetch, ['meta', 'fetchFactoryId'], 'EMPTY_FETCH');
-  const key = _get(fetch, ['meta', 'key'], 'EMPTY_KEY');
+export default function useFetch(fetch, options = {}) {
+  const memoizedGetFetch = useMemo(() => memoize(getFetch), []);
 
-  const memoizedGetFetch = useMemo(() => memoize(getFetch), [fetchFactoryId, key]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const memoizedOptions = useMemo(() => options, [objectHash(options)]);
 
-  const selector = useCallback(state => memoizedGetFetch(fetch, state, options), [
-    fetchFactoryId,
-    key,
-  ]);
+  const selector = useCallback(
+    state => (fetch ? memoizedGetFetch(fetch, state, memoizedOptions) : emptyResult),
+    [fetch, memoizedOptions, memoizedGetFetch],
+  );
 
-  return useSelector(fetch ? selector : emptySelector);
+  return useSelector(selector);
 }

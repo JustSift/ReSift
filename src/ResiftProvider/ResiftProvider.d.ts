@@ -2,7 +2,8 @@ import React from 'react';
 
 interface Props {
   children?: React.ReactNode;
-  dataService?: any;
+  dataService: any;
+  suppressOutsideReduxWarning?: boolean;
 }
 
 declare const ResiftProvider: React.ComponentType<Props>;

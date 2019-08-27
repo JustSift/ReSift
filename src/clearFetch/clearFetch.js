@@ -13,15 +13,10 @@ export function isClearAction(action) {
 //
 // Investigate: this may be a good place to try to clear memoized fetches
 export default function clearFetch(fetch) {
-  const isActionCreatorFactory = _get(fetch, ['meta', 'type']) === 'ACTION_CREATOR_FACTORY';
+  const isActionCreatorFactory = _get(fetch, ['meta', 'type']) === 'FETCH_INSTANCE_FACTORY';
   if (isActionCreatorFactory) {
     throw new Error(
       '[clearFetch] you tried to pass an action creatorFactory to clearFetch. Ask rico until he write docs.',
-    );
-  }
-  if (!fetch.meta.key) {
-    throw new Error(
-      '`clearFetch` expected to see a key. Are you using a fetch with a dynamic key like a static key?',
     );
   }
 
