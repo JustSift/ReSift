@@ -109,3 +109,12 @@ li {
   background-color: #2962ff;
   border: none;
 }
+
+.white-link {
+  color: white;
+}
+
+.white-link:hover {
+  text-decoration: underline;
+  color: white;
+}

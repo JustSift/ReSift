@@ -8,12 +8,11 @@
 const React = require('react');
 
 class Footer extends React.Component {
-  docUrl(doc, language) {
+  docUrl(doc) {
     const baseUrl = this.props.config.baseUrl;
     const docsUrl = this.props.config.docsUrl;
     const docsPart = `${docsUrl ? `${docsUrl}/` : ''}`;
-    const langPart = `${language ? `${language}/` : ''}`;
-    return `${baseUrl}${docsPart}${langPart}${doc}`;
+    return `${baseUrl}${docsPart}${doc}`;
   }
 
   pageUrl(doc, language) {
@@ -40,36 +39,58 @@ class Footer extends React.Component {
             <a href={this.docUrl('introduction/what-is-resift', this.props.language)}>
               What is ReSift?
             </a>
+            <a href={this.docUrl('introduction/quick-glance', this.props.language)}>Quick glance</a>
             <a href={this.docUrl('main-concepts/whats-a-fetch', this.props.language)}>
               What's a fetch?
             </a>
-            <a href={this.docUrl('doc3.html', this.props.language)}>API</a>
+            <a href={this.docUrl('api/about-api-docs', this.props.language)}>API</a>
           </div>
           <div>
             <h5>Community</h5>
-            <a href="https://discordapp.com/">Project Chat</a>
+            <a
+              href="https://github.com/JustSift/ReSift/issues/new"
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              Open an issue
+            </a>
+            <a href="https://stackoverflow.com/" target="_blank" rel="noreferrer noopener">
+              Stack Overflow
+            </a>
             <a href="https://twitter.com/ricokahler" target="_blank" rel="noreferrer noopener">
               Twitter
             </a>
           </div>
           <div>
             <h5>More</h5>
-            <a href={`${this.props.config.baseUrl}blog`}>Blog</a>
-            <a href="https://github.com/JustSift/ReSift">GitHub</a>
             <a
               className="github-button"
-              href={this.props.config.repoUrl}
+              href="https://github.com/JustSift/ReSift"
               data-icon="octicon-star"
-              data-count-href="/facebook/docusaurus/stargazers"
-              data-show-count="true"
-              data-count-aria-label="# stargazers on GitHub"
-              aria-label="Star this project on GitHub"
+              aria-label="Star JustSift/ReSift on GitHub"
             >
               Star
+            </a>
+            <a href="https://travis-ci.org/JustSift/ReSift">
+              <img
+                src="https://travis-ci.org/JustSift/ReSift.svg?branch=master"
+                alt="Build Status"
+              />
+            </a>
+            <a href="https://coveralls.io/github/JustSift/ReSift?branch=master">
+              <img
+                src="https://coveralls.io/repos/github/JustSift/ReSift/badge.svg?branch=master"
+                alt="Coverage Status"
+              />
             </a>
           </div>
         </section>
         <section className="copyright">{this.props.config.copyright}</section>
+        <section className="copyright">
+          <a className="white-link" href="https://www.justsift.com">
+            www.justsift.com
+          </a>
+        </section>
       </footer>
     );
   }
