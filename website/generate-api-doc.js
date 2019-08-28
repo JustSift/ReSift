@@ -8,7 +8,9 @@ function generateApiDoc(filename, contents) {
   function camelToDashed(camel) {
     return camel
       .split('')
-      .map(letter => (letter.toUpperCase() === letter ? `-${letter}` : letter))
+      .map((letter, index) =>
+        letter.toUpperCase() === letter && index !== 0 ? `-${letter}` : letter,
+      )
       .join('')
       .toLowerCase();
   }
@@ -86,7 +88,8 @@ function generateApiDoc(filename, contents) {
       })
       .map(x => x.trim())
       .join('\n')
-      .trim();
+      .trim()
+      .replace(/@omitRequired/g, '');
   }
 
   function getMarkdownFromJsDoc(node) {
@@ -206,16 +209,20 @@ function generateApiDoc(filename, contents) {
       return str.replace(/\n/g, '<br>');
     }
 
+    const omitRequired = getText(node).includes('@omitRequired');
+
     return table([
-      ['Name', 'Description', 'Type', 'Required'],
+      ['Name', 'Description', 'Type', omitRequired ? null : 'Required'].filter(x => x !== null),
       ...propertyNodes
         .map(parseProperty)
-        .map(({ name, description, type, required }) => [
-          newLineToBr(name),
-          newLineToBr(description),
-          `<code>${newLineToBr(type.replace(/\|/g, '&#124;'))}</code>`,
-          newLineToBr(required ? 'yes' : 'no'),
-        ]),
+        .map(({ name, description, type, required }) =>
+          [
+            `<code>${newLineToBr(name)}</code>`,
+            newLineToBr(description),
+            `<code>${newLineToBr(type.replace(/\|/g, '&#124;'))}</code>`,
+            omitRequired ? null : newLineToBr(required ? 'yes' : 'no'),
+          ].filter(x => x !== null),
+        ),
     ]);
   }
 

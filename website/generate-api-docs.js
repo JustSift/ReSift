@@ -23,7 +23,9 @@ async function asyncFilter(array, predicate) {
 function camelToDashed(camel) {
   return camel
     .split('')
-    .map(letter => (letter.toUpperCase() === letter ? `-${letter}` : letter))
+    .map((letter, index) =>
+      letter.toUpperCase() === letter && index !== 0 ? `-${letter}` : letter,
+    )
     .join('')
     .toLowerCase();
 }
