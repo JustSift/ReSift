@@ -1,3 +1,3 @@
-export default function createStore(displayName, fetchFactoryId) {
+export default function createStoreKey(displayName, fetchFactoryId) {
   return `${displayName} | ${fetchFactoryId}`;
 }

@@ -27,7 +27,7 @@ const siteConfig = {
   // For no header links in the top nav bar -> headerLinks: [],
   headerLinks: [
     { doc: 'introduction/what-is-resift', label: 'Docs' },
-    { doc: 'doc4', label: 'API' },
+    { doc: 'api/about-api-docs', label: 'API' },
     { page: 'help', label: 'Help' },
     { href: 'https://github.com/JustSift/ReSift', label: 'GitHub' },
   ],

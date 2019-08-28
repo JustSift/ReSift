@@ -9,13 +9,49 @@
       "main-concepts/whats-a-fetch",
       "main-concepts/how-to-define-a-fetch",
       "main-concepts/sharing-state-between-fetches",
-      "main-concepts/making-sense-of-loading-states",
+      "main-concepts/making-sense-of-statuses",
       "main-concepts/using-the-http-service"
     ],
-    "Guides": ["guides/fetch-services"],
-    "Recipes": ["doc3"]
+    "Guides": [
+      "guides/context-fetches",
+      "guides/writing-fetch-services",
+      "guides/http-proxies",
+      "guides/usage-with-redux"
+    ],
+    "Recipes": [
+      "doc3"
+    ]
   },
-  "docs-other": {
-    "First Category": ["doc4", "doc5"]
+  "api-docs": {
+    "About": [
+      "api/about-api-docs"
+    ],
+    "API": [
+      "api/canceled-error",
+      "api/e-r-r-o-r",
+      "api/l-o-a-d-i-n-g",
+      "api/n-o-r-m-a-l",
+      "api/resift-provider",
+      "api/u-n-k-n-o-w-n",
+      "api/clear-fetch",
+      "api/combine-statuses",
+      "api/create-action-type",
+      "api/create-context-fetch",
+      "api/create-data-service",
+      "api/create-http-proxy",
+      "api/create-http-service",
+      "api/create-share-key",
+      "api/create-store-key",
+      "api/data-service-reducer",
+      "api/define-fetch",
+      "api/get-fetch",
+      "api/is-error",
+      "api/is-loading",
+      "api/is-normal",
+      "api/is-unknown",
+      "api/use-clear-fetch",
+      "api/use-dispatch",
+      "api/use-fetch"
+    ]
   }
 }
