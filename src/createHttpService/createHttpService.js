@@ -27,6 +27,9 @@ async function http(
 
   const headerEntries = Object.entries(headers);
 
+  // don't know there's this false positive
+  // https://github.com/eslint/eslint/issues/12117
+  // eslint-disable-next-line no-unused-vars
   for (const [headerKey, headerValue] of headerEntries) {
     req.set(headerKey, headerValue);
   }

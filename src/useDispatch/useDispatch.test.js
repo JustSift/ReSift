@@ -76,7 +76,7 @@ test('it dispatches actions to the redux store', done => {
     const dispatch = useDispatch();
     useEffect(() => {
       dispatch({ type: 'TEST_ACTION' });
-    }, []);
+    }, [dispatch]);
     return null;
   });
 
