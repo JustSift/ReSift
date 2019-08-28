@@ -1,9 +1,9 @@
 import UNKNOWN from '../UNKNOWN';
 
-function getUnknown(loadingState) {
-  return loadingState === UNKNOWN;
+function getUnknown(status) {
+  return status === UNKNOWN;
 }
 
-export default function isUnknown(...loadingStates) {
-  return loadingStates.every(getUnknown);
+export default function isUnknown(...statuses) {
+  return statuses.every(getUnknown);
 }

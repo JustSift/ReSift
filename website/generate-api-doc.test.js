@@ -75,19 +75,19 @@ it('works', () => {
 
     This interface should turn into a table
 
-    | Name    | Description                  | Type                                          | Required |
-    | ------- | ---------------------------- | --------------------------------------------- | -------- |
-    | foo     | this is a description of foo | <code>string</code>                           | yes      |
-    | bar     |                              | <code>number</code>                           | no       |
-    | complex |                              | <code>{<br> a: Date<br> b: Animal<br>}</code> | yes      |
+    | Name                 | Description                  | Type                                          | Required |
+    | -------------------- | ---------------------------- | --------------------------------------------- | -------- |
+    | <code>foo</code>     | this is a description of foo | <code>string</code>                           | yes      |
+    | <code>bar</code>     |                              | <code>number</code>                           | no       |
+    | <code>complex</code> |                              | <code>{<br> a: Date<br> b: Animal<br>}</code> | yes      |
 
     ## \`Animal\`
 
     makes a sound
 
-    | Name      | Description | Type                | Required |
-    | --------- | ----------- | ------------------- | -------- |
-    | makeSound |             | <code>string</code> | yes      |
+    | Name                   | Description | Type                | Required |
+    | ---------------------- | ----------- | ------------------- | -------- |
+    | <code>makeSound</code> |             | <code>string</code> | yes      |
 
     ## Other code test
 

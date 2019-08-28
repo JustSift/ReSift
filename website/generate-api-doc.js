@@ -16,13 +16,19 @@ function generateApiDoc(filename, contents) {
   }
 
   function formatCode(code) {
-    return prettier
-      .format(code, {
-        singleQuote: true,
-        semi: false,
-        parser: 'typescript',
-      })
-      .trim();
+    try {
+      return prettier
+        .format(code, {
+          singleQuote: true,
+          semi: false,
+          parser: 'typescript',
+        })
+        .trim();
+    } catch (e) {
+      console.warn('Could not format a code block');
+
+      return code.trim();
+    }
   }
 
   function formatCodeForTypes(code) {
