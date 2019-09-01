@@ -20,7 +20,7 @@ export default function getFetch<FetchResult, MergeResult>(
 ): [PickResult<FetchResult, MergeResult> | null, number];
 
 export interface GetFetchOptions {
-  isolatedStatus: boolean;
+  isolatedStatus?: boolean;
 }
 
 type Unwrap<T> = T extends Promise<infer U> ? U : T;
