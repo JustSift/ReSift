@@ -19,6 +19,10 @@ export default function getFetch<FetchResult, MergeResult>(
   options?: GetFetchOptions,
 ): [PickResult<FetchResult, MergeResult> | null, number];
 
+/**
+ * @docs `GetFetchOptions`
+ * This is the shape of the options when using `getFetch`.
+ */
 export interface GetFetchOptions {
   isolatedStatus?: boolean;
 }
