@@ -125,6 +125,10 @@
       "doc5": {
         "title": "Fifth Document"
       },
+      "examples/crud-example": {
+        "title": "CRUD Example",
+        "sidebar_label": "CRUD Example"
+      },
       "guides/context-fetches": {
         "title": "Context fetches",
         "sidebar_label": "Context fetches"
@@ -189,8 +193,8 @@
     "categories": {
       "Introduction": "Introduction",
       "Main Concepts": "Main Concepts",
+      "Examples": "Examples",
       "Guides": "Guides",
-      "Recipes": "Recipes",
       "About": "About",
       "API": "API"
     }
