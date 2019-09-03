@@ -12,17 +12,17 @@
       "main-concepts/making-sense-of-statuses",
       "main-concepts/using-the-http-service"
     ],
-    "Examples": ["examples/crud-example"],
+    "Examples": [
+      "examples/crud-example"
+    ],
     "Guides": [
       "guides/context-fetches",
       "guides/writing-fetch-services",
       "guides/http-proxies",
       "guides/usage-with-redux"
-    ]
-  },
-  "api-docs": {
-    "About": ["api/about-api-docs"],
+    ],
     "API": [
+      "api/about-api-docs",
       "api/canceled-error",
       "api/e-r-r-o-r",
       "api/l-o-a-d-i-n-g",

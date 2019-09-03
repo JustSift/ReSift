@@ -99,9 +99,9 @@ async function main() {
 
   const newSidebars = {
     ...sidebars,
-    'api-docs': {
-      About: ['api/about-api-docs'],
-      API: docIds,
+    docs: {
+      ...sidebars.docs,
+      API: ['api/about-api-docs', ...docIds],
     },
   };
 
