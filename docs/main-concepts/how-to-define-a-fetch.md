@@ -346,7 +346,7 @@ Then the file name should follow these rules in order:
 
 Examples:
 
-- `makePersonUpdateFetch.js` — non-singleton, `PUT` request, that updates one person
+- `makeUpdatePersonFetch.js` — non-singleton, `PUT` request, that updates one person
 - `makePersonFetch.js` — non-singleton, `GET` request, the gets ones person.
 - `configurationFetch.js` — singleton, `GET` request for the single config
 - `updatePeopleFetch.js` — singleton, `PUT` request for a collection of people
