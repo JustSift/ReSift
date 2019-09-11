@@ -269,7 +269,7 @@ function InfinitePeopleList() {
     <InfiniteList
       items={people}
       // 👇 this will fire when the user hits the end of the list
-      onScrollToEnd={handleScrollToEnd}
+      onScrollToEnd={() => setRequestMorePeople(true)}
       loading={isLoading(status)}
     />
   );
