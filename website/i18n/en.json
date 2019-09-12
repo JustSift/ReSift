@@ -126,8 +126,12 @@
         "title": "Fifth Document"
       },
       "examples/crud-example": {
-        "title": "CRUD Example",
-        "sidebar_label": "CRUD Example"
+        "title": "CRUD Examples",
+        "sidebar_label": "CRUD Examples"
+      },
+      "examples/multiple-request-defineFetch": {
+        "title": "Using defineFetch for multiple fetches",
+        "sidebar_label": "Multiple Fetches Example"
       },
       "guides/context-fetches": {
         "title": "Context fetches",

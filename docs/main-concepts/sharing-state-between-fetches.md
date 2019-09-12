@@ -6,7 +6,7 @@ sidebar_label: Sharing state between fetches
 
 By default, each fetch factory has its own state that is siloed to itself.
 
-This means that fetch instances that come from different fetch factories will have different states even if they share the same key or endpoint.
+This means fetch instances that come from different fetch factories will have different states even if they share the same key or endpoint.
 
 For example:
 
