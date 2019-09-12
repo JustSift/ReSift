@@ -46,7 +46,7 @@ const makeUpdatePersonFetch = defineFetch({
 function ExampleComponent() {
   // example usage
   const julesFetch = makePersonFetch('person-id-jules');
-  const updateJulesFetch = makePersonFetch('person-id-jules');
+  const updateJulesFetch = makeUpdatePersonFetch('person-id-jules');
 
   const [jules] = useFetch(julesFetch);
   const [shouldAlsoBeJules] = useFetch(updateJulesFetch);
