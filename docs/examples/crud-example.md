@@ -11,7 +11,7 @@ Quick examples of GET, PUT, POST and DELETE `defineFetches`.
 ## Example: GET with and without unique identifier
 
 ```ts
-// component/actions/getPeople.ts
+// component/actions/peopleFetch.ts
 
 import defineFetch from 'resift/defineFetch';
 
@@ -29,7 +29,7 @@ export default defineFetch({
 ```
 
 ```ts
-// component/actions/getPerson.ts
+// component/actions/personFetch.ts
 
 import defineFetch from 'resift/defineFetch';
 
@@ -57,23 +57,23 @@ import useDispatch from 'resift/useDispatch';
 import PeopleList from './PeopleList';
 
 // Action in example above
-import makeGetPeople from './actions/getPeople';
-import makeGetPerson from './actions/getPerson';
+import makePeopleFetch from './actions/peopleFetch';
+import makePersonFetch from './actions/personFetch';
 
 function PeopleFetcher() {
   const dispatch = useDispatch();
 
-  const getPeople = makeGetPeople();
-  const getPerson = makeGetPeople('John Smith');
+  const peopleFetch = makePeopleFetch();
+  const personFetch = makePersonFetch('John Smith');
 
   // On ComponentDidMount
   useEffect(() => {
-    dispatch(getPeople());
-    dispatch(getPerson());
-  }, [dispatch, getPeople, getPerson]);
+    dispatch(peopleFetch());
+    dispatch(makePersonFetch());
+  }, [dispatch, makePersonFetch, peopleFetch]);
 
-  const [people, getPeopleStatus] = useFetch(getPeople());
-  const [person, getPersonStatus] = useFetch(getPerson());
+  const [people, peopleStatus] = useFetch(peopleFetch());
+  const [person, personStatus] = useFetch(makePersonFetch());
 
   return <PeopleList people={people} person={person} />;
 }
@@ -88,7 +88,7 @@ export default PeopleFetcher;
 ## Example: Post
 
 ```ts
-// component/actions/createPeople.ts
+// component/actions/createPerson.ts
 
 import defineFetch from 'resift/defineFetch';
 
@@ -115,7 +115,7 @@ export default defineFetch({
 ## Example: Delete
 
 ```ts
-// component/actions/createPeople.ts
+// component/actions/deletePerson.ts
 
 import defineFetch from 'resift/defineFetch';
 
@@ -141,7 +141,7 @@ export default defineFetch({
 Note: the share key in define fetch glues these two fetches together.
 
 ```ts
-// component/actions/getPerson.ts
+// component/actions/personFetch.ts
 
 import defineFetch from 'resift/defineFetch';
 
@@ -162,12 +162,12 @@ export default defineFetch({
 ```
 
 ```ts
-// component/actions/editPerson.ts
+// component/actions/makeUpdatePersonFetch.ts
 
 import defineFetch from 'resift/defineFetch';
 
 export default defineFetch({
-  displayName: 'Edit Person',
+  displayName: 'Update Person',
   share: {
     namespace: 'person',
     merge: (previous, next) => {
@@ -188,7 +188,7 @@ export default defineFetch({
 ```
 
 ```tsx
-// Example container using `definefetch` above
+// Example component fetcher using `definefetch` above
 // - component/index.tsx
 
 import React, { useEffect } from 'react';
@@ -201,28 +201,28 @@ import useDispatch from 'resift/useDispatch';
 import ProfileComponent from './Profile';
 
 // Action in example above
-import makeGetPerson from './actions/getPerson';
-import makeEditPerson from './actions/editPerson';
+import makePersonFetch from './actions/personFetch';
+import makeUpdatePersonFetch from './actions/makeUpdatePersonFetch';
 
 function ProfileFetcher() {
   const dispatch = useDispatch();
 
   // This builds the function used for dispatching requests and subscribing to changes.
-  const getPerson = makeGetPerson('John Smith');
-  const editPerson = makeEditPerson('John Smith');
+  const personFetch = makePersonFetch('John Smith');
+  const updatePersonFetch = makeUpdatePersonFetch('John Smith');
 
   // When component mounts the defineFetch's request function will fire.
   useEffect(() => {
-    dispatch(getPerson());
-  }, [dispatch, getPerson]);
+    dispatch(personFetch());
+  }, [dispatch, personFetch]);
 
   const handleEditPerson = (newPerson: any) => {
-    dispatch(editPerson(newPerson));
+    dispatch(updatePersonFetch(newPerson));
   };
 
   // `useFetch` subscribes to changes made during the request phase of the dispatch above
   // Note: Both on mount and `handleEditPerson` events will change this `person` data.
-  const [person, status] = useFetch(getPerson());
+  const [person, status] = useFetch(personFetch());
 
   return <Profile profileData={person} onEditPerson={handleEditPerson} />;
 }
