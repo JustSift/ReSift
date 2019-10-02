@@ -55,6 +55,12 @@ export default function defineFetch({
   if (!displayName) throw new Error('`displayName` is required in `defineFetch`');
   if (!make) throw new Error('`make` is required in `defineFetch`');
 
+  if (share) {
+    if (!share.namespace) {
+      throw new Error('`namespace` is required in `share');
+    }
+  }
+
   function fetchFactory(...keyArgs) {
     const makeResult = make(...keyArgs);
 
@@ -84,7 +90,7 @@ export default function defineFetch({
       resolvablePayload.cancel = () => {
         canceledRef.canceled = true;
 
-        // don't know there's this false positive
+        // don't know why there's this false positive
         // https://github.com/eslint/eslint/issues/12117
         // eslint-disable-next-line no-unused-vars
         for (const subscriber of subscribers) {

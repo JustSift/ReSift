@@ -1,33 +1,70 @@
 import _get from 'lodash/get';
-import _omit from 'lodash/omit';
-import createShareKey from '../createShareKey';
-import createStoreKey from '../createStoreKey';
 import { isFetchAction } from '../defineFetch';
-import { isClearAction } from '../clearFetch';
 import { isSuccessAction } from '../createDataService';
+import _fromPairs from 'lodash/fromPairs';
+import _merge from 'lodash/merge';
 
-export default function sharedReducer(state = {}, action) {
+export function replace(_prev, next) {
+  return next;
+}
+
+export function normalizeMerge(merge, namespace) {
+  if (!merge) {
+    return {
+      [namespace]: replace,
+    };
+  }
+
+  if (typeof merge === 'function') {
+    return {
+      [namespace]: merge,
+    };
+  }
+
+  if (typeof merge === 'object') {
+    if (!merge[namespace]) {
+      return {
+        ...merge,
+        [namespace]: replace,
+      };
+    }
+
+    return merge;
+  }
+
+  throw new Error('[sharedReducer] Could not match typeof merge. See docs. (TODO add docs link)');
+}
+
+const initialState = {
+  data: {},
+  relationships: {},
+};
+
+// for each fetch factory, save their normalized merge object into an easy-to-look-up place
+// on success, find the merge functions relevant to the current merge
+
+export default function sharedReducer(state = initialState, action) {
   if (isFetchAction(action)) {
     const { meta } = action;
     const { displayName, fetchFactoryId, key, share } = meta;
-
     // only run this reducer if this action is `share`d
     if (!share) return state;
 
-    const { namespace } = share;
-    const storeKey = createStoreKey(displayName, fetchFactoryId);
-    const shareKey = createShareKey(namespace, key);
-    const storePathHash = [storeKey, key].join(' | ');
+    const { namespace, merge } = share;
+    const mergeObj = normalizeMerge(merge, namespace);
+
+    let relationships = {};
+    // (eslint bug)
+    // eslint-disable-next-line no-unused-vars
+    for (const [targetNamespace, mergeFn] of Object.entries(mergeObj)) {
+      const lookup = relationships[targetNamespace] || {};
+      lookup[namespace] = mergeFn;
+      relationships[targetNamespace] = lookup;
+    }
 
     return {
       ...state,
-      [shareKey]: {
-        ..._get(state, [shareKey]),
-        parentActions: {
-          ..._get(state, [shareKey, 'parentActions']),
-          [storePathHash]: { storeKey, key },
-        },
-      },
+      relationships: _merge({}, state.relationships, relationships),
     };
   }
 
@@ -37,32 +74,55 @@ export default function sharedReducer(state = {}, action) {
 
     // only run this reducer if this action is `share`d
     if (!share) return state;
-
     const { namespace } = share;
-    const merge = share.merge || ((_, next) => next);
-    const shareKey = createShareKey(namespace, key);
+
+    const merges = state.relationships[namespace];
+
+    const nextData = { ...state.data };
+
+    // (eslint bug)
+    // eslint-disable-next-line no-unused-vars
+    for (const [targetNamespace, mergeFn] of Object.entries(merges)) {
+      // if the target namespace is different from the action's namespace
+      // then we should apply the merge function over all the keys
+      if (targetNamespace !== namespace) {
+        const mergedData = Object.entries(state.data[targetNamespace] || {}).reduce(
+          (acc, [key, value]) => {
+            acc[key] = mergeFn(value, payload);
+            return acc;
+          },
+          {},
+        );
+
+        nextData[targetNamespace] = mergedData;
+        continue;
+      }
+
+      // otherwise we should only apply the merge function over the current key
+      nextData[targetNamespace] = {
+        ..._get(state.data, [targetNamespace]),
+        [key]: mergeFn(_get(state.data, [targetNamespace, key]), payload),
+      };
+    }
 
     return {
       ...state,
-      [shareKey]: {
-        ..._get(state, [shareKey]),
-        data: merge(_get(state, [shareKey, 'data']), payload),
-      },
+      data: nextData,
     };
   }
 
-  if (isClearAction(action)) {
-    const { meta } = action;
-    const { key, share } = meta;
+  // if (isClearAction(action)) {
+  //   const { meta } = action;
+  //   const { key, share } = meta;
 
-    // only run this reducer if this action is `share`d
-    if (!share) return state;
+  //   // only run this reducer if this action is `share`d
+  //   if (!share) return state;
 
-    const { namespace } = share;
-    const shareKey = createShareKey(namespace, key);
+  //   const { namespace } = share;
+  //   const shareKey = createShareKey(namespace, key);
 
-    return _omit(state, shareKey);
-  }
+  //   return _omit(state, shareKey);
+  // }
 
   return state;
 }
