@@ -2,6 +2,37 @@ import shortId from 'shortid';
 import createActionType from '../createActionType';
 import FETCH from '../prefixes/FETCH';
 
+export function replace(_prev, next) {
+  return next;
+}
+
+export function normalizeMerge(merge, namespace) {
+  if (!merge) {
+    return {
+      [namespace]: replace,
+    };
+  }
+
+  if (typeof merge === 'function') {
+    return {
+      [namespace]: merge,
+    };
+  }
+
+  if (typeof merge === 'object') {
+    if (!merge[namespace]) {
+      return {
+        ...merge,
+        [namespace]: replace,
+      };
+    }
+
+    return merge;
+  }
+
+  throw new Error('[sharedReducer] Could not match typeof merge. See docs. (TODO add docs link)');
+}
+
 export function isFetchAction(action) {
   if (!action) return false;
   if (!action.type) return false;
@@ -68,7 +99,10 @@ export default function defineFetch({
       fetchFactoryId,
       key: `key:${makeResult.key.join(' | ')}`,
       displayName,
-      share,
+      share: share && {
+        ...share,
+        mergeObj: normalizeMerge(share.merge, share.namespace),
+      },
       conflict,
     };
 

@@ -1,4 +1,4 @@
-import defineFetch, { isFetchAction } from './defineFetch';
+import defineFetch, { isFetchAction, normalizeMerge, replace } from './defineFetch';
 import timer from '../timer';
 import DeferredPromise from '../DeferredPromise';
 
@@ -234,4 +234,67 @@ test('staticFetchFactoryId', () => {
       "type": "FETCH_INSTANCE_FACTORY",
     }
   `);
+});
+
+describe('normalizeMerge', () => {
+  const namespace = 'testNamespace';
+
+  test('if falsy, returns replace', () => {
+    const result = normalizeMerge(null, namespace);
+    expect(result).toMatchInlineSnapshot(`
+          Object {
+            "testNamespace": [Function],
+          }
+        `);
+    expect(result[namespace]).toBe(replace);
+  });
+
+  test('if merge is a function, returns an object with the correct namespace', () => {
+    const result = normalizeMerge(() => ({}), namespace);
+    expect(result).toMatchInlineSnapshot(`
+          Object {
+            "testNamespace": [Function],
+          }
+        `);
+    expect(result[namespace]).not.toBe(replace);
+  });
+
+  test('if merge is an object and does not contain the current namespace, returns an object with replace', () => {
+    const result = normalizeMerge(
+      {
+        otherNamespace: () => ({}),
+      },
+      namespace,
+    );
+    expect(result).toMatchInlineSnapshot(`
+      Object {
+        "otherNamespace": [Function],
+        "testNamespace": [Function],
+      }
+      `);
+    expect(result[namespace]).toBe(replace);
+  });
+
+  test('if merge is an object but does contain the current namespace, returns the object as-is', () => {
+    const mergeFn = () => ({});
+    const mergeObj = {
+      [namespace]: mergeFn,
+    };
+    const result = normalizeMerge(mergeObj, namespace);
+
+    expect(result).toMatchInlineSnapshot(`
+      Object {
+        "testNamespace": [Function],
+      }
+      `);
+    expect(result).toBe(mergeObj);
+  });
+
+  test('if nothing matches, throw', () => {
+    expect(() => {
+      normalizeMerge('test', namespace);
+    }).toThrowErrorMatchingInlineSnapshot(
+      `"[sharedReducer] Could not match typeof merge. See docs. (TODO add docs link)"`,
+    );
+  });
 });

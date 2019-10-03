@@ -4,37 +4,6 @@ import { isSuccessAction } from '../createDataService';
 import _fromPairs from 'lodash/fromPairs';
 import _merge from 'lodash/merge';
 
-export function replace(_prev, next) {
-  return next;
-}
-
-export function normalizeMerge(merge, namespace) {
-  if (!merge) {
-    return {
-      [namespace]: replace,
-    };
-  }
-
-  if (typeof merge === 'function') {
-    return {
-      [namespace]: merge,
-    };
-  }
-
-  if (typeof merge === 'object') {
-    if (!merge[namespace]) {
-      return {
-        ...merge,
-        [namespace]: replace,
-      };
-    }
-
-    return merge;
-  }
-
-  throw new Error('[sharedReducer] Could not match typeof merge. See docs. (TODO add docs link)');
-}
-
 const initialState = {
   data: {},
   parents: {},
@@ -51,8 +20,7 @@ export default function sharedReducer(state = initialState, action) {
     // only run this reducer if this action is `share`d
     if (!share) return state;
 
-    const { namespace, merge } = share;
-    const mergeObj = normalizeMerge(merge, namespace);
+    const { namespace, mergeObj } = share;
 
     const mergeState = { ..._get(state, ['merges']) };
     // (eslint bug)
