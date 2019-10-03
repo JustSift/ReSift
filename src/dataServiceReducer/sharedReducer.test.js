@@ -170,15 +170,10 @@ describe('sharedReducer', () => {
 
     const requests = [movieListRequest, movieItem123Request];
 
-    const initialState = {
-      relationships: {},
-      data: {},
-    };
-    const afterRequests = requests.reduce(sharedReducer, initialState);
+    const afterRequests = requests.reduce(sharedReducer, null);
 
     expect(afterRequests).toMatchInlineSnapshot(`
       Object {
-        "data": Object {},
         "merges": Object {
           "movieItem": Object {
             "movieItem": [Function],
@@ -188,7 +183,27 @@ describe('sharedReducer', () => {
             "movieList": [Function],
           },
         },
-        "relationships": Object {},
+        "parents": Object {
+          "movieItem": Object {
+            "Get Movie Item | key:movie123 | test-short-id": Object {
+              "displayName": "Get Movie Item",
+              "fetchFactoryId": "test-short-id",
+              "key": "key:movie123",
+            },
+            "Get Movie List | key: | test-short-id": Object {
+              "displayName": "Get Movie List",
+              "fetchFactoryId": "test-short-id",
+              "key": "key:",
+            },
+          },
+          "movieList": Object {
+            "Get Movie List | key: | test-short-id": Object {
+              "displayName": "Get Movie List",
+              "fetchFactoryId": "test-short-id",
+              "key": "key:",
+            },
+          },
+        },
       }
     `);
 
@@ -222,7 +237,27 @@ describe('sharedReducer', () => {
             "movieList": [Function],
           },
         },
-        "relationships": Object {},
+        "parents": Object {
+          "movieItem": Object {
+            "Get Movie Item | key:movie123 | test-short-id": Object {
+              "displayName": "Get Movie Item",
+              "fetchFactoryId": "test-short-id",
+              "key": "key:movie123",
+            },
+            "Get Movie List | key: | test-short-id": Object {
+              "displayName": "Get Movie List",
+              "fetchFactoryId": "test-short-id",
+              "key": "key:",
+            },
+          },
+          "movieList": Object {
+            "Get Movie List | key: | test-short-id": Object {
+              "displayName": "Get Movie List",
+              "fetchFactoryId": "test-short-id",
+              "key": "key:",
+            },
+          },
+        },
       }
     `);
 
@@ -273,7 +308,27 @@ describe('sharedReducer', () => {
             "movieList": [Function],
           },
         },
-        "relationships": Object {},
+        "parents": Object {
+          "movieItem": Object {
+            "Get Movie Item | key:movie123 | test-short-id": Object {
+              "displayName": "Get Movie Item",
+              "fetchFactoryId": "test-short-id",
+              "key": "key:movie123",
+            },
+            "Get Movie List | key: | test-short-id": Object {
+              "displayName": "Get Movie List",
+              "fetchFactoryId": "test-short-id",
+              "key": "key:",
+            },
+          },
+          "movieList": Object {
+            "Get Movie List | key: | test-short-id": Object {
+              "displayName": "Get Movie List",
+              "fetchFactoryId": "test-short-id",
+              "key": "key:",
+            },
+          },
+        },
       }
     `);
   });

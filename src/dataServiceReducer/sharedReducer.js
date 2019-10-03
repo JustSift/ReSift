@@ -37,7 +37,8 @@ export function normalizeMerge(merge, namespace) {
 
 const initialState = {
   data: {},
-  relationships: {},
+  parents: {},
+  merges: {},
 };
 
 // for each fetch factory, save their normalized merge object into an easy-to-look-up place
@@ -53,7 +54,7 @@ export default function sharedReducer(state = initialState, action) {
     const { namespace, merge } = share;
     const mergeObj = normalizeMerge(merge, namespace);
 
-    const mergeState = { ...state.merges };
+    const mergeState = { ..._get(state, ['merges']) };
     // (eslint bug)
     // eslint-disable-next-line no-unused-vars
     for (const [targetNamespace, mergeFn] of Object.entries(mergeObj)) {
@@ -63,21 +64,21 @@ export default function sharedReducer(state = initialState, action) {
       mergeState[targetNamespace] = merges;
     }
 
+    const parentsState = { ..._get(state, ['parents']) };
+
     // (eslint bug)
     // eslint-disable-next-line no-unused-vars
-    // for (const targetNamespace of Object.keys(mergeObj)) {
-    //   const parents = { ..._get(relationships, [targetNamespace, 'parents']) };
-    //   parents[`${displayName} | ${key} | ${fetchFactoryId}`] = { fetchFactoryId, key, displayName };
+    for (const targetNamespace of Object.keys(mergeObj)) {
+      const parents = { ..._get(parentsState, [targetNamespace]) };
+      parents[`${displayName} | ${key} | ${fetchFactoryId}`] = { fetchFactoryId, key, displayName };
 
-    //   relationships[targetNamespace] = {
-    //     ...relationships.targetNamespace,
-    //     parents,
-    //   };
-    // }
+      parentsState[targetNamespace] = parents;
+    }
 
     return {
       ...state,
       merges: mergeState,
+      parents: parentsState,
     };
   }
 
@@ -91,7 +92,7 @@ export default function sharedReducer(state = initialState, action) {
 
     const merges = _get(state, ['merges', namespace]);
 
-    const nextData = { ...state.data };
+    const nextData = { ..._get(state, ['data']) };
 
     // (eslint bug)
     // eslint-disable-next-line no-unused-vars
@@ -99,7 +100,7 @@ export default function sharedReducer(state = initialState, action) {
       // if the target namespace is different from the action's namespace
       // then we should apply the merge function over all the keys
       if (targetNamespace !== namespace) {
-        const mergedData = Object.entries(state.data[targetNamespace] || {}).reduce(
+        const mergedData = Object.entries(_get(state, ['data', targetNamespace], {})).reduce(
           (acc, [key, value]) => {
             acc[key] = mergeFn(value, payload);
             return acc;
