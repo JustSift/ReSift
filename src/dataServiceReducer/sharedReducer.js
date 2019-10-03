@@ -68,12 +68,14 @@ export default function sharedReducer(state = initialState, action) {
 
     // (eslint bug)
     // eslint-disable-next-line no-unused-vars
-    for (const targetNamespace of Object.keys(mergeObj)) {
-      const parents = { ..._get(parentsState, [targetNamespace]) };
-      parents[`${displayName} | ${key} | ${fetchFactoryId}`] = { fetchFactoryId, key, displayName };
+    const parents = { ..._get(parentsState, [namespace]) };
+    parents[`${displayName} | ${key} | ${fetchFactoryId}`] = {
+      fetchFactoryId,
+      key,
+      displayName,
+    };
 
-      parentsState[targetNamespace] = parents;
-    }
+    parentsState[namespace] = parents;
 
     return {
       ...state,

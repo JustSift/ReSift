@@ -190,11 +190,6 @@ describe('sharedReducer', () => {
               "fetchFactoryId": "test-short-id",
               "key": "key:movie123",
             },
-            "Get Movie List | key: | test-short-id": Object {
-              "displayName": "Get Movie List",
-              "fetchFactoryId": "test-short-id",
-              "key": "key:",
-            },
           },
           "movieList": Object {
             "Get Movie List | key: | test-short-id": Object {
@@ -243,11 +238,6 @@ describe('sharedReducer', () => {
               "displayName": "Get Movie Item",
               "fetchFactoryId": "test-short-id",
               "key": "key:movie123",
-            },
-            "Get Movie List | key: | test-short-id": Object {
-              "displayName": "Get Movie List",
-              "fetchFactoryId": "test-short-id",
-              "key": "key:",
             },
           },
           "movieList": Object {
@@ -314,11 +304,6 @@ describe('sharedReducer', () => {
               "displayName": "Get Movie Item",
               "fetchFactoryId": "test-short-id",
               "key": "key:movie123",
-            },
-            "Get Movie List | key: | test-short-id": Object {
-              "displayName": "Get Movie List",
-              "fetchFactoryId": "test-short-id",
-              "key": "key:",
             },
           },
           "movieList": Object {
