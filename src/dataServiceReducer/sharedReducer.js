@@ -53,18 +53,25 @@ export default function sharedReducer(state = initialState, action) {
     const { namespace, merge } = share;
     const mergeObj = normalizeMerge(merge, namespace);
 
-    let relationships = {};
+    const relationships = { ...state.relationships };
     // (eslint bug)
     // eslint-disable-next-line no-unused-vars
     for (const [targetNamespace, mergeFn] of Object.entries(mergeObj)) {
-      const lookup = relationships[targetNamespace] || {};
-      lookup[namespace] = mergeFn;
-      relationships[targetNamespace] = lookup;
+      const merges = { ..._get(relationships, [targetNamespace, 'merges']) };
+      merges[namespace] = mergeFn;
+
+      // const parents = { ..._get(relationships, [targetNamespace, 'parents']) };
+      // parents[`${displayName} | ${key} | ${fetchFactoryId}`] = { fetchFactoryId, key, displayName };
+
+      relationships[targetNamespace] = {
+        ...relationships.targetNamespace,
+        merges,
+      };
     }
 
     return {
       ...state,
-      relationships: _merge({}, state.relationships, relationships),
+      relationships,
     };
   }
 
@@ -76,7 +83,7 @@ export default function sharedReducer(state = initialState, action) {
     if (!share) return state;
     const { namespace } = share;
 
-    const merges = state.relationships[namespace];
+    const merges = _get(state, ['relationships', namespace, 'merges']);
 
     const nextData = { ...state.data };
 

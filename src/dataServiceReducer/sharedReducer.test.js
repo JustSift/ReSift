@@ -181,12 +181,16 @@ describe('sharedReducer', () => {
         "data": Object {},
         "relationships": Object {
           "movieItem": Object {
-            "movieItem": [Function],
-            "movieList": [Function],
+            "merges": Object {
+              "movieItem": [Function],
+              "movieList": [Function],
+            },
           },
           "movieList": Object {
-            "movieItem": [Function],
-            "movieList": [Function],
+            "merges": Object {
+              "movieItem": [Function],
+              "movieList": [Function],
+            },
           },
         },
       }
@@ -215,12 +219,16 @@ describe('sharedReducer', () => {
         },
         "relationships": Object {
           "movieItem": Object {
-            "movieItem": [Function],
-            "movieList": [Function],
+            "merges": Object {
+              "movieItem": [Function],
+              "movieList": [Function],
+            },
           },
           "movieList": Object {
-            "movieItem": [Function],
-            "movieList": [Function],
+            "merges": Object {
+              "movieItem": [Function],
+              "movieList": [Function],
+            },
           },
         },
       }
@@ -266,12 +274,16 @@ describe('sharedReducer', () => {
         },
         "relationships": Object {
           "movieItem": Object {
-            "movieItem": [Function],
-            "movieList": [Function],
+            "merges": Object {
+              "movieItem": [Function],
+              "movieList": [Function],
+            },
           },
           "movieList": Object {
-            "movieItem": [Function],
-            "movieList": [Function],
+            "merges": Object {
+              "movieItem": [Function],
+              "movieList": [Function],
+            },
           },
         },
       }
