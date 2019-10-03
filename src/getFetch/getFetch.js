@@ -1,6 +1,6 @@
 import _get from 'lodash/get';
+import _flatten from 'lodash/flatten';
 import createStoreKey from '../createStoreKey';
-import createShareKey from '../createShareKey';
 
 import isUnknown from '../isUnknown';
 import isLoading from '../isLoading';
@@ -64,28 +64,60 @@ export default function getFetch(fetch, state, options) {
   const storeKey = createStoreKey(displayName, fetchFactoryId);
 
   const value = _get(state, ['dataService', 'actions', storeKey, key]);
+  const nonSharedStatus = getStatus(value);
 
   if (!share) {
     if (!value) return [null, UNKNOWN];
 
     const data = value.error ? null : value.payload;
-    const status = getStatus(value);
 
-    return [data, status];
+    return [data, nonSharedStatus];
   }
 
-  const { namespace } = share;
-  const shareKey = createShareKey(namespace, key);
-  const storeValue = state.dataService.shared[shareKey];
-  if (!storeValue) return [null, UNKNOWN];
-
-  const sharedValue = storeValue.data;
-  const dataServiceValues = Object.values(storeValue.parentActions).map(
-    ({ storeKey, key }) => state.dataService.actions[storeKey][key],
-  );
-  const sharedStatus = combineSharedStatuses(...dataServiceValues.map(getStatus));
-
+  const { namespace, mergeObj } = share;
+  const sharedData = _get(state, ['dataService', 'shared', 'data', namespace, key]);
   const isolatedStatus = _get(options, ['isolatedStatus'], false);
 
-  return [sharedValue, isolatedStatus ? getStatus(value) : sharedStatus];
+  if (isolatedStatus) {
+    return [sharedData, nonSharedStatus];
+  }
+
+  const targetNamespaces = Object.keys(mergeObj);
+
+  const parentLocations = _flatten(
+    targetNamespaces
+      .map(targetNamespace => {
+        const parentLocations = _get(state, ['dataService', 'shared', 'parents', namespace]);
+        if (!parentLocations) {
+          return null;
+        }
+
+        if (targetNamespace === namespace) {
+          const validParentLocations = Object.values(parentLocations).filter(
+            parentLocation => parentLocation.key === key,
+          );
+
+          return validParentLocations;
+        }
+
+        return Object.values(parentLocations);
+      })
+      .filter(x => !!x),
+  );
+
+  const sharedStatuses = parentLocations
+    .map(parentLocation => {
+      const storeKey = createStoreKey(parentLocation.displayName, parentLocation.fetchFactoryId);
+      const parentAction = _get(state, ['dataService', 'actions', storeKey, parentLocation.key]);
+      if (!parentAction) {
+        return null;
+      }
+
+      return getStatus(getStatus);
+    })
+    .filter(x => x !== null);
+
+  const sharedStatus = combineSharedStatuses(...sharedStatuses);
+
+  return [sharedData, isolatedStatus ? getStatus(value) : sharedStatus];
 }
