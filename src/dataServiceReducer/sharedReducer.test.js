@@ -146,10 +146,10 @@ describe('sharedReducer', () => {
       share: {
         namespace: 'movieItem',
         merge: {
-          movieList: (previousMovie, nextList) => {
-            if (!previousMovie) return null;
-            return nextList.find(i => i.id === previousMovie.id);
-          },
+          // movieList: (previousMovie, nextList) => {
+          //   if (!previousMovie) return null;
+          //   return nextList.find(i => i.id === previousMovie.id);
+          // },
         },
       },
       make: movieId => ({
@@ -179,20 +179,16 @@ describe('sharedReducer', () => {
     expect(afterRequests).toMatchInlineSnapshot(`
       Object {
         "data": Object {},
-        "relationships": Object {
+        "merges": Object {
           "movieItem": Object {
-            "merges": Object {
-              "movieItem": [Function],
-              "movieList": [Function],
-            },
+            "movieItem": [Function],
+            "movieList": [Function],
           },
           "movieList": Object {
-            "merges": Object {
-              "movieItem": [Function],
-              "movieList": [Function],
-            },
+            "movieList": [Function],
           },
         },
+        "relationships": Object {},
       }
     `);
 
@@ -217,20 +213,16 @@ describe('sharedReducer', () => {
           },
           "movieList": Object {},
         },
-        "relationships": Object {
+        "merges": Object {
           "movieItem": Object {
-            "merges": Object {
-              "movieItem": [Function],
-              "movieList": [Function],
-            },
+            "movieItem": [Function],
+            "movieList": [Function],
           },
           "movieList": Object {
-            "merges": Object {
-              "movieItem": [Function],
-              "movieList": [Function],
-            },
+            "movieList": [Function],
           },
         },
+        "relationships": Object {},
       }
     `);
 
@@ -256,7 +248,7 @@ describe('sharedReducer', () => {
           "movieItem": Object {
             "key:movie123": Object {
               "id": "movie123",
-              "title": "CHANGED",
+              "title": "foo",
             },
           },
           "movieList": Object {
@@ -272,20 +264,16 @@ describe('sharedReducer', () => {
             ],
           },
         },
-        "relationships": Object {
+        "merges": Object {
           "movieItem": Object {
-            "merges": Object {
-              "movieItem": [Function],
-              "movieList": [Function],
-            },
+            "movieItem": [Function],
+            "movieList": [Function],
           },
           "movieList": Object {
-            "merges": Object {
-              "movieItem": [Function],
-              "movieList": [Function],
-            },
+            "movieList": [Function],
           },
         },
+        "relationships": Object {},
       }
     `);
   });
