@@ -67,26 +67,26 @@ export default function sharedReducer(state = initialState, action) {
     // (eslint bug)
     // eslint-disable-next-line no-unused-vars
     for (const [targetNamespace, mergeFn] of Object.entries(merges)) {
-      // if the target namespace is different from the action's namespace
-      // then we should apply the merge function over all the keys
-      if (targetNamespace !== namespace) {
-        const mergedData = Object.entries(_get(state, ['data', targetNamespace], {})).reduce(
-          (acc, [key, value]) => {
-            acc[key] = mergeFn(value, payload);
-            return acc;
-          },
-          {},
-        );
-
-        nextData[targetNamespace] = mergedData;
+      // if the target namespace is the same from the action's namespace
+      // we should only apply the merge function over the current key
+      if (targetNamespace === namespace) {
+        nextData[targetNamespace] = {
+          ..._get(state.data, [targetNamespace]),
+          [key]: mergeFn(_get(state.data, [targetNamespace, key]), payload),
+        };
         continue;
       }
 
-      // otherwise we should only apply the merge function over the current key
-      nextData[targetNamespace] = {
-        ..._get(state.data, [targetNamespace]),
-        [key]: mergeFn(_get(state.data, [targetNamespace, key]), payload),
-      };
+      const mergedData = Object.entries(_get(state, ['data', targetNamespace], {})).reduce(
+        (acc, [key, value]) => {
+          acc[key] = mergeFn(value, payload);
+          return acc;
+        },
+        {},
+      );
+
+      // otherwise we should apply the merge function over all the keys
+      nextData[targetNamespace] = mergedData;
     }
 
     return {
