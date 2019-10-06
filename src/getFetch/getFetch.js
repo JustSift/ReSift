@@ -66,7 +66,11 @@ export default function getFetch(fetch, state, options) {
   const value = _get(state, ['dataService', 'actions', storeKey, key]);
   const nonSharedStatus = getStatus(value);
 
+  // if the fetch is _not_ shared, continue down this code path.
+  // in this path, all we do is return the "non-shared" value and the "non-shared" state from the
+  // `actions` sub-store (vs the `shared` sub-store)
   if (!share) {
+    // if there is no value, then all we can do is return null and UNKNOWN
     if (!value) return [null, UNKNOWN];
 
     const data = value.error ? null : value.payload;
@@ -74,16 +78,23 @@ export default function getFetch(fetch, state, options) {
     return [data, nonSharedStatus];
   }
 
+  // otherwise if the fetch _is_ shared, then continue down this code path
   const { namespace, mergeObj } = share;
-  const sharedData = _get(state, ['dataService', 'shared', 'data', namespace, key]);
-  const isolatedStatus = _get(options, ['isolatedStatus'], false);
 
-  if (isolatedStatus) {
+  // the value comes from the `shared` sub-store instead of the `actions` sub-store
+  const sharedData = _get(state, ['dataService', 'shared', 'data', namespace, key]);
+  const shouldReturnIsolatedStatus = _get(options, ['isolatedStatus'], false);
+
+  // if the user put in `isolatedStatus: true` in their options then we should return the status
+  // derived from the `actions` sub-store
+  if (shouldReturnIsolatedStatus) {
     return [sharedData, nonSharedStatus];
   }
 
+  // otherwise do all the stuff below to get the shared status
   const targetNamespaces = Object.keys(mergeObj);
 
+  // `parentLocations` are paths to the state in the `actions` sub-store
   const parentLocations = _flatten(
     targetNamespaces
       .map(targetNamespace => {
@@ -105,6 +116,9 @@ export default function getFetch(fetch, state, options) {
       .filter(x => !!x),
   );
 
+  // this takes all those paths and grabs the action sub-state.
+  // this sub-state is ran through `getStatus` which returns the corresponding status for the
+  // sub-state.
   const sharedStatuses = parentLocations
     .map(parentLocation => {
       const storeKey = createStoreKey(parentLocation.displayName, parentLocation.fetchFactoryId);
@@ -117,7 +131,8 @@ export default function getFetch(fetch, state, options) {
     })
     .filter(x => x !== null);
 
+  // all of those status are folded into one shared status
   const sharedStatus = combineSharedStatuses(...sharedStatuses);
 
-  return [sharedData, isolatedStatus ? getStatus(value) : sharedStatus];
+  return [sharedData, sharedStatus];
 }
