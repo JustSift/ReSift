@@ -5,7 +5,6 @@ export { default as createActionType } from './createActionType';
 export { default as createContextFetch } from './createContextFetch';
 export { default as createDataService } from './createDataService';
 export { default as createHttpProxy } from './createHttpProxy';
-export { default as createShareKey } from './createShareKey';
 export { default as createStoreKey } from './createStoreKey';
 export { default as createHttpService } from './createHttpService';
 export { default as dataServiceReducer } from './dataServiceReducer';

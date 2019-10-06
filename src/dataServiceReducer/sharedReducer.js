@@ -1,8 +1,7 @@
 import _get from 'lodash/get';
 import { isFetchAction } from '../defineFetch';
 import { isSuccessAction } from '../createDataService';
-import _fromPairs from 'lodash/fromPairs';
-import _merge from 'lodash/merge';
+import { isClearAction } from '../clearFetch';
 
 const initialState = {
   data: {},
@@ -95,18 +94,39 @@ export default function sharedReducer(state = initialState, action) {
     };
   }
 
-  // if (isClearAction(action)) {
-  //   const { meta } = action;
-  //   const { key, share } = meta;
+  if (isClearAction(action)) {
+    const { meta } = action;
+    const { displayName, fetchFactoryId, key, share } = meta;
+    // only run this reducer if this action is `share`d
+    if (!share) return state;
 
-  //   // only run this reducer if this action is `share`d
-  //   if (!share) return state;
+    const { namespace, mergeObj } = share;
 
-  //   const { namespace } = share;
-  //   const shareKey = createShareKey(namespace, key);
+    const mergeState = { ..._get(state, ['merges']) };
+    // (eslint bug)
+    // eslint-disable-next-line no-unused-vars
+    for (const [targetNamespace, mergeFn] of Object.entries(mergeObj)) {
+      const merges = { ..._get(mergeState, [targetNamespace]) };
+      delete merges[namespace];
 
-  //   return _omit(state, shareKey);
-  // }
+      mergeState[targetNamespace] = merges;
+    }
+
+    const parentsState = { ..._get(state, ['parents']) };
+
+    // (eslint bug)
+    // eslint-disable-next-line no-unused-vars
+    const parents = { ..._get(parentsState, [namespace]) };
+    delete parents[`${displayName} | ${key} | ${fetchFactoryId}`];
+
+    parentsState[namespace] = parents;
+
+    return {
+      ...state,
+      merges: mergeState,
+      parents: parentsState,
+    };
+  }
 
   return state;
 }

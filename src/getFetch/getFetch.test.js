@@ -196,7 +196,11 @@ describe('getFetch', () => {
       Object {
         "dataService": Object {
           "actions": Object {},
-          "shared": Object {},
+          "shared": Object {
+            "data": Object {},
+            "merges": Object {},
+            "parents": Object {},
+          },
         },
       }
     `);
@@ -223,7 +227,11 @@ describe('getFetch', () => {
       Object {
         "dataService": Object {
           "actions": Object {},
-          "shared": Object {},
+          "shared": Object {
+            "data": Object {},
+            "merges": Object {},
+            "parents": Object {},
+          },
         },
       }
     `);
@@ -290,7 +298,11 @@ describe('getFetch', () => {
             },
           },
         },
-        "shared": Object {},
+        "shared": Object {
+          "data": Object {},
+          "merges": Object {},
+          "parents": Object {},
+        },
       }
     `);
 
@@ -318,7 +330,7 @@ describe('getFetch', () => {
 
     expect(result).toMatchInlineSnapshot(`
       Array [
-        null,
+        undefined,
         0,
       ]
     `);
@@ -362,6 +374,9 @@ describe('getFetch', () => {
                 "fetchFactoryId": "test-short-id",
                 "key": "key:",
                 "share": Object {
+                  "mergeObj": Object {
+                    "example": [Function],
+                  },
                   "namespace": "example",
                 },
                 "type": "FETCH_INSTANCE",
@@ -375,14 +390,24 @@ describe('getFetch', () => {
           },
         },
         "shared": Object {
-          "example | key:": Object {
-            "data": Object {
-              "foo": "bar",
+          "data": Object {
+            "example": Object {
+              "key:": Object {
+                "foo": "bar",
+              },
             },
-            "parentActions": Object {
-              "Example | test-short-id | key:": Object {
+          },
+          "merges": Object {
+            "example": Object {
+              "example": [Function],
+            },
+          },
+          "parents": Object {
+            "example": Object {
+              "Example | key: | test-short-id": Object {
+                "displayName": "Example",
+                "fetchFactoryId": "test-short-id",
                 "key": "key:",
-                "storeKey": "Example | test-short-id",
               },
             },
           },
@@ -451,6 +476,9 @@ describe('getFetch', () => {
                 "fetchFactoryId": "test-short-id",
                 "key": "key:",
                 "share": Object {
+                  "mergeObj": Object {
+                    "example": [Function],
+                  },
                   "namespace": "example",
                 },
                 "type": "FETCH_INSTANCE",
@@ -471,6 +499,9 @@ describe('getFetch', () => {
                 "fetchFactoryId": "test-short-id",
                 "key": "key:",
                 "share": Object {
+                  "mergeObj": Object {
+                    "example": [Function],
+                  },
                   "namespace": "example",
                 },
               },
@@ -480,18 +511,29 @@ describe('getFetch', () => {
           },
         },
         "shared": Object {
-          "example | key:": Object {
-            "data": Object {
-              "one": "done",
-            },
-            "parentActions": Object {
-              "Example One | test-short-id | key:": Object {
-                "key": "key:",
-                "storeKey": "Example One | test-short-id",
+          "data": Object {
+            "example": Object {
+              "key:": Object {
+                "one": "done",
               },
-              "Example Two | test-short-id | key:": Object {
+            },
+          },
+          "merges": Object {
+            "example": Object {
+              "example": [Function],
+            },
+          },
+          "parents": Object {
+            "example": Object {
+              "Example One | key: | test-short-id": Object {
+                "displayName": "Example One",
+                "fetchFactoryId": "test-short-id",
                 "key": "key:",
-                "storeKey": "Example Two | test-short-id",
+              },
+              "Example Two | key: | test-short-id": Object {
+                "displayName": "Example Two",
+                "fetchFactoryId": "test-short-id",
+                "key": "key:",
               },
             },
           },

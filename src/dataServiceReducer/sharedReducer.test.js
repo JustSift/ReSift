@@ -48,7 +48,7 @@ test('returns the previous state if the action is not shared', () => {
   expect(newState).toBe(previousState);
 });
 
-test.only('does merges correctly', () => {
+test('shared merges bidirectional case', () => {
   const makeMovieListFetch = defineFetch({
     displayName: 'Get Movie List',
     share: {
@@ -77,15 +77,16 @@ test.only('does merges correctly', () => {
         }),
     }),
   });
+
   const makeMovieItemFetch = defineFetch({
     displayName: 'Get Movie Item',
     share: {
       namespace: 'movieItem',
       merge: {
-        // movieList: (previousMovie, nextList) => {
-        //   if (!previousMovie) return null;
-        //   return nextList.find(i => i.id === previousMovie.id);
-        // },
+        movieList: (previousMovie, nextList) => {
+          if (!previousMovie) return null;
+          return nextList.find(i => i.id === previousMovie.id);
+        },
       },
     },
     make: movieId => ({
@@ -109,34 +110,35 @@ test.only('does merges correctly', () => {
   const afterRequests = requests.reduce(sharedReducer, null);
 
   expect(afterRequests).toMatchInlineSnapshot(`
-      Object {
-        "merges": Object {
-          "movieItem": Object {
-            "movieItem": [Function],
-            "movieList": [Function],
-          },
-          "movieList": Object {
-            "movieList": [Function],
+    Object {
+      "merges": Object {
+        "movieItem": Object {
+          "movieItem": [Function],
+          "movieList": [Function],
+        },
+        "movieList": Object {
+          "movieItem": [Function],
+          "movieList": [Function],
+        },
+      },
+      "parents": Object {
+        "movieItem": Object {
+          "Get Movie Item | key:movie123 | test-short-id": Object {
+            "displayName": "Get Movie Item",
+            "fetchFactoryId": "test-short-id",
+            "key": "key:movie123",
           },
         },
-        "parents": Object {
-          "movieItem": Object {
-            "Get Movie Item | key:movie123 | test-short-id": Object {
-              "displayName": "Get Movie Item",
-              "fetchFactoryId": "test-short-id",
-              "key": "key:movie123",
-            },
-          },
-          "movieList": Object {
-            "Get Movie List | key: | test-short-id": Object {
-              "displayName": "Get Movie List",
-              "fetchFactoryId": "test-short-id",
-              "key": "key:",
-            },
+        "movieList": Object {
+          "Get Movie List | key: | test-short-id": Object {
+            "displayName": "Get Movie List",
+            "fetchFactoryId": "test-short-id",
+            "key": "key:",
           },
         },
-      }
-    `);
+      },
+    }
+  `);
 
   const movie123Success = {
     type: createActionType(SUCCESS, movieItem123Fetch.meta),
@@ -149,43 +151,44 @@ test.only('does merges correctly', () => {
 
   const afterMovie123Success = sharedReducer(afterRequests, movie123Success);
   expect(afterMovie123Success).toMatchInlineSnapshot(`
-      Object {
-        "data": Object {
-          "movieItem": Object {
-            "key:movie123": Object {
-              "id": "movie123",
-              "title": "foo",
-            },
-          },
-          "movieList": Object {},
-        },
-        "merges": Object {
-          "movieItem": Object {
-            "movieItem": [Function],
-            "movieList": [Function],
-          },
-          "movieList": Object {
-            "movieList": [Function],
+    Object {
+      "data": Object {
+        "movieItem": Object {
+          "key:movie123": Object {
+            "id": "movie123",
+            "title": "foo",
           },
         },
-        "parents": Object {
-          "movieItem": Object {
-            "Get Movie Item | key:movie123 | test-short-id": Object {
-              "displayName": "Get Movie Item",
-              "fetchFactoryId": "test-short-id",
-              "key": "key:movie123",
-            },
-          },
-          "movieList": Object {
-            "Get Movie List | key: | test-short-id": Object {
-              "displayName": "Get Movie List",
-              "fetchFactoryId": "test-short-id",
-              "key": "key:",
-            },
+        "movieList": Object {},
+      },
+      "merges": Object {
+        "movieItem": Object {
+          "movieItem": [Function],
+          "movieList": [Function],
+        },
+        "movieList": Object {
+          "movieItem": [Function],
+          "movieList": [Function],
+        },
+      },
+      "parents": Object {
+        "movieItem": Object {
+          "Get Movie Item | key:movie123 | test-short-id": Object {
+            "displayName": "Get Movie Item",
+            "fetchFactoryId": "test-short-id",
+            "key": "key:movie123",
           },
         },
-      }
-    `);
+        "movieList": Object {
+          "Get Movie List | key: | test-short-id": Object {
+            "displayName": "Get Movie List",
+            "fetchFactoryId": "test-short-id",
+            "key": "key:",
+          },
+        },
+      },
+    }
+  `);
 
   const movieListSuccess = {
     type: createActionType(SUCCESS, movieListFetch.meta),
@@ -204,54 +207,110 @@ test.only('does merges correctly', () => {
 
   const afterMoveListSuccess = sharedReducer(afterMovie123Success, movieListSuccess);
   expect(afterMoveListSuccess).toMatchInlineSnapshot(`
-      Object {
-        "data": Object {
-          "movieItem": Object {
-            "key:movie123": Object {
+    Object {
+      "data": Object {
+        "movieItem": Object {
+          "key:movie123": Object {
+            "id": "movie123",
+            "title": "CHANGED",
+          },
+        },
+        "movieList": Object {
+          "key:": Array [
+            Object {
               "id": "movie123",
+              "title": "CHANGED",
+            },
+            Object {
+              "id": "movie456",
               "title": "foo",
             },
-          },
-          "movieList": Object {
-            "key:": Array [
-              Object {
-                "id": "movie123",
-                "title": "CHANGED",
-              },
-              Object {
-                "id": "movie456",
-                "title": "foo",
-              },
-            ],
+          ],
+        },
+      },
+      "merges": Object {
+        "movieItem": Object {
+          "movieItem": [Function],
+          "movieList": [Function],
+        },
+        "movieList": Object {
+          "movieItem": [Function],
+          "movieList": [Function],
+        },
+      },
+      "parents": Object {
+        "movieItem": Object {
+          "Get Movie Item | key:movie123 | test-short-id": Object {
+            "displayName": "Get Movie Item",
+            "fetchFactoryId": "test-short-id",
+            "key": "key:movie123",
           },
         },
-        "merges": Object {
-          "movieItem": Object {
-            "movieItem": [Function],
-            "movieList": [Function],
-          },
-          "movieList": Object {
-            "movieList": [Function],
+        "movieList": Object {
+          "Get Movie List | key: | test-short-id": Object {
+            "displayName": "Get Movie List",
+            "fetchFactoryId": "test-short-id",
+            "key": "key:",
           },
         },
-        "parents": Object {
-          "movieItem": Object {
-            "Get Movie Item | key:movie123 | test-short-id": Object {
-              "displayName": "Get Movie Item",
-              "fetchFactoryId": "test-short-id",
-              "key": "key:movie123",
-            },
-          },
-          "movieList": Object {
-            "Get Movie List | key: | test-short-id": Object {
-              "displayName": "Get Movie List",
-              "fetchFactoryId": "test-short-id",
-              "key": "key:",
-            },
-          },
+      },
+    }
+  `);
+});
+
+test('shared merges one way', () => {
+  const makeMovieListFetch = defineFetch({
+    displayName: 'Get Movie List',
+    share: {
+      namespace: 'movieList',
+      merge: {
+        movieItem: (previousList, movie) => {
+          if (!previousList) return null;
+
+          const index = previousList.findIndex(i => i.id === movie.id);
+          if (index === -1) return previousList;
+
+          return [
+            ...previousList.slice(0, index),
+            movie,
+            ...previousList.slice(index + 1, previousList.length),
+          ];
         },
-      }
-    `);
+      },
+    },
+    make: () => ({
+      key: [],
+      request: () => ({ http }) =>
+        http({
+          method: 'GET',
+          route: '/movies',
+        }),
+    }),
+  });
+
+  // note that this fetch does _not_ implement a merge for movieList.
+  //
+  // in this test, movieList implements a movieItem merge but movieItem does not implement a
+  // movieList merge.
+  const makeMovieItemFetch = defineFetch({
+    displayName: 'Get Movie Item',
+    share: {
+      namespace: 'movieItem',
+    },
+    make: movieId => ({
+      key: [movieId],
+      request: () => ({ http }) =>
+        http({
+          method: 'GET',
+          route: `/movies/${movieId}`,
+        }),
+    }),
+  });
+
+  // const movieListFetch = makeMovieListFetch();
+  // const movieItem123Fetch = makeMovieItemFetch('movie123');
+
+  // const movieListSuccess =
 });
 
 test.skip('clear fetch', () => {

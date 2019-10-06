@@ -113,7 +113,7 @@ export default function getFetch(fetch, state, options) {
         return null;
       }
 
-      return getStatus(getStatus);
+      return getStatus(parentAction);
     })
     .filter(x => x !== null);
 
