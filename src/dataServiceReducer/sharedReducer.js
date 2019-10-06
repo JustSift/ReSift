@@ -1,4 +1,5 @@
 import _get from 'lodash/get';
+import _isEmpty from 'lodash/isEmpty';
 import { isFetchAction } from '../defineFetch';
 import { isSuccessAction } from '../createDataService';
 import { isClearAction } from '../clearFetch';
@@ -114,15 +115,21 @@ export default function sharedReducer(state = initialState, action) {
 
     const parentsState = { ..._get(state, ['parents']) };
 
-    // (eslint bug)
-    // eslint-disable-next-line no-unused-vars
-    const parents = { ..._get(parentsState, [namespace]) };
-    delete parents[`${displayName} | ${key} | ${fetchFactoryId}`];
+    const parentSet = { ..._get(parentsState, [namespace]) };
+    const parentKey = `${displayName} | ${key} | ${fetchFactoryId}`;
+    delete parentSet[parentKey];
+    if (_isEmpty(parentSet)) {
+      delete parentsState[namespace];
+    } else {
+      parentsState[namespace] = parentSet;
+    }
 
-    parentsState[namespace] = parents;
+    const dataState = { ..._get(state, ['data']) };
+    delete dataState[namespace];
 
     return {
       ...state,
+      data: dataState,
       merges: mergeState,
       parents: parentsState,
     };
