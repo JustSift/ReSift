@@ -207,3 +207,439 @@ Now you have all the knowledge you need to use material-ui and JSS for this proj
 You'd import the ReSift functions you need in curly braces. For example, `import { createHttpProxy } from 'resift'` or `import { useFetch, useDispatch } from 'resift'`.
 
 That's all for set up, let's go make our first fetch!
+
+## Section 1: Making Your First Fetch – Fetch Genres and Display Loading Indicator
+
+When finished, it’ll look like this:
+
+![section 1 finished screen](assets/section_1_finished.gif)
+
+When users load the app, we'll start fetching the genre data while displaying a loading spinner when the data has not been returned.
+
+Now let’s see how we can get there.
+
+### Starter code
+
+You can get the starter code via [Github](https://github.com/pearlzhuzeng/resift-rentals-tutorial/tree/starter/first-fetch) or [codesandbox](https://codesandbox.io/s/resift-rentals-tutorial-section1-starter-csicp).
+
+Then refer to the [Setup & Overview](#setup-overview) section for spinning up the codebase and inspecting the starter code.
+
+### 1. Installing ReSift
+
+Note that this code has already have resift installed because it’s needed for creating the HTTP proxy.
+
+To install ReSift from scratch, all you need to do is run: `npm install --save resift redux react-redux`, this command will install ReSift as well as ReSift’s peer dependencies: `redux` and `react-redux`, although you are not required to have knowledge on redux or react-redux in order to use ReSift.
+
+### 2. Adding ReSift to Your Components
+
+After installing ReSift, in order to use ReSift in your components, you need two steps:</br>
+Step 1: [Add a dataService file](#add-a-dataservice-file)</br>
+Step 2: [Wrap the app in `ResiftProvider`](#wrap-the-app-in-resiftprovider)
+
+#### Add a Data Service File:
+
+In the `/src` folder, create a js file named `dataService.js` and add in the following content:
+
+```js
+// dataService.js
+import { createHttpService, createDataService } from 'resift';
+
+const http = createHttpService({
+  prefix: '/api',
+});
+
+const dataService = createDataService({
+  services: { http },
+  onError: e => {
+    throw e;
+  },
+});
+export default dataService;
+```
+
+This file specifies the data service that the codebase will be using, in our case, we are using http.
+Now we can add in the endpoints we created in the http proxy for use in this codebase:
+
+```js
+// dataService.js
+import { createHttpService, createDataService } from 'resift';
+import { genres, movies, movie } from 'mockApi'; // Imports the endpoints from mockApi
+
+const http = createHttpService({
+  prefix: '/api',
+  proxies: [genres, movies, movie], // Add the endpoints as proxies
+});
+
+const dataService = createDataService({
+  services: { http },
+  onError: e => {
+    throw e;
+  },
+});
+
+export default dataService;
+```
+
+Note that if you’re using a real backend instead of an HTTP proxy, then you don’t need to add in the two lines we just added. And you might need to add token or authorization, those would be added in `getHeaders`, you can refer to [this page](./installation) for more information.
+
+#### Wrap the App in `ResiftProvider`
+
+Anything in the app that needs to use ReSift needs to be wrapped in a ReSiftProvider.
+ReSift will malfunction if it's not being wrapped in the ReSiftProvider. For example, the following code has useFetch outside of the provider and it will not work:
+
+```js
+// App.js
+import React from 'react';
+import { ResiftProvider, useFetch } from 'resift';
+import dataService from './dataService';
+// Components
+import AppBar from 'components/AppBar';
+import Genre from 'components/Genre';
+// Fetches
+import genresFetch from 'fetches/genresFetch';
+// DON'T DO THIS
+function App() {
+  const [genres] = useFetch(genresFetch);
+  return (
+    <ResiftProvider dataService={dataService}>
+      <AppBar />
+      {genres.map(genre => (
+        <Genre key={genre.id} genre={genre} />
+      ))}
+    </ResiftProvider>
+  );
+}
+export default App;
+```
+
+Since our whole app will be using ReSift, it'll be best to add the `ResiftProvider` in the index file instead.
+Let's go into the `index.js` file and import the ReSift modules we need:
+
+```js
+// Import ReSift
+import { ResiftProvider } from 'resift';
+import dataService from './dataService';
+```
+
+And then wrap our App component in the ResiftProvider:
+
+```js
+function WrappedApp() {
+  return (
+    <ResiftProvider dataService={dataService}>
+      <MuiThemeProvider theme={theme}>
+        <App />
+      </MuiThemeProvider>
+    </ResiftProvider>
+  );
+}
+```
+
+Note that we have the `<App />` wrapped in the Material-UI's `<MuiThemeProvider>` to get the dark theme, so the `<ResiftProvider>` needs to wrap the `<MuiThemeProvider>` component as well.
+
+### 3. Making the Fetch
+
+There are four steps to conducting a data fetch using ReSift.
+
+Step 1: [Create a Fetch Factory](#step-1-create-a-fetch-factory) </br>
+Step 2: [Create the Fetch Instance](#step-2-create-the-fetch-instance)</br>
+Step 3: [Use the Fetch](#step-3-use-the-fetch)</br>
+Step 4: [Dispatch the Fetch](#step-4-dispatch-the-fetch)
+
+You can think of this process as making an online order.
+Creating a fetch factory is like adding what you want in a cart.
+Creating the fetch instance is like submitting your order.
+Using the fetch is like sending your order to the fulfillment facility, for which the fulfillment facility will respond with the goods you ordered, and send you your fulfillment status.
+And dispatching the fetch is the fulfillment facility sending things out to you based on your order.
+
+![GIF for fulfilling order](https://media.giphy.com/media/5JMQL3hcBcWc0/giphy.gif)
+
+#### Step 1: Create a Fetch Factory
+
+Let's create a `fetches` folder in the `/src` folder where we can put all our fetches in.
+In there, let’s create the fetch factory for getting genres, in `/fetches` folder, create a file called `makeGenresFetch.js`. It's our suggested convention to name the fetch factory ‘make + [the thing to fetch for] + Fetch’.
+We call it fetch factory because it's a place to define what the fetch should look like, we'll first import the `defineFetch` module from ReSift.
+
+```js
+import { defineFetch } from 'resift';
+```
+
+And then use it to define the fetch.
+
+```js
+const makeGenresFetch = defineFetch({
+  displayName: 'Get Genres',
+  make: () => ({
+    key: [],
+    request: () => ({ http }) =>
+      http({
+        method: 'GET',
+        route: '/genres',
+      }),
+  }),
+});
+export default makeGenresFetch;
+```
+
+To define the fetch, there are a few params.
+
+- The first one is `displayName`, which just need to be a human readable name that helps us debug in the [redux dev tools](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd?hl=en) if you have that installed.
+  ![redux dev tools](assets/section_1_redux_dev_console.png)
+- The second one is a `make` function, which defines how the fetch should be made. It would return a key array, and a request. We’ll talk about the key array later. For now, let’s focus on understanding the request function. In this function, we need to:
+  1. Grab the service we're using, in this case `http`, note that there’s no http import in the top level because it comes from our [dataService file](#add-a-data-service-file).
+  2. Specify the method http method, in this case `GET`.
+  3. Supply the endpoint for this api call, in this case `/genres`
+
+#### Step 2: Create the Fetch Instance
+
+Fetch instances are created by calling the fetch factory, therefore, to get a genres fetch instance, all we need to do is:
+
+```js
+const genresFetch = makeGenresFetch();
+```
+
+Wow just one line of code. We only have one kind of instance of the genresFetch because our keys array is empty meaning that the genresFetch instance does not change based on keys. And we call this a singleton fetch. Since it's just one line of code, we can combine it into the fetch factory file.
+
+So let’s rename the `makeGenresFetch.js` file into `genresFetch.js` and then add the line in.
+
+```js
+// genresFetch.js
+import { defineFetch } from 'resift';
+const makeGenresFetch = defineFetch({
+  displayName: 'Get Genres',
+  make: () => ({
+    key: [],
+    request: () => ({ http }) =>
+      http({
+        method: 'GET',
+        route: '/genres',
+      }),
+  }),
+});
+const genresFetch = makeGenresFetch();
+export default genresFetch;
+```
+
+#### Step 3: Use the Fetch
+
+Let's use the genres fetch. We have already created the Genre component for individual genres. We'll get the genres data in the App component.
+To use the fetch, we need the `useFetch` module from ReSift.
+In `src/App.js`, import the module and the genresFetch we defined:
+
+```js
+import { useFetch } from 'resift';
+import genresFetch from 'fetches/genresFetch';
+```
+
+`useFetch` will return two things, first one is the data requested, second one is the status of getting the data. In the same file, inside `function App` add:
+
+```js
+const [genres, status] = useFetch(genresFetch);
+```
+
+Now we can import the Genre component and map over the genres array, add the following code in your file:
+
+```js
+import Genre from 'components/Genre';
+
+function App() {
+  const [genres] = useFetch(genresFetch);
+  return (
+    <>
+      <AppBar />
+      {genres.map(genre => (
+        <Genre key={genre.id} genre={genre} />
+      ))}
+    </>
+  );
+}
+```
+
+Refresh the page, you'll receive a type error: `Cannot read property 'map' of null`. It's indicating to us that `genres` is null.
+So genres is the data we asked for, but it will be null when the server has not responded with the data yet.
+This is where `status` comes in. In ReSift, we have a four data fetching statuses:
+
+- UNKNOWN: indicating we're unsure where the data fetching process is at
+- LOADING: indicating that the data fetching request has been sent, and the data is coming back
+- NORMAL: indicating that the data has come back
+- ERROR: indicating an error happened during the data fetching process
+
+So we know that if the status is normal, then we're guaranteed to have gotten the data back from the server. Conveniently, ReSift has a helper function `isNormal()` that checks if that status is normal. Let's add it in and only map over genres when the status is normal.
+
+```js
+import { isNormal } from 'resift';
+{
+  isNormal(status) &&
+    genres.map(genre => <Genre key={genre.id} genre={genre} className={classes.genre} />);
+}
+```
+
+If you refresh the page now, we'll the error is gone, but the genres data is still not showing up on the page. Why is that?
+The reason is if we just useFetch in the file, the genres will always be null on the first render. This is when `useDispatch` comes in.
+
+#### Step 4: Dispatch the Fetch
+
+Data dispatch should have in one of the two occasions: 1) when a page first loads/when component mounts; 2) when there's an event kicks in defined by the event handler. Our case is the former, we need the genres data when we load the page. For this we'll use React's [useEffect hook](https://reactjs.org/docs/hooks-effect.html). Let's add the imports and the effect:
+
+```js
+import { useEffect } from 'react';
+import { useDispatch } from 'resift'
+
+function App() {
+  ...
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(genresFetch());
+  }, [dispatch]);
+}
+```
+
+The complete code at this point looks like this:
+
+```js
+// src/App.js
+import React, { useEffect } from 'react';
+// Components
+import AppBar from 'components/AppBar';
+import Genre from 'components/Genre';
+// ReSift
+import { useDispatch, useFetch, isNormal } from 'resift';
+// Fetches
+import genresFetch from 'fetches/genresFetch';
+// Styles
+import { makeStyles } from '@material-ui/core/styles';
+
+const useStyles = makeStyles(theme => ({
+  root: {},
+  genre: {
+    margin: '8px 0',
+  },
+}));
+
+function App() {
+  const classes = useStyles();
+  const dispatch = useDispatch();
+  const [genres, status] = useFetch(genresFetch);
+
+  useEffect(() => {
+    dispatch(genresFetch());
+  }, [dispatch]);
+  return (
+    <>
+      <AppBar />
+      {isNormal(status) &&
+        genres.map(genre => <Genre key={genre.id} genre={genre} className={classes.genre} />)}
+    </>
+  );
+}
+export default App;
+```
+
+Refresh the page now and you'll see the genres data load after a second.
+Wait, that's not a great user experience having to wait for the data to come without know what's happening. We should indicate to our user that the data is loading. To achieve this, we'll use the `status` we got from `useFetch()` and a helper function from ReSift call `isLoading`. And we can display the Material UI spinner called `CircularProgress` during the loading state.
+Let's import `isLoading` and `CircularProgress`:
+
+```js
+import { isLoading } from 'resift';
+import { CircularProgress } from '@material-ui/core';
+```
+
+Now we can add the spinner in while loading
+
+```js
+function App() {
+  ...
+  return (
+    <>
+      ...
+      {isLoading(status) && <CircularProgress />}
+      ...
+    </>
+  );
+}
+```
+
+We'll also add a piece of style in to make the spinner white.
+
+```js
+const useStyles = makeStyles(theme => ({
+  ...
+  spinner: {
+    color: 'white',
+  },
+}));
+
+function App() {
+  ...
+  return (
+    <>
+      ...
+      {isLoading(status) && <CircularProgress className={classes.spinner} />}
+      ...
+    </>
+  )
+}
+```
+
+Our complete file looks like this now:
+
+```js
+import React, { useEffect } from 'react';
+// Components
+import AppBar from 'components/AppBar';
+import Genre from 'components/Genre';
+// ReSift
+import { useDispatch, useFetch, isNormal, isLoading } from 'resift';
+// Fetches
+import genresFetch from 'fetches/genresFetch';
+// Styles
+import { makeStyles } from '@material-ui/core/styles';
+import { CircularProgress } from '@material-ui/core';
+
+const useStyles = makeStyles(theme => ({
+  root: {},
+  genre: {
+    margin: '8px 0',
+  },
+  spinner: {
+    color: 'white',
+  },
+}));
+
+function App() {
+  const classes = useStyles();
+  const dispatch = useDispatch();
+  const [genres, status] = useFetch(genresFetch);
+
+  useEffect(() => {
+    dispatch(genresFetch());
+  }, [dispatch]);
+  return (
+    <>
+      <AppBar />
+      {isLoading(status) && <CircularProgress className={classes.spinner} />}
+      {isNormal(status) &&
+        genres.map(genre => <Genre key={genre.id} genre={genre} className={classes.genre} />)}
+    </>
+  );
+}
+export default App;
+```
+
+Refresh the page and you shall see the loading spinner before the genres data kick in.
+
+#### Conclude
+
+Now you’ve gone through some basic fetch concepts, let's review the online order analogy we made earlier to help form a sticky mental modal.
+
+- _Creating a fetch factory is like adding what you want in a cart._</br>
+  You're defining what your order/fetch looks like.
+- _Creating the fetch instance is like submitting your order._</br>
+  You've made up your mind and confirmed your order/fetch.
+- _Using the fetch is like sending your order to the fulfillment facility, for which the fulfillment facility will respond with the goods you ordered, and send you your fulfillment status._</br>
+  You send off your order/fetch, and then the fulfillment facility/server respond with the goods/data you requested, and notify you the status of sending over the goods/data.
+- _Dispatching the fetch is the fulfillment facility sending things out to you based on your order._</br>
+  The server sending out the data requested.
+
+You can review the finished code at this point on [Github](https://github.com/pearlzhuzeng/resift-rentals-tutorial/tree/working/first-fetch-no-loader) or [Codesandbox](https://codesandbox.io/s/resift-rentals-tutorial-section1-finished-95182). And let’s move on to make a movie drawer which involves a movie fetch.
