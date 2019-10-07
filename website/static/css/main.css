@@ -1,0 +1,120 @@
+html,
+body {
+  font-family: 'Source Sans Pro', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #212121;
+}
+
+.headerTitleWithLogo {
+  font-weight: 900;
+  font-size: 25.46px;
+}
+
+.postHeaderTitle {
+  font-size: 50.92px;
+  font-weight: 900;
+}
+
+h1 {
+  font-size: 36.07px;
+  font-weight: 700;
+}
+
+p,
+li {
+  letter-spacing: 0.5px;
+  font-size: 16.97px;
+  font-weight: 400;
+}
+
+.home {
+  min-height: calc(100vh - 70px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #60269e;
+}
+
+.jumbotron {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 1rem;
+  text-align: center;
+  color: white;
+}
+
+.jumbotron__title {
+  font-size: 4.23rem;
+  font-weight: bold;
+  line-height: 1;
+}
+@media (max-width: 960px) {
+  .jumbotron__title {
+    font-size: 2.61rem;
+    font-weight: bold;
+  }
+}
+
+.jumbotron__subtitle {
+  font-size: 2.61rem;
+  margin-bottom: 1rem;
+}
+@media (max-width: 960px) {
+  .jumbotron__subtitle {
+    font-size: 1.61rem;
+  }
+}
+
+.jumbotron__code {
+  background-color: #431a6e;
+  font-size: 1.61rem;
+  padding: 1rem;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 960px) {
+  .jumbotron__code {
+    font-size: 1rem;
+  }
+}
+
+.jumbotron__buttons {
+  display: flex;
+}
+
+.jumbotron__buttons > *:not(:last-child) {
+  margin-right: 1rem;
+}
+
+.link-button {
+  border: 1px solid white;
+  padding: 0.61rem;
+  cursor: pointer;
+  color: white;
+  border-radius: 3px;
+  transition: all 300ms;
+  font-weight: 600;
+}
+
+.link-button:hover {
+  background-color: white;
+  color: #60269e;
+}
+
+.link-button--primary {
+  background-color: #2962ff;
+  border: none;
+}
+
+.white-link {
+  color: white;
+}
+
+.white-link:hover {
+  text-decoration: underline;
+  color: white;
+}

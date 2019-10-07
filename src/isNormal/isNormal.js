@@ -1,9 +1,9 @@
 import NORMAL from '../NORMAL';
 
-function getNormal(loadingState) {
-  return (loadingState & NORMAL) !== 0;
+function getNormal(status) {
+  return (status & NORMAL) !== 0;
 }
 
-export default function isNormal(...loadingStates) {
-  return loadingStates.every(getNormal);
+export default function isNormal(...statuses) {
+  return statuses.every(getNormal);
 }

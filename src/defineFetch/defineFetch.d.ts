@@ -1,3 +1,7 @@
+/**
+ * @docs `defineFetch`
+ * This function create a fetch factory.
+ */
 export default function defineFetch<
   KeyArgs extends any[],
   FetchArgs extends any[],
@@ -8,6 +12,7 @@ export default function defineFetch<
 ): FetchActionFactory<KeyArgs, FetchArgs, FetchResult, MergeResult>;
 
 /**
+ * @docs `DefineFetchParams`
  * the shape of the parameter object that goes into `defineFetch`
  */
 export interface DefineFetchParams<
@@ -16,36 +21,58 @@ export interface DefineFetchParams<
   FetchResult,
   MergeResult
 > {
+  /**
+   * this is a display name
+   */
   displayName: string;
-  make: (
-    ...keyArgs: KeyArgs
-  ) => { key: string[]; request: (...fetchArgs: FetchArgs) => (services: any) => FetchResult };
+
+  /**
+   * this is make.
+   */
+  make: (...keyArgs: KeyArgs) => MakeObject<FetchArgs, FetchResult>;
+
+  /**
+   * this is share
+   */
   share?: ShareParams<MergeResult>;
   conflict?: 'cancel' | 'ignore';
   staticFetchFactoryId?: string;
 }
 
+/**
+ * @docs `MakeObject`
+ * When defining the `make` function in `defineFetch`, you must return this object.
+ */
+interface MakeObject<FetchArgs extends any[], FetchResult> {
+  key: string[];
+  request: (...fetchArgs: FetchArgs) => (services: any) => FetchResult;
+}
+
+/**
+ * @docs `ShareParams`
+ */
 export interface ShareParams<MergeResult> {
   namespace: string;
   merge?: (previous: any, next: any) => MergeResult;
 }
 
 /**
+ * @docs `FetchActionFactory`
  * the result of calling `defineFetch` is a factory that returns an action creator with meta data
  */
-export interface FetchActionFactory<
+export type FetchActionFactory<
   KeyArgs extends any[],
   FetchArgs extends any[],
   FetchResult,
   MergeResult
-> {
-  (...args: KeyArgs): FetchActionCreator<FetchArgs, FetchResult, MergeResult>;
-
+> = (
+  ...args: KeyArgs
+) => FetchActionCreator<FetchArgs, FetchResult, MergeResult> & {
   meta: {
     fetchFactoryId: string;
     displayName: string;
   };
-}
+};
 
 export interface FetchActionCreator<
   FetchArgs extends any[] = any,
