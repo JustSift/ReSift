@@ -1176,3 +1176,5 @@ function Genre({ className, genre }) {
 ```
 
 That's it! Now refresh the page and you can see a loading spinner on initial load, and the app will fetch until the movie thumbnail fills the whole window width during the initial load, otherwise fetch the next page of movies when the user scrolls to the end of the page.
+
+You can checkout our finished code for this section on [Github](https://github.com/pearlzhuzeng/resift-rentals-tutorial/tree/working/pagination-no-loader) or [Codesandbox](https://codesandbox.io/s/resift-rentals-tutorial-section3-finished-nywki).
