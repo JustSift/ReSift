@@ -1434,3 +1434,49 @@ function Movie({ match }) {
 
 That's it! We now have a movie drawer that opens and closes.
 You can examine the finished code on [Github](https://github.com/pearlzhuzeng/resift-rentals-tutorial/tree/working/movie-drawer-no-loader) or [Codesandbox](https://codesandbox.io/s/resift-rentals-tutorial-section4-finished-5cvzr).
+
+## Section 5: Fetch Movie Data when Hovering over Movie Thumbnail
+
+To provide more responsive user experiences, a nice-to-have is fetching the movie data when the user hover over the thumbnail. This can be achieved by dispatching the movie fetch on hover. The associated event for it is `onMouseEnter`.
+
+Take the finished code from the last section as the starter code and try to achieve this:
+![Finished screen for section 5](assets/section_5_finished.gif)
+
+If you click a movie thumbnail without hovering first, you'll see a loading spinner when it loads the movie data. But if you hover over a thumbnail for longer than one second and then click, you'll see the data is already loaded.
+
+Try it on your own to add fetches and event handlers to the `MovieThumbnail` component and below is our solution for your reference.
+
+```js
+// /src/components/MovieThumbnail.js
+...
+import { useDispatch, useFetch } from 'resift';
+import makeMovieFetch from 'fetches/makeMovieFetch';
+...
+
+function MovieThumbnail({ className, movie }) {
+  ...
+  const movieFetch = makeMovieFetch(id);
+  const [movieData] = useFetch(movieFetch);
+  const dispatch = useDispatch();
+  ...
+  const handleMouseEnter = () => {
+    // Don't fetch if the data is already there
+    if (movieData) return;
+
+    dispatch(movieFetch());
+  };
+
+  return (
+    <Link
+      ...
+      onMouseEnter={handleMouseEnter}
+    >
+      <h3 className={classes.name}>{name}</h3>
+    </Link>
+  );
+}
+```
+
+You got it!
+
+You can checkout the full finished code till this point on [Github](https://github.com/pearlzhuzeng/resift-rentals-tutorial/tree/working/fetch-on-hover-no-loader) or [Codesandbox](https://codesandbox.io/s/resift-rentals-tutorial-section5-finished-s9kf1).
