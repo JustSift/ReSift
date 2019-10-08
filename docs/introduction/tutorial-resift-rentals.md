@@ -629,7 +629,7 @@ export default App;
 
 Refresh the page and you shall see the loading spinner before the genres data kick in.
 
-#### Conclude
+### Conclude
 
 Now you’ve gone through some basic fetch concepts, let's review the online order analogy we made earlier to help form a sticky mental modal.
 
@@ -643,3 +643,173 @@ Now you’ve gone through some basic fetch concepts, let's review the online ord
   The server sending out the data requested.
 
 You can review the finished code at this point on [Github](https://github.com/pearlzhuzeng/resift-rentals-tutorial/tree/working/first-fetch-no-loader) or [Codesandbox](https://codesandbox.io/s/resift-rentals-tutorial-section1-finished-95182). And let’s move on to make a movie drawer which involves a movie fetch.
+
+## Section 2: Display Movies in Each Genre
+
+Here's what we are trying to achieve in this section:
+![Finished screen for this section](assets/section_2_finished.gif)
+We'll see the thumbnails of the movies in each genre, and a loading spinner in each genre to indicate when our app is fetching the movies data.
+
+Let’s first take a look at the endpoints in `mockApi.js`, note that when we fetch all the genres, we’re only fetching the genre ids and names, we omitted fetch the movies in the genres fetch.
+Now in order to display the movies in each genre, we’ll use the movies endpoint.
+
+### 1. Define the Fetch Factory
+
+Let’s first define our fetch, we’ll call it `makeMoviesFetch.js` and put it in the `/fetches` folder:
+
+```js
+// src/fetch/makeMoviesFetch.js
+import { defineFetch } from 'resift';
+const makeMoviesFetch = defineFetch({
+  displayName: 'Get Movies',
+  make: genreId => ({
+    key: [genreId],
+    request: () => ({ http }) =>
+      http({
+        method: 'GET',
+        route: `/genres/${genreId}/movies`,
+      }),
+  }),
+});
+export default makeMoviesFetch;
+```
+
+In section 1 we had an empty key array because genresFetch is a singleton fetch. The moviesFetch will be different based on different genre ids, therefore, we need to put `genreId` into our key array. Adding genreId in the key array indicates that every fetch instance will be unique for every unique key.
+
+### 2. Use the Movies Fetch
+
+Using the movies fetch will be very similar to using the genres fetch, where we'll need the `useFetch` and `useDispatch` ReSift modules. The only difference is that this time, we need to pass in genreId as the argument for `makeMoviesFetch()`. Let's add the code in:
+
+```js
+// src/components/Genre.js
+...
+import { useEffect } from 'react';
+import { useDispatch, useFetch } from 'resift';
+import makeMoviesFetch from 'fetches/makeMoviesFetch';
+...
+
+function Genre({... genre ...}) {
+  ...
+  const moviesFetch = makeMoviesFetch(genre.id)
+  const [movies, status] = useFetch(moviesFetch)
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(moviesFetch())
+  }, [dispatch, moviesFetch])
+
+  return (
+    <div>
+      ...
+      {movies.results.map(...)}
+      // We have to do movies.results because that's what our http proxy defines to contain the list of movies.
+    </div>
+  )
+}
+```
+
+In the components folder, we already made a MovieThumbnail component. We can import MovieThumbnail, and when the fetch status comes back as normal, we'll map over movies to display movie thumbnails; and if the fetch status is loading, we'll display the loading spinner from material UI.
+
+```js
+...
+import { isLoading, isNormal } from 'resift';
+import MovieThumbnail from 'components/MovieThumbnail';
+import { CircularProgress } from '@material-ui/core';
+...
+
+function Genre() {
+  ...
+  return (
+    <div>
+      ...
+      {isLoading(status) && <CircularProgress />}
+      {isNormal(status) && movies.map(movie => <MovieThumbnail key={movie.id} className={classes.movie} movie={movie} />)}
+    </div>
+  )
+
+```
+
+And here's our finished code for the Genre component:
+
+```js
+// /src/components/Genre.js
+import React, { useEffect } from 'react';
+// Fetches
+import { useDispatch, useFetch, isLoading, isNormal } from 'resift';
+import makeMoviesFetch from 'fetches/makeMoviesFetch';
+// Components
+import MovieThumbnail from 'components/MovieThumbnail';
+// Styles
+import { makeStyles } from '@material-ui/core/styles';
+import classNames from 'classnames';
+import { CircularProgress } from '@material-ui/core';
+
+const useStyles = makeStyles(theme => ({
+  root: {
+    backgroundColor: 'black',
+    height: 160,
+    padding: 16,
+    paddingTop: 4,
+  },
+  movies: {
+    display: 'flex',
+    marginTop: 24,
+    overflow: 'auto',
+    '&::-webkit-scrollbar': {
+      display: 'none',
+    },
+  },
+  name: {
+    color: 'white',
+    fontSize: 16,
+  },
+  movie: {
+    flex: '0 0 auto',
+    marginRight: 8,
+    width: 240,
+    height: 104,
+    opacity: 0.8,
+    transition: 'all 0.5s ease-out',
+    '&:hover': {
+      opacity: 1,
+    },
+  },
+  spinner: {
+    color: 'white',
+  },
+}));
+
+function Genre({ className, genre }) {
+  const classes = useStyles();
+  const { id, name } = genre;
+  const moviesFetch = makeMoviesFetch(id);
+  const [movies, status] = useFetch(moviesFetch);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(moviesFetch());
+  }, [dispatch, moviesFetch, id]);
+
+  return (
+    <div className={classNames(classes.root, className)}>
+      <h2 className={classes.name}>{name}</h2>
+      <div className={classes.movies}>
+        {isLoading(status) && <CircularProgress className={classes.spinner} />}
+        {isNormal(status) &&
+          movies.results.map(movie => (
+            <MovieThumbnail key={movie.id} className={classes.movie} movie={movie} />
+          ))}
+      </div>
+    </div>
+  );
+}
+
+export default Genre;
+```
+
+### Conclude
+
+1. Note that in section 1, we made one single fetch for genres. The fetch does not change based on fetch id. We call it a singleton fetch. When we’re doing a singleton fetch, we’ll make the fetch instance in the same file where the fetch factory is defined.
+2. In this section, our fetch instance is different based on the key we passed in, and therefore we need to make the fetch instance in the file where we can get the dynamic key. So we make the fetch factory in a separate file called `makeMoviesFetch` and then we make the instance in the `Genre` component file where we can get the Genre id.
+
+You can further examine the finished code on [Github](https://github.com/pearlzhuzeng/resift-rentals-tutorial/tree/working/movies-fetch-no-loader) or [Codesandbox](https://codesandbox.io/s/resift-rentals-tutorial-section2-finished-6bf1v).
