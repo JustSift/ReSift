@@ -813,3 +813,361 @@ export default Genre;
 2. In this section, our fetch instance is different based on the key we passed in, and therefore we need to make the fetch instance in the file where we can get the dynamic key. So we make the fetch factory in a separate file called `makeMoviesFetch` and then we make the instance in the `Genre` component file where we can get the Genre id.
 
 You can further examine the finished code on [Github](https://github.com/pearlzhuzeng/resift-rentals-tutorial/tree/working/movies-fetch-no-loader) or [Codesandbox](https://codesandbox.io/s/resift-rentals-tutorial-section2-finished-6bf1v).
+
+## Section 3: Infinite Scrolling & Pagination
+
+At this point of the app, we have fetched genres and the movies under each genre. When you scroll through the movies, you can see that some genres contain a lot of of them. On the initial load though, there are only certain amount of movies being displayed, therefore from a performance perspective, it's not ideal to fetch all the movies data all at once. It would be nice to fetch just enough number of movies to show the user and fetch more when needed.
+
+Pagination and ReSift `merge` will help us achieve that.
+
+At the end of the section we shall see:
+![Finished screen of section 3](assets/section_3_finished.gif)
+
+It fetches 10 movies at a time and once you scroll past 10 movies, it then fires off the fetch for the next batch of 10 movies.
+
+Let's make that happen! You can grab the starter code from [Github](https://github.com/pearlzhuzeng/resift-rentals-tutorial/tree/working/movies-fetch-no-loader) or [Codesandbox](https://codesandbox.io/s/resift-rentals-tutorial-section2-finished-6bf1v).
+
+### 1. Query Pagination in our Movies Fetch Factory
+
+This is what our Movies Fetch Factory currently looks like:
+
+```js
+// /src/fetches/makeMoviesFetch
+import { defineFetch } from 'resift';
+
+const makeMoviesFetch = defineFetch({
+  displayName: 'Get Movies',
+  make: genreId => ({
+    key: [genreId],
+    request: () => ({ http }) =>
+      http({
+        method: 'GET',
+        route: `/genres/${genreId}/movies`,
+      }),
+  }),
+});
+export default makeMoviesFetch;
+```
+
+And let's look at the movies endpoint in the mockApi:
+
+```js
+// src/mockApi/mockApi.js
+...
+export const movies = createHttpProxy('/genres/:id/movies', async ({ requestParams, match }) => {
+  await mockDelay();
+  const { id } = match.params;
+  const genre = genreLookup[id];
+
+  const { query } = requestParams;
+  const pageSize = _get(query, ['pageSize']);
+
+  if (!genre) {
+    throw new Error('Genre not found');
+  }
+
+  if (!pageSize) {
+    return {
+      results: genre.movies,
+    };
+  }
+
+  const currentPageNumber = _get(query, ['page']);
+  return paginate(genre.movies, pageSize, currentPageNumber);
+});
+...
+```
+
+We can see that this endpoint has pagination built in and will return a paginated list of movies if page size (how many movies should be in one page) and current page number are passed in. Therefore, to achieve paginated fetch, we need to add the query params (page size and current page number) into the fetch factory, and the `request` object is where we add that. Here we go:
+
+```js
+// /src/fetches/makeMoviesFetch
+...
+const makeMoviesFetch = defineFetch({
+  ...
+    request: page => ({ http }) =>
+      http({
+        ...
+        query: {
+          page,
+          pageSize: 10
+        }
+      }),
+  }),
+});
+...
+```
+
+Refresh the page now and you'll see only 10 movies are being fetched in each genre.
+
+### 2. Trigger Re-Fetch on Scroll Event
+
+Now we need to trigger the next batch of fetch to happen. In section 1, we talked about two occasions when we conduct data fetching, one when component mounts, the other one when an event triggers. In our case, we would like to have the scroll event trigger the re-fetch. To explain the concepts better, we are going to create a helper component called `InfiniteList`. Go ahead and create a `helpers` folder in the `components` folder and add a file and name it `InfiniteList.js`. And you can copy and paste in the following imports and styles to set the stage:
+
+```js
+// src/components/helpers/InfiniteList.js
+import React, { useEffect, useRef, useState } from 'react';
+// ReSift
+import { useFetch, isLoading, useDispatch, isNormal } from 'resift';
+// Styles
+import { makeStyles } from '@material-ui/core/styles';
+import classNames from 'classnames';
+import { CircularProgress } from '@material-ui/core';
+
+const useStyles = makeStyles(theme => ({
+  root: {},
+  spinnerContainer: {
+    width: '100%',
+    position: 'relative',
+  },
+  spinner: {
+    color: 'white',
+    position: 'absolute',
+    top: '20%',
+  },
+}));
+
+const handleScroll = () => {}
+
+function InfiniteList({ children, className, fetch }) {
+  const classes = useStyles();
+
+  return (
+    <div className={classNames(classes.root, className)} onScroll={handleScroll}>
+
+    </div>
+  );
+```
+
+The InfiniteList component will follow a [react render props](https://reactjs.org/docs/render-props.html) pattern. The `children` prop will be the children element from whichever element that's wrapped by `InfiniteList`. The `className` prop allows a parent component to define styles for the `InfiniteList`. And the `fetch` prop will be whatever fetch instance that gets passed in — for example, when we later use the `InfiniteList`, we'll be passing it the `moviesFetch`.
+
+Now, let's first add in functions to [create the fetch instance](#step-2-create-the-fetch-instance), [use the fetch](#step-3-use-the-fetch), [dispatch the fetch](#step-4-dispatch-the-fetch), and [indicate fetch status](#show-fetch-status). You can click the respective links to review the process, and let's add to our `InfiniteList` component:
+
+```js
+function InfiniteList({ children, className, fetch }) {
+  ...
+  const [data, status] = useFetch(fetch);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetch)
+  }, [dispatch, fetch])
+
+  return (
+    <div className={classNames(classes.root, className)} onScroll={handleScroll}>
+      {isNormal(status) && children(data)}
+      {isLoading(status) && <CircularProgress className={classes.spinner} />)}
+    </div>
+  );
+```
+
+Looks familiar so far? Both the genres fetch in section 1 and the movies fetch in section 2 followed this pattern of dispatching data on initial load, showing a loading spinner when the data is loading, and once data status is normal/data comes back, pass the data to the display components.
+
+Next step is to trigger re-fetch when the user scroll to the end of their current page. How we calculate that is by adding an empty div at the end of each page, when that div's left bound has been scrolled past the window width, then we know the user needs to see the next page. We need to most updated state of the anchors div so we'll be utilizing the [react hook `useRef`](https://reactjs.org/docs/hooks-reference.html#useref).
+
+Let's fill in the scroll handler:
+
+```js
+...
+  // A local state of whether the user has scrolled to the end of the page
+  const [hitScrollEnd, setHitScrollEnd] = useState(false);
+
+  // A div added at the end of each page to help us check if the user has hit the end of the page
+  const scrollAnchorRef = useRef(null);
+
+  const handleScroll = () => {
+    const scrollAnchor = scrollAnchorRef.current;
+    if (!scrollAnchor) return; // null check
+
+    const { left } = scrollAnchor.getBoundingClientRect();
+    const { width } = document.body.getBoundingClientRect();
+    setHitScrollEnd(width - left > 0);
+  };
+
+  useEffect(() => {
+    // Don't need to fetch if the user hasn't scrolled to the end of the page
+    if (!hitScrollEnd) return;
+
+    if (!data) return; // null check
+
+    const { pageSize, currentPageNumber, totalNumberOfPages } = data.paginationMeta;
+    // Don't need to fetch if there's no more pages to scroll
+    if (currentPageNumber * pageSize >= totalNumberOfPages) return;
+
+    // Dispatch the fetch for the next page of data
+    dispatch(fetch(currentPageNumber + 1)).then(() => {
+      handleScroll();
+    });
+  }, [hitScrollEnd, data, dispatch, fetch]);
+
+  return (
+    <div className={classNames(classes.root, className)} onScroll={handleScroll}>
+      {isNormal(status) && children(data)}
+      <div ref={scrollAnchorRef} />
+      {/* This ref div needs to stay after the children, otherwise it will only re-fetch once*/}
+      {isLoading(status) ...}
+    </div>
+  );
+```
+
+Now let's use our `InfiniteList` component:
+
+```js
+// /src/components/Genre
+...
+import InfiniteList from 'components/helpers/InfiniteList';
+...
+
+function Genre({ className, genre }) {
+  ...
+  // Delete this line since the InfiniteList component handles the fetch data and status now.
+  const [movies, status] = useFetch(moviesFetch);
+  ...
+  return (
+    <div>
+      ...
+      <div className={classes.movies}>
+        <InfiniteList className={classes.movies} fetch={moviesFetch}>
+          {movies =>
+            movies.results.map(movie => (
+              <MovieThumbnail key={movie.id} className={classes.movie} movie={movie} />
+            ))
+          }
+        </InfiniteList>
+      </div>
+    </div>
+  )
+}
+```
+
+Now refresh the page, you'll see that you every time you scroll right past the current page, the app will fetch the next page.
+
+There's a bug though, try scroll left, you'll see that every time the app fetches the next page, the previous page will be gone. That's because the state of the fetch instance has been replaced by the new fetch. How should we solve this?
+
+### 3. Merge Fetch States
+
+ReSift conveniently built a `merge` function that will update instead of replacing the current state of a fetch instance with new additional data. When the user scrolls to the end of the movies list, we should dispatch a request for the next page and then merge the new results with the existing result.
+
+Let's modify our movies fetch factory to add in the merge.
+
+Between `displayName` and `make` block, we'll add in a block `share`. The `share` object has one required param `namespace`. Defining a namespace will allow that updates that happen under one fetch instance to update the fetch state in another fetch instance that shares the same namespace.
+
+The `share` object takes an optional object called `merge`. It's useful when the newest state needs to be merge with previous state instead of replacing it. This is exactly what we need.
+
+```js
+// /src/fetches/makeMoviesFetch.js
+...
+const makeMoviesFetch = defineFetch({
+  ...
+  share: {
+    namespace: 'moviesOfGenre',
+    merge: (previous, response) => {
+      if (!previous) return response;
+
+      return {
+        results: [..._get(previous, ['results'], []), ..._get(response, ['results'], [])],
+        paginationMeta: response.paginationMeta,
+      };
+    },
+  },
+  ...
+});
+
+export default makeMoviesFetch;
+```
+
+There are different ways how two states can be merged. You can define different shapes of merging in the `merge` block. In our case, we'd like the newly fetched movies to be added on to the movie results list, while having the newest paginationMeta to take over and be the current paginationMeta state.
+
+The whole new `makeMoviesFetch` file now looks like this:
+
+```js
+// /src/fetches/makeMoviesFetch.js
+import { defineFetch } from 'resift';
+import _get from 'lodash/get';
+
+const makeMoviesFetch = defineFetch({
+  displayName: 'Get Movies from Genre',
+  share: {
+    namespace: 'moviesOfGenre',
+    merge: (previous, response) => {
+      if (!previous) return response;
+
+      return {
+        results: [..._get(previous, ['results'], []), ..._get(response, ['results'], [])],
+        paginationMeta: response.paginationMeta,
+      };
+    },
+  },
+  make: genreId => ({
+    key: [genreId],
+    request: page => ({ http }) =>
+      http({
+        method: 'GET',
+        route: `/genres/${genreId}/movies`,
+        query: {
+          page,
+          pageSize: 10,
+        },
+      }),
+  }),
+});
+
+export default makeMoviesFetch;
+```
+
+Refresh the page now and you shall see the next page of movies correctly being added to the end of the current page of movies.
+
+### 4. Handle Initial Load
+
+Finally, there're a couple of issues to fix. First issue is that the loading spinner now showing up on the first load, that's because we did not add a initial spinner. Second issue is about edge cases where the browser window is wider than the width of 10 movies, then onScroll event will never be triggered and there will never to a re-fetch. We're going to kill two birds with one stone by adding logic for the initial fetch in the `Genre` component.
+
+```js
+...
+import _range from 'lodash/range';
+// _range is an array helper that turns a range into an array, e.g. _range(3) => [0, 1, 2]
+...
+
+function Genre({ className, genre }) {
+  ...
+  const [displayInitialSpinner, setDisplayInitialSpinner] = useState(true);
+
+  useEffect(() => {
+    // Get the width of the window
+    const { width } = document.body.getBoundingClientRect();
+    // 240px is the width we set for each movie thumbnail
+    // 8px is the margin between movie thumbnails
+    // By dividing the window width by the individual thumbnail width,
+    // we can get how many thumbnails need to be loaded in the initial fetch
+    const numberOfItemsToFetch = width / (240 + 8);
+    // Then we divide the number of thumbnails needed by the number of thumbnails on each page,
+    // we can get the number of pages we need to fetch during the initial load.
+    const numberOfPagesToFetchTill = Math.ceil(numberOfItemsToFetch / 10);
+    // Generate an array of pages we need to fetch
+    const pages = _range(numberOfPagesToFetchTill);
+    // Fetch each page one by one. We're using an async function here so we always wait for the
+    // current page to finish fetching before we fetch the next page.
+    (async () => {
+      for (const page of pages) {
+        await dispatch(moviesFetch(page));
+        if (page === 0) {
+          setDisplayInitialSpinner(false);
+        }
+      }
+    })();
+  }, [moviesFetch, dispatch]);
+
+  return (
+    <div className={classNames(classes.root, className)}>
+      ...
+      {displayInitialSpinner && (
+        <div className={classes.movies}>
+          <CircularProgress className={classes.spinner} />
+        </div>
+      )}
+      ...
+    </div>
+  );
+}
+```
+
+That's it! Now refresh the page and you can see a loading spinner on initial load, and the app will fetch until the movie thumbnail fills the whole window width during the initial load, otherwise fetch the next page of movies when the user scrolls to the end of the page.
