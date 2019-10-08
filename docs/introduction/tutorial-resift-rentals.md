@@ -1178,3 +1178,259 @@ function Genre({ className, genre }) {
 That's it! Now refresh the page and you can see a loading spinner on initial load, and the app will fetch until the movie thumbnail fills the whole window width during the initial load, otherwise fetch the next page of movies when the user scrolls to the end of the page.
 
 You can checkout our finished code for this section on [Github](https://github.com/pearlzhuzeng/resift-rentals-tutorial/tree/working/pagination-no-loader) or [Codesandbox](https://codesandbox.io/s/resift-rentals-tutorial-section3-finished-nywki).
+
+## Section 4: Display Movie Info in a Movie Drawer
+
+In this section, we'll be fetching individual movie data when the user clicks on the movie thumbnail. We'll then display the fetched data in a movie drawer on the right side of the screen, while displaying a loading spinner when the data is loading. And you can navigate to open or close the drawer. When finished, we'll have something like this:
+
+![Finished screen for section 4](assets/section_4_finished.gif)
+
+### 1. Define the Fetch Factory
+
+Our [mockApi](#mockapi) provides us the `movie` endpoint, which will give us the movie data of the movie of a given id. So this fetch will be using the same idea from the movies fetch in section 2, where there'll be a unique fetch instance based each movie id. Let's go ahead and create the `makeMovieFetch.js` file in the `fetches` folder:
+
+```js
+// /src/fetches/makeMovieFetch.js
+import { defineFetch } from 'resift';
+const makeMovieFetch = defineFetch({
+  displayName: 'Get Movie',
+  make: movieId => ({
+    key: [movieId],
+    request: () => ({ http }) =>
+      http({
+        method: 'GET',
+        route: `/movies/${movieId}`,
+      }),
+  }),
+});
+export default makeMovieFetch;
+```
+
+### 2. Add React Router
+
+For this section, we'll need some basic react router knowledge because we need to use the router change to switch between home page and single movie drawer view. To gain a basic understanding of react router, we recommend [this tutorial](https://www.freecodecamp.org/news/hitchhikers-guide-to-react-router-v4-a957c6a5aa18/). We’re using the latest version of react router, v 5.1.1 and this tutorial is react-router 4.0, but the basic concepts are universal.
+
+First, we got to install the web version of react router, `npm install react-router-dom`.
+
+And here're some key concepts of react router that we'll be using in this project:
+
+- All elements using the react router needs to be wrapped in `<BrowserRouter>`.
+- `<Link>` is a react router component that can take in the route and then use that to compose an `<a>` element.
+- The history in react-router is like a global store of the current state of the url. We'll be accessing the history object using the newly released [react router hooks](https://reacttraining.com/blog/react-router-v5-1/).
+- Finally, we'll use the `<Route>` component and the `match` param to que up the `MovieDrawer` component when the url points to it.
+
+In `App.js`, we need to wrap everything in `BrowserRouter`, and then import our `MovieDrawer` component
+
+```js
+...
+import { BrowserRouter as Router, Route} from 'react-router-dom';
+import MovieDrawer from 'components/MovieDrawer';
+...
+function App() {
+  return (
+    <Router>
+      <AppBar />
+      {isLoading(status) && <CircularProgress className={classes.spinner} />}
+      {isNormal(status) &&
+        genres.map(genre => <Genre key={genre.id} genre={genre} className={classes.genre} />)}
+      <Route path="/movies/:movieId" component={Movie} />
+    </Router>
+  );
+}
+export default App;
+```
+
+Next, we go into the `MovieThumbnail` component to add a `Link` component that’ll direct people to the movie drawer when they clicked the thumbnail.
+
+```js
+// src/components/MovieThumbnail
+...
+import { Link } from 'react-router-dom';
+...
+function MovieThumbnail({ className, movie }) {
+  ...
+  const { id, name, imageUrl } = movie;
+  ...
+
+  return (
+    // Just change the original <div> tag into <Link>
+    // And then we can add the `to` prop to direct to individual movie drawer
+    <Link
+      className={classNames(classes.root, className)}
+      to={`/movies/${id}`}
+      style={{
+        backgroundImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0.9)), url(${imageUrl})`,
+        backgroundSize: 'cover',
+      }}
+    >
+      <h3 className={classes.name}>{name}</h3>
+    </Link>
+  );
+}
+export default MovieThumbnail;
+```
+
+### 3. Use Fetch in the Movie Drawer
+
+Let's create a MovieDrawer component and paste in the react, styles, and material ui component imports.
+
+```js
+// /src/components/MovieDrawer.js
+import React, from 'react';
+// Styles
+import { makeStyles } from '@material-ui/core/styles';
+import { Drawer, CircularProgress } from '@material-ui/core';
+
+const useStyles = makeStyles(theme => ({
+  root: {
+    padding: 20,
+  },
+  drawer: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: 600,
+    padding: 16,
+    height: '100vh',
+  },
+  paper: {
+    minWidth: 600,
+  },
+  linkBack: {
+    color: 'white',
+    marginRight: 16,
+  },
+  buttonEdit: {
+    border: 'solid 1px white',
+    color: 'white',
+    width: 'fit-content',
+    padding: 0,
+  },
+  movieHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+  score: {
+    fontSize: 32,
+    fontWeight: 'bold',
+  },
+  preview: {
+    width: '100%',
+    marginTop: 16,
+  },
+  spinner: {
+    color: 'white',
+  },
+}));
+
+function Movie() {
+  const classes = useStyles();
+}
+
+export default Movie;
+```
+
+Next, we'll add in functions to [create the fetch instance](#step-2-create-the-fetch-instance), [use the fetch](#step-3-use-the-fetch), [dispatch the fetch](#step-4-dispatch-the-fetch), and [indicate fetch status](#show-fetch-status). You can click the respective links to review the process. In order to fetch the correct movie, we need the movie id, which will come from the `match` param from react router. Now let's add the fetch functions to our `MovieDrawer` component:
+
+```js
+// /src/components/MovieDrawer.js
+...
+import { useEffect } from 'react';
+// Fetches
+import { useDispatch, useFetch, isLoading, isNormal } from 'resift';
+import makeMovieFetch from 'fetches/makeMovieFetch';
+...
+function Movie({ match }) {
+  const classes = useStyles();
+  const { movieId: id } = match.params;
+  const movieFetch = makeMovieFetch(id);
+  const dispatch = useDispatch();
+  const [movie, status] = useFetch(movieFetch);
+
+  useEffect(() => {
+    dispatch(movieFetch());
+  }, [movieFetch, dispatch]);
+
+  return (
+    // Drawer is a material-ui component we imported
+    <Drawer
+      anchor="right"
+      open={true}
+      className={classes.root}
+      classes={{ paper: classes.paper }}
+    >
+      <div className={classes.drawer}>
+        {isLoading(status) && <CircularProgress className={classes.spinner} />}
+        {isNormal(status) && (
+          <>
+            <div className={classes.movieHeader}>
+              <div>
+                <h1>{movie.name}</h1>
+                <p className={classes.score}>
+                  {movie.tomatoScore >= 60 ? '🍅 ' : '🤢 '}
+                  {movie.tomatoScore}%
+                </p>
+                <p>
+                  <span>{movie.mpaaRating}</span> | <span>{movie.runtime}</span> |{' '}
+                </p>
+                <p>{movie.genres.join(', ')}</p>
+              </div>
+              <img src={movie.posterUrl} alt="poster" />
+            </div>
+            <p>Staring: {movie.actors.join(', ')}</p>
+            <p dangerouslySetInnerHTML={{ __html: movie.synopsis }} />
+            <div>
+              <video className={classes.preview} controls>
+                <source src={movie.trailerUrl} type="video/mp4" />
+              </video>
+            </div>
+          </>
+        )}
+      </div>
+    </Drawer>
+  )
+}
+```
+
+Now click on a movie thumbnail and you shall see the movie drawer open up. And let's add a few lines of code to use the react router to help opening and closing the drawer.
+
+```js
+// /src/components/MovieDrawer.js
+import { Link, useHistory, useRouteMatch } from 'react-router-dom';
+
+function Movie({ match }) {
+  ...
+  const history = useHistory();
+  // Let the url determine the open state of the movie drawer
+  const open = !!useRouteMatch('/movies/:movieId');
+
+  return (
+    <Drawer
+      ...
+      open={open}
+      // Adding this onClose callback allows you to close the drawer when clicking away from it
+      onClose={() => history.push('/')}
+    >
+      <div className={classes.drawer}>
+        ...
+        {isNormal(status) && (
+          <>
+            <div>
+              {/* Adding a back button here using the react router link to direct users back to the all movies list */}
+              <Link className={classes.linkBack} to="/">
+                ⬅ Back
+              </Link>
+            </div>
+            <div className={classes.movieHeader}>
+              ...
+            </div>
+            ...
+          </>
+        )}
+      </div>
+    </Drawer>
+  );
+}
+```
+
+That's it! We now have a movie drawer that opens and closes.
+You can examine the finished code on [Github](https://github.com/pearlzhuzeng/resift-rentals-tutorial/tree/working/movie-drawer-no-loader) or [Codesandbox](https://codesandbox.io/s/resift-rentals-tutorial-section4-finished-5cvzr).
