@@ -8,7 +8,7 @@ Welcome to the ReSift tutorial. This tutorial will introduce basic ReSift concep
 
 - It fetches genre data and presents the genre name and the thumbnails of the movies in each genre.
 - It optimizes performance by only fetching data _when needed/in batches_.
-  - In the initial load, it fetches 10 movies for each category to show their movie thumbnails. It’ll fetch the next batch of 10 movies when you scroll past the previous batch.
+  - In the initial load, it fetches 10 movies for each genre to show their movie thumbnails. It’ll fetch the next batch of 10 movies when you scroll past the previous batch.
   - In the genre fetch, it only fetches the movie data needed for movie thumbnail (movie id, name, and imageUrl). When you hover over or click the thumbnail is when it’ll fetch the rest of the movie data, such as synopsis, preview url, etc.
 - It provides consistency when the movie information is updated—when the movie information is edited in the editing dialog, that information gets updated globally, allowing the information in the movie drawer to change accordingly.
 - It responds to users’ actions instantly by giving them indications about the data loading status.
@@ -536,8 +536,11 @@ function App() {
 export default App;
 ```
 
-Refresh the page now and you'll see the genres data load after a second.
-Wait, that's not a great user experience having to wait for the data to come without know what's happening. We should indicate to our user that the data is loading. To achieve this, we'll use the `status` we got from `useFetch()` and a helper function from ReSift call `isLoading`. And we can display the Material UI spinner called `CircularProgress` during the loading state.
+Refresh the page now and you'll see the genres data load after a second. Wait, that's not a great user experience having to wait for the data to come without know what's happening. We should indicate to our user that the data is loading.
+
+#### Show Fetch Status
+
+To achieve this, we'll use the `status` we got from `useFetch()` and a helper function from ReSift call `isLoading`. And we can display the Material UI spinner called `CircularProgress` during the loading state.
 Let's import `isLoading` and `CircularProgress`:
 
 ```js
@@ -642,7 +645,7 @@ Now you’ve gone through some basic fetch concepts, let's review the online ord
 - _Dispatching the fetch is the fulfillment facility sending things out to you based on your order._</br>
   The server sending out the data requested.
 
-You can review the finished code at this point on [Github](https://github.com/pearlzhuzeng/resift-rentals-tutorial/tree/working/first-fetch-no-loader) or [Codesandbox](https://codesandbox.io/s/resift-rentals-tutorial-section1-finished-95182). And let’s move on to make a movie drawer which involves a movie fetch.
+You can review the finished code at this point on [Github](https://github.com/pearlzhuzeng/resift-rentals-tutorial/tree/working/first-fetch-no-loader) or [Codesandbox](https://codesandbox.io/s/resift-rentals-tutorial-section1-finished-95182). And let’s move on to displaying movie thumbnails in each genre.
 
 ## Section 2: Display Movies in Each Genre
 
@@ -652,6 +655,8 @@ We'll see the thumbnails of the movies in each genre, and a loading spinner in e
 
 Let’s first take a look at the endpoints in `mockApi.js`, note that when we fetch all the genres, we’re only fetching the genre ids and names, we omitted fetch the movies in the genres fetch.
 Now in order to display the movies in each genre, we’ll use the movies endpoint.
+
+You can grab the starter code from on [Github](https://github.com/pearlzhuzeng/resift-rentals-tutorial/tree/working/first-fetch-no-loader) or [Codesandbox](https://codesandbox.io/s/resift-rentals-tutorial-section1-finished-95182).
 
 ### 1. Define the Fetch Factory
 
