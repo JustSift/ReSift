@@ -1480,3 +1480,265 @@ function MovieThumbnail({ className, movie }) {
 You got it!
 
 You can checkout the full finished code till this point on [Github](https://github.com/pearlzhuzeng/resift-rentals-tutorial/tree/working/fetch-on-hover-no-loader) or [Codesandbox](https://codesandbox.io/s/resift-rentals-tutorial-section5-finished-s9kf1).
+
+## Section 6: Edit Movie
+
+In your previous experiences, you might have experienced UIs where you edit information in one place and head over to a different place that has that information and found that it's not updated there. Or you might have the experience trying to make data updates consistent across the UI.
+
+ReSift makes keep data updates consistent cross the app very easy. We'll demonstrate that by adding editing functionality to movie data in this section. We're going to make the movie title and movie synopsis editable as a demonstration. Same method can be applied to edit other fields of the movie information if you'd like to dive further.
+
+When finished, you'll see something like this:
+[Add a screen cast here once the movie info can be updated cross different namespaces.]
+
+So first step again, is define the fetch factory.
+
+### 1. Define the Update Movie Fetch Factory
+
+Our mockApi gives up the `movie` endpoint that accepts the `PUT` action.
+In the `/fetches` folder, let's add a file called `makeUpdateMovieFetch.js`.
+
+```js
+// /src/fetches/makeUpdateMovieFetch.js
+import { defineFetch } from 'resift';
+
+const makeUpdateMovieFetch = defineFetch({
+  displayName: 'Update Movie',
+  make: movieId => ({
+    key: [movieId],
+    // updatedMovie needs to be passed in as data to the PUT call.
+    request: updatedMovie => ({ http }) =>
+      http({
+        method: 'PUT',
+        route: `/movies/${movieId}`,
+        data: updatedMovie,
+      }),
+  }),
+});
+export default makeUpdateMovieFetch;
+```
+
+### 2. Add the Edit Movie Form
+
+Now let's build the MovieForm component, for which we're going to use the material UI form and button components to build the movie form.
+
+In your `/components` folder, add the `MovieForm.js` file:
+
+```js
+// /src/components/MovieForm.js
+import React, { useState } from 'react';
+// Styles
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+} from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+
+const useStyles = makeStyles(theme => ({
+  root: {},
+}));
+
+function MovieForm({ movie }) {
+  const classes = useStyles();
+  const [draftMovie, setDraftMovie] = useState(movie);
+  const { name, synopsis } = draftMovie;
+
+  const handleChangeName = e => {
+    setDraftMovie({ ...draftMovie, name: e.target.value });
+  };
+
+  const handleChangeSynopsis = e => {
+    setDraftMovie({ ...draftMovie, synopsis: e.target.value });
+  };
+
+  const handleCancel = () => {
+    setDraftMovie(movie);
+  };
+
+  const handleSave = () => {};
+
+  return (
+    <div className={classes.root}>
+      <Dialog open={true} aria-labelledby="form-dialog-title">
+        <DialogTitle id="form-dialog-title">Edit Movie Information</DialogTitle>
+        <DialogContent>
+          <form noValidate autoComplete="off">
+            <TextField
+              label="Name"
+              value={name}
+              onChange={handleChangeName}
+              margin="normal"
+              variant="outlined"
+              fullWidth
+            />
+            <TextField
+              label="Synopsis"
+              value={synopsis}
+              onChange={handleChangeSynopsis}
+              margin="normal"
+              variant="outlined"
+              multiline
+              fullWidth
+            />
+          </form>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancel}>Cancel</Button>
+          <Button variant="outlined" onClick={handleSave}>
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
+  );
+}
+export default MovieForm;
+```
+
+Now click on a movie thumbnail and you'll see a form for editing movies is being pulled up.
+
+We don't want to have the form dialog open all the time though, only when the user wants to edit the form. So let's add a edit button in the movie drawer, and then use the url to determine whether or not the form dialog should be open using react router.
+
+First, open up the `MovieDrawer` component and add
+
+```js
+// /src/components/MovieDrawer.js
+import MovieForm from 'components/MovieForm';
+import { Button } from '@material-ui/core';
+
+function MovieDrawer({ match }) {
+  ...
+  const handleEdit = () => {
+    history.push(`/movies/${id}/edit`);
+  };
+
+  return (
+    <Drawer>
+      <div className={classes.drawer}>
+        ...
+        {isNormal(status) && (
+          <>
+            <div>
+              <Link className={classes.linkBack} to="/">
+                ⬅ Back
+              </Link>
+              <Button className={classes.buttonEdit} onClick={handleEdit}>
+                Edit
+              </Button>
+              <MovieForm movie={movie} />
+            </div>
+            ...
+          </>
+        }
+        ...
+      </div>
+    </Drawer>
+  )
+}
+```
+
+And in the `MovieForm` component, add the logic to let the router control the open state of the form:
+
+```js
+// /src/components/MovieForm.js
+import { useHistory, useRouteMatch } from 'react-router-dom';
+
+function MovieForm({ movie }) {
+  ...
+  const { id } = draftMovie;
+  const open = !!useRouteMatch('/movies/:movieId/edit');
+  const history = useHistory();
+
+  const handleCancel = () => {
+    ...
+    history.push(`/movies/${id}`);
+  }
+
+  return (
+    <div ... >
+      <Dialog open={open} ... >
+      </Dialog>
+    </div>
+}
+```
+
+After changing these two files, you can see in the browser that the movie form will be pulled up once you clicked the edit button, and clicking cancel button on the form will close the form.
+
+How about saving the edited movie? Let's use our update movie fetch factory!
+
+### 3. Use and Dispatch the Update Movie Fetch
+
+In the `MovieForm.js` file, let add the code for using and dispatching the update movie fetch instances.
+
+```js
+// /src/components/MovieForm.js
+import makeUpdateMovieFetch from 'fetches/makeUpdateMovieFetch';
+import { useDispatch } from 'resift';
+
+function MovieForm({movie}) {
+  ...
+  const updateMovieFetch = makeUpdateMovieFetch(id);
+  const dispatch = useDispatch();
+
+  const handleSave = () => {
+    dispatch(updateMovieFetch(draftMovie));
+    history.push(`/movies/${id}`);
+  };
+}
+```
+
+Now try editing the movie and hit the save button. Notice that the actual content in the movie drawer did not change, but if you pulled up the edit form again, the edited movie information did get saved. Why?
+
+This data inconsistency is cause by the update movie fetch instance and the movie fetch instance (which the movie drawer uses) not originated from the same fetch factory. Therefore, updating the state of one doesn't automatically update the state of the other, even though both share the same `movie` endpoint.
+
+Remember we mentioned `share` and `namespace` in our [Infinite Scrolling & Pagination Section](#3-merge-fetch-states)? Have the same namespace indicates to ReSift that if the state in one of the fetch instance change, all the states in the fetch instances under the same namespace needs to get changed as well.
+
+Let's add `share` and the same name for their `namespace`s in `makeMovieFetch` and `makeUpdateMovieFetch`.
+
+```js
+// /src/fetches/makeMovieFetch.js
+...
+const makeMovieFetch = defineFetch({
+  displayName: 'Get Movie',
+  share: {
+    namespace: 'movie',
+  },
+  ...
+})
+```
+
+```js
+// /src/fetches/makeUpdateMovieFetch.js
+...
+const makeUpdateMovieFetch = defineFetch({
+  displayName: 'Update Movie',
+  share: {
+    namespace: 'movie',
+  },
+  ...
+})
+```
+
+Try editing the movie title or synopsis now and save, you'll see that the movie information in the movie drawer will get updated accordingly.
+
+Before we move on, there's a piece of change that we can apply to optimize user experience. Now after clicking save in the movie form, you can see the loading spinner in the drawer for a second before the update info shows up in the movie drawer. If we make our `handleEdit` function into an async function, we can wait for the update movie data to come back before closing the movie form dialog:
+
+```js
+const handleSave = async () => {
+  await dispatch(updateMovieFetch(draftMovie));
+  history.push(`/movies/${id}`);
+};
+```
+
+### 4. Update Shared State Cross Different Namespaces
+
+One caveat you probably have noticed is that, if you update the movie name, the movie name in the movie thumbnail on the homepage did not get updated. The data in the movie thumbnails are being fetched from the `movies` endpoint. It has a namespace defined already and should not have the same namespace as the movie fetch factories because they don't share the same endpoints. Is there a way to keep shared pieces of stated updated cross different namespaces?
+
+Yes, ReSift got your back.
+
+[Add content to this section sharing fetches across different namespaces is added.]
+
+You can checkout the finished code on [Github](https://github.com/pearlzhuzeng/resift-rentals-tutorial/tree/working/edit-movie).
