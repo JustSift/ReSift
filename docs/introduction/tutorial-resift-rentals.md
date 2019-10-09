@@ -4,14 +4,16 @@ title: Tutorial: ReSift Rentals
 sidebar_label: Tutorial
 ---
 
-Welcome to the ReSift tutorial. This tutorial will introduce basic ReSift concepts through building an app called _ReSift Rentals_ that lets you browse movies, kinda like Netflix. The [complete ReSift Rentals app](https://6xrby.csb.app/) has the following functionalities:
+Welcome to the ReSift tutorial!
+
+This tutorial will introduce basic ReSift concepts through building an app called _ReSift Rentals_ that lets you browse movies, kinda like Netflix. The [completed ReSift Rentals app](https://gtcpo.csb.app/) has the following functionalities:
 
 - It fetches genre data and presents the genre name and the thumbnails of the movies in each genre.
-- It optimizes performance by only fetching data _when needed/in batches_.
-  - In the initial load, it fetches 10 movies for each genre to show their movie thumbnails. It’ll fetch the next batch of 10 movies when you scroll past the previous batch.
-  - In the genre fetch, it only fetches the movie data needed for movie thumbnail (movie id, name, and imageUrl). When you hover over or click the thumbnail is when it’ll fetch the rest of the movie data, such as synopsis, preview url, etc.
-- It provides consistency when the movie information is updated—when the movie information is edited in the editing dialog, that information gets updated globally, allowing the information in the movie drawer to change accordingly.
-- It responds to users’ actions instantly by giving them indications about the data loading status.
+- It optimizes performance by only fetch the data _when needed/in batches_.
+  - In the initial load, it fetches 10 movies for each genre to show their movie thumbnails. It’ll fetch the next batch of 10 movies when the user scroll past the current batch.
+  - In the genre fetch, it only fetches the movie data needed for the movie thumbnails (id, name, and imageUrl). When you hover over or click the thumbnail is when it’ll fetch the rest of the movie data, such as synopsis, preview url, etc.
+- It provides consistency when the movie information is updated—when a user saves the movie information they edited in the edit movie form, that information gets updated globally, allowing the information in the movie drawer to change accordingly.
+- It responds to users’ actions instantly by indicating to them the data loading status.
 
 ## Before We Start the Tutorial
 
@@ -19,49 +21,52 @@ In making of this tutorial, we assume that you have basic understanding of React
 
 We used a few third party libraries to help with certain functionalities and we’ll introduce them when they are being used, you do not need prior knowledge about them.
 
-This is tutorial is divided into 8 sections with each introduces different ReSift concepts. This tutorial is relatively long and you can go through all of it to build the foundation for your ReSift skills, or you can jump to the sections pertaining to what you want to use ReSift for to get an example of how to apply ReSift in a codebase. Every section has their own starter code and finished code. The starter code has the needed components and styling already provided so we can focus on introducing data fetches using ReSift. The following list is a quick glance of each section and the main concepts they introduce. You can pick and choose the concepts you’d like to understand and start at any sections. Instead of following the tutorial, you can also look at the finished code as examples of using ReSift.
+This tutorial is divided into 8 sections, each introduces a set of ReSift concepts. This tutorial is relatively long and you can go through all of it to build the foundation of your ReSift skills, or jump to the sections pertaining to what you want to use ReSift for. Every section has their own starter code and finished code. The starter code has the needed components and styling already provided so we can focus on introducing data fetches using ReSift.
+
+The following list is a quick glance of each section and the main concepts they introduced. You can pick and choose the concepts you’d like to understand and start at any sections. Instead of following the tutorial, you can also look at the finished code as examples of using ReSift.
 
 **[Setup & Overview](#setup-overview)**</br>
 Gives a starting point to follow the tutorial.
 
 **[Section 1: Making Your First Fetch – Fetch Genres and Display Loading Indicator](#section-1-making-your-first-fetch-fetch-genres-and-display-loading-indicator)**</br>
-Main concepts: Singleton data fetch, dispatch data, and indicate loading status
+Main concepts: Singleton data fetch, dispatch data, and indicate loading status</br>
 Main ReSift API introduced: `defineFetch` , `useFetch`, `useDispatch`, `isNormal`, `isLoading`, `status`
 
 **[Section 2: Display Movies in Each Genre](#section-2-display-movies-in-each-genre)**</br>
-Main concepts: Generate unique genre fetch instances via the same fetch factory
+Main concepts: Generate unique genre fetch instances via the same fetch factory</br>
 Main ReSift API introduced: `key`
 
 **[Section 3: Infinite Scrolling & Pagination](#section-3-infinite-scrolling-pagination)**</br>
-Main concepts: Fetch data in batches and merge data in the current fetch with data from the previous fetches
+Main concepts: Fetch data in batches and merge data in the current fetch with the data from the previous fetches</br>
 Main ReSift API introduced: `merge`
 
 **[Section 4: Display Movie Info in a Movie Drawer](#section-4-display-movie-info-in-a-movie-drawer)**</br>
-Main concepts: Generate unique movie fetch instances via one fetch factory
+Main concepts: Generate unique movie fetch instances via one fetch factory</br>
 Main ReSift API introduced: Practice similar concepts as section 2
 
 **[Section 5: Fetch Movie Data when Hovering over Movie Thumbnail](#section-5-fetch-movie-data-when-hovering-over-movie-thumbnail)**</br>
-Main concepts: Dispatch fetch when events fired
+Main concepts: Dispatch fetch when events fired</br>
 Main ReSift API introduced: `useDispatch`
 
 **[Section 6: Edit Movie](#section-6-edit-movie)**</br>
-Main concepts: Creating a fetch factory to update movie info and keeping that info in sync
+Main concepts: Creating a fetch factory to update movie info and keeping that info in sync</br>
 Main ReSift API introduced: `share`
 
 **[Section 7: Compose Custom Hooks](#section-7-compose-custom-hooks)**</br>
-Main concepts: Improve code clarity through composing custom hooks
+Main concepts: Improve code clarity through composing custom hooks</br>
 Main ReSift API introduced: How ReSift uses hooks
 
 **[Section 8: Create a Mock API using the ReSift HTTP Proxy](#section-8-create-a-mock-api-using-the-resift-http-proxy)**</br>
-Main concepts: Set up mock api endpoints
+Main concepts: Set up mock api endpoints</br>
 Main ReSift API introduced: `createHttpProxy`
 
 **[Where to Go from Here](#where-to-go-from-here)**</br>
 Provides some additional exercises and examples of using ReSift
 
-And at point of this tutorial you run into any hurdle, please don't be hesitant to leave us an issue.
+And at point of this tutorial you run into any hurdle, please don't be hesitant to [open an issue on Github](https://github.com/justsift/resift/issues).
 
 Now let's dive in!
+
 ![dive in](https://media.giphy.com/media/1lxkgpEvs7pmlddf9D/giphy.gif)
 
 ## Setup & Overview
@@ -70,8 +75,8 @@ This project was bootstrapped with [create-react-app](https://create-react-app.d
 
 You can follow along in two ways:
 
-1. Spin up via your own localhost: After [cloning the repo](https://github.com/pearlzhuzeng/resift-rentals-tutorial/tree/starter/first-fetch), you can cd into the project directory and do `npm install` to install all the packages and then run `npm start` to see the project running on `localhost: 3000`. Or
-2. by forking [the codesandbox](https://codesandbox.io/s/resift-rentals-tutorial-section1-starter-csicp) we have set up for you.
+1. Spin up your own localhost: After [cloning the repo](https://github.com/pearlzhuzeng/resift-rentals-tutorial/tree/starter/first-fetch), you can cd into the project directory and do `npm install` to install all the packages and then run `npm start` to see the project running on `localhost: 3000`. Or,
+2. Fork [the codesandbox project](https://codesandbox.io/s/resift-rentals-tutorial-section1-starter-csicp) we have set up for you.
 
 This is what you'll see now:
 
@@ -84,7 +89,7 @@ Right now there’s nothing but a header. We’ll be writing in the `/src` folde
 - `src/index.js` is the entry point for our react code.
 - `src/App.js` is the base file for component imports.
 - `src/mockApi` holds our [mockApi](#mockapi) that provides data fetching endpoints.
-- `src/components` that holds our [components](#components).
+- `src/components` holds our [components](#components).
 
 ### MockApi
 
@@ -143,8 +148,8 @@ To get started with the tutorial, all you need to know is that there are three e
 
 #### Endpoint considerations:
 
-- The `/genre` endpoint is for displaying the names of each genre on the homepage, so we only need to return the id and name of the genres.
-- In `/genre/:id/movies`, we only need to return the Movie data that contains information necessary for displaying the movie thumbnail on the homepage, it does not need the full movie data. We also need the pagination meta so we can fetch movies in batches.
+- The `/genre` endpoint is for displaying the names of each genre on the homepage, so we only need to return the id and name of the each genre.
+- In `/genre/:id/movies`, we do not need to return the full movie data, only need to return the movie data that contains information necessary for displaying the movie thumbnail on the homepage. We also need the pagination meta so we can fetch movies in batches.
 - In `/movies/:id`, we return the entire movie object for displaying detailed information in a movie drawer.
 
 ### Components
@@ -213,7 +218,7 @@ Now you have all the knowledge you need to use material-ui and JSS for this proj
 
 You'd import the ReSift functions you need in curly braces. For example, `import { createHttpProxy } from 'resift'` or `import { useFetch, useDispatch } from 'resift'`.
 
-That's all for set up, let's go make our first fetch!
+That's all for setup, let's go make our first fetch!
 
 ## Section 1: Making Your First Fetch – Fetch Genres and Display Loading Indicator
 
@@ -221,9 +226,9 @@ When finished, it’ll look like this:
 
 ![section 1 finished screen](assets/section_1_finished.gif)
 
-When users load the app, we'll start fetching the genre data while displaying a loading spinner when the data has not been returned.
+When a user loads the app, we'll start fetching the genre data while displaying a loading spinner when the data has not been returned.
 
-Now let’s see how we can get there.
+Let’s see how we can get there.
 
 ### Starter code
 
@@ -658,6 +663,7 @@ You can review the finished code at this point on [Github](https://github.com/pe
 
 Here's what we are trying to achieve in this section:
 ![Finished screen for this section](assets/section_2_finished.gif)
+
 We'll see the thumbnails of the movies in each genre, and a loading spinner in each genre to indicate when our app is fetching the movies data.
 
 Let’s first take a look at the endpoints in `mockApi.js`, note that when we fetch all the genres, we’re only fetching the genre ids and names, we omitted fetch the movies in the genres fetch.
@@ -1497,7 +1503,7 @@ ReSift makes keep data updates consistent cross the app very easy. We'll demonst
 When finished, you'll see something like this:
 [Add a screen cast here once the movie info can be updated cross different namespaces.]
 
-So first step again, is define the fetch factory.
+So first step again, is defining the fetch factory.
 
 ### 1. Define the Update Movie Fetch Factory
 
@@ -2042,4 +2048,4 @@ In the mean time, we believe that the more you practice, the more natural ReSift
 - ...
 - ...
 
-Thanks for reading and following along! If you encounter any issues or have any questions, please don't hesitate to [open an issue on Github](https://github.com/justsift/resift/issues)! We look forward to co-creating with you a happier data fetching experience for both developers and users!
+Thanks for reading and following along! If you encounter any issues or have any questions, please don't hesitate to [open an issue on Github](https://github.com/justsift/resift/issues). We look forward to co-creating with you a happier data fetching experience for both developers and users!
