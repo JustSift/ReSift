@@ -1742,3 +1742,11 @@ Yes, ReSift got your back.
 [Add content to this section sharing fetches across different namespaces is added.]
 
 You can checkout the finished code on [Github](https://github.com/pearlzhuzeng/resift-rentals-tutorial/tree/working/edit-movie).
+
+## Section 7: Compose Custom Hooks
+
+Since ReSift is written in hooks, it's very easy to compose custom hooks with ReSift. Custom hooks are very powerful for creating sharable state logic. You can refer to the [React Custom Hooks](https://reactjs.org/docs/hooks-custom.html) page to get familiar with the concepts.
+
+We’ll refactor part of our code to showcase this.
+
+[Will add a `useCurrentMovie` hook for this section.]
