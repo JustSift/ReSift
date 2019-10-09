@@ -2028,3 +2028,18 @@ export const movie = createHttpProxy('/movies/:id', async ({ requestParams, matc
 ```
 
 You can also refer to [ReSift api docs](https://resift.org/docs/api/create-http-proxy) to further explore creating http proxy.
+
+## Where to Go from Here
+
+In this tutorial, we introduced main concepts of ReSift that you'll be using in most occasions. We intend to keep adding sections to this tutorial to introduce more ReSift api usages and provide examples. Make sure to check back in for more sections later.
+
+In the mean time, we believe that the more you practice, the more natural ReSift patterns will be for you. Here's a list of functionalities you can continue adding to your ReSift Rentals app. We'll continue add on to the list and add suggested solutions for each practice.
+
+- Add a `/movies` endpoint that displays all the movies in one list, instead of being listed under each genre.
+  Description: abcdefghijklmn
+  Hint: opqrstuvwxyz
+  Suggested solution: link to working code in codesandbox
+- ...
+- ...
+
+Thanks for reading and following along! If you encounter any issues or have any questions, please don't hesitate to [open an issue on Github](https://github.com/justsift/resift/issues)! We look forward to co-creating with you a happier data fetching experience for both developers and users!
