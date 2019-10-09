@@ -19,7 +19,7 @@ In making of this tutorial, we assume that you have basic understanding of React
 
 We used a few third party libraries to help with certain functionalities and we’ll introduce them when they are being used, you do not need prior knowledge about them.
 
-This tutorial is divided into 8 sections with each introduces different ReSift concepts. Every section has their own starter code and finished code. The starter code has the needed components and styling already provided so we can focus on introducing data fetches using ReSift. The following list is a quick glance of each section and the main concepts they introduce. You can pick and choose the concepts you’d like to understand and start at any sections. Instead of following the tutorial, you can also look at the finished code as examples of using ReSift.
+This is tutorial is divided into 8 sections with each introduces different ReSift concepts. This tutorial is relatively long and you can go through all of it to build the foundation for your ReSift skills, or you can jump to the sections pertaining to what you want to use ReSift for to get an example of how to apply ReSift in a codebase. Every section has their own starter code and finished code. The starter code has the needed components and styling already provided so we can focus on introducing data fetches using ReSift. The following list is a quick glance of each section and the main concepts they introduce. You can pick and choose the concepts you’d like to understand and start at any sections. Instead of following the tutorial, you can also look at the finished code as examples of using ReSift.
 
 **[Setup & Overview](#setup-overview)**</br>
 Gives a starting point to follow the tutorial.
@@ -123,6 +123,7 @@ To get started with the tutorial, all you need to know is that there are three e
    ```
 
 3. `/movies/:id`: returns a movie object with this shape:
+
    ```js
    movie: {
      id: number,
@@ -139,6 +140,12 @@ To get started with the tutorial, all you need to know is that there are three e
      runtime: string,
    }
    ```
+
+#### Endpoint considerations:
+
+- The `/genre` endpoint is for displaying the names of each genre on the homepage, so we only need to return the id and name of the genres.
+- In `/genre/:id/movies`, we only need to return the Movie data that contains information necessary for displaying the movie thumbnail on the homepage, it does not need the full movie data. We also need the pagination meta so we can fetch movies in batches.
+- In `/movies/:id`, we return the entire movie object for displaying detailed information in a movie drawer.
 
 ### Components
 
@@ -1750,3 +1757,274 @@ Since ReSift is written in hooks, it's very easy to compose custom hooks with Re
 We’ll refactor part of our code to showcase this.
 
 [Will add a `useCurrentMovie` hook for this section.]
+
+## Section 8: Create a Mock API using the ReSift HTTP Proxy
+
+This section is intended for people who are interested in creating a mock backend.
+
+This is useful when there’s not an actual backend built but an agreed-upon shape of the api. You don’t have to wait till the backend is built to start testing out the fetches on the front end. You can create a mock api with ReSift’s HTTP proxy.
+
+### Examine the Starter Files
+
+You can grab the starter code from [Github](https://github.com/pearlzhuzeng/resift-rentals-tutorial/tree/starter/http-proxy/) or [Codesandbox](https://codesandbox.io/s/resift-rentals-tutorial-starter-create-http-proxy-532lx).
+
+Our goal for this mock api is to have three endpoints: `/genres`, `/genres/:id/movies`, and `/movies/:id`. You can refer to [this section](#mockapi), where we talked about the return shapes of these endpoints and our considerations.
+
+We'll be making our http proxy in the `/src/mockApi` folder. Side note: The `/mockApi` folder needs to live in the `/src` in order to work with `create-react-app`.
+
+This folder currently contains the following files:
+
+- An `index.js` file with helper already imported, awaiting us to build our mockApi in.
+- A `movies.json` file that contains the movies data we scrapped from [Rotten Tomatoes](https://www.rottentomatoes.com).
+- A `genreLookup.js` file that transforms the data in `movies.json` file into a genre lookup/dictionary that has id and certain information of each genre:
+
+  ```js
+  GenreLookup: {
+    id: string,
+    genre: Genre
+  }
+  Genre: {
+    id: string,
+    name: string,
+    movies: Movie[] // Sorted with rotten tomato score from high to low
+  }
+  Movie: {
+    id: string,
+    name: string,
+    imageUrl: string
+  }
+  ```
+
+- A `movieLookup.js` file that transforms the data in `movies.json` file into a movie lookup/dictionary that has id and certain information of each movie:
+
+  ```js
+  MovieLookup: {
+    id: string,
+    movie: Movie
+  }
+  Movie: {
+    id: number,
+    name: string,
+    imageUrl: string,
+    posterUrl: string,
+    synopsis: string,
+    genres: string[],
+    actors: string[],
+    mpaaRating: string,
+    trailerUrl: string,
+    tomatoScore: number,
+    theaterReleaseDate: string,
+    runtime: string,
+  }
+  ```
+
+- And a paginate helper that takes in an array, a pageSize(how many array items should be on one page, and a current page number), and returns the sliced array of items on the current page, along with the paginationMeta. The return shape looks like the following:
+
+  ```js
+  {
+    results: Array
+    paginationMeta: {
+      pageSize: number,
+      currentPageNumber: number,
+      totalNumberOfPages: number,
+    },
+  };
+  ```
+
+#### Creating the http proxy shell
+
+The ReSift module we need for creating http proxy is `createHttpProxy`. Let's import it into the `index.js` file.
+
+```js
+// src/mockApi/index.js
+import { createHttpProxy } from 'resift';
+```
+
+The shapes of the endpoints are listed [here](#mockapi). Let's keep building the http proxy shell using `createHttpProxy`.
+
+```js
+// src/mockApi/index.js
+...
+
+export const genres = createHttpProxy();
+
+export const movies = createHttpProxy();
+
+export const movie = createHttpProxy();
+```
+
+And let's add a mock delay to mimic network response delay
+
+```js
+// src/mockApi/index.js
+function mockDelay() {
+  return new Promise((resolve, reject) => {
+    try {
+      setTimeout(resolve, 1000);
+    } catch (e) {
+      reject(e);
+    }
+  });
+}
+```
+
+### 1. Build the `genres` endpoint
+
+For the `genres` endpoint, we want the path to be `/genres`, and return an array of genres.
+
+```js
+// src/mockApi/index.js
+...
+const genreList = Object.values(genreLookup).map(genre => ({
+  id: genre.id,
+  name: genre.name,
+}));
+
+export const genres = createHttpProxy(
+  { path: '/genres', exact: true },
+  async ({ requestParams }) => {
+    await mockDelay();
+    return genreList;
+  },
+);
+...
+```
+
+### 2. Build the `movies` endpoint
+
+For the `movies` endpoint, we want the path to be `/genres/:id/movies`, and return a paginated movies result.
+
+```js
+// src/mockApi/index.js
+...
+export const movies = createHttpProxy('/genres/:id/movies', async ({ requestParams, match }) => {
+  await mockDelay();
+  const { id } = match.params;
+  const genre = genreLookup[id];
+
+  const { query } = requestParams;
+  const pageSize = _get(query, ['pageSize']);
+  // `_get` is a lodash function that has null checks, so you don’t have to write out `query && query.pageSize`
+
+  if (!genre) {
+    throw new Error('Genre not found');
+  }
+
+  if (!pageSize) {
+    return {
+      results: genre.movies,
+    };
+  }
+
+  const currentPageNumber = _get(query, ['page']);
+  return paginate(genre.movies, pageSize, currentPageNumber);
+});
+...
+```
+
+### 3. Build the `movie` endpoint
+
+For the `movie` endpoint, we want the path to be `/movies/:id`, and it has two methods, `GET` for getting the movie data, and `PUT` for updating the movie data.
+
+```js
+// src/mockApi/index.js
+...
+export const movie = createHttpProxy('/movies/:id', async ({ requestParams, match }) => {
+  await mockDelay();
+
+  if (requestParams.method === 'PUT') {
+    const { id } = match.params;
+    movieLookup[id] = requestParams.data;
+    return movieLookup[id];
+  }
+
+  if (requestParams.method === 'GET') {
+    const { id } = match.params;
+    return movieLookup[id];
+  }
+
+  throw new Error('no matching verb');
+});
+...
+```
+
+That's is for creating the mockApi for our _ReSift Rentals_ app.
+
+Here's the full `index.js` file for your reference:
+
+```js
+// src/mockApi/index.js
+
+import { createHttpProxy } from 'resift';
+
+import genreLookup from './genreLookup';
+import movieLookup from './movieLookup';
+
+// Helpers
+import _get from 'lodash/get'; // array helper
+import paginate from './helpers/paginate';
+
+const genreList = Object.values(genreLookup).map(genre => ({
+  id: genre.id,
+  name: genre.name,
+}));
+
+function mockDelay() {
+  return new Promise((resolve, reject) => {
+    try {
+      setTimeout(resolve, 1000);
+    } catch (e) {
+      reject(e);
+    }
+  });
+}
+
+export const genres = createHttpProxy(
+  { path: '/genres', exact: true },
+  async ({ requestParams }) => {
+    await mockDelay();
+    return genreList;
+  },
+);
+
+export const movies = createHttpProxy('/genres/:id/movies', async ({ requestParams, match }) => {
+  await mockDelay();
+  const { id } = match.params;
+  const genre = genreLookup[id];
+
+  const { query } = requestParams;
+  const pageSize = _get(query, ['pageSize']);
+
+  if (!genre) {
+    throw new Error('Genre not found');
+  }
+
+  if (!pageSize) {
+    return {
+      results: genre.movies,
+    };
+  }
+
+  const currentPageNumber = _get(query, ['page']);
+  return paginate(genre.movies, pageSize, currentPageNumber);
+});
+
+export const movie = createHttpProxy('/movies/:id', async ({ requestParams, match }) => {
+  await mockDelay();
+
+  if (requestParams.method === 'PUT') {
+    const { id } = match.params;
+    movieLookup[id] = requestParams.data;
+    return movieLookup[id];
+  }
+
+  if (requestParams.method === 'GET') {
+    const { id } = match.params;
+    return movieLookup[id];
+  }
+
+  throw new Error('no matching verb');
+});
+```
+
+You can also refer to [ReSift api docs](https://resift.org/docs/api/create-http-proxy) to further explore creating http proxy.
