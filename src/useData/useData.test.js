@@ -7,7 +7,7 @@ import createDataService from '../createDataService';
 import DeferredPromise from '../DeferredPromise';
 import useDispatch from '../useDispatch';
 
-test('unshared, it grabs data from the store', async () => {
+test('unshared: it grabs data from the store', async () => {
   const done = new DeferredPromise();
 
   const makeGetMovie = defineFetch({
@@ -60,7 +60,7 @@ test('unshared, it grabs data from the store', async () => {
   expect(effectHandler.mock.calls[1][0]).toBe(movie);
 });
 
-test('shared: pulls data from the store', async () => {
+test('shared: it grabs data from the store', async () => {
   const done = new DeferredPromise();
 
   const makeGetMovie = defineFetch({

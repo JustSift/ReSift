@@ -19,7 +19,7 @@ function Index({ config: siteConfig, language = '' }) {
       <div className="jumbotron">
         <div className="jumbotron__title">ReSift</div>
         <div className="jumbotron__subtitle">a state management library for data fetches</div>
-        <code className="jumbotron__code">const [person, status] = useFetch(personFetch);</code>
+        <code className="jumbotron__code">const person = useData(getPerson);</code>
         <div className="jumbotron__buttons">
           <a className="link-button" href={getDoc('introduction/what-is-resift')}>
             What is ReSift?

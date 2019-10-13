@@ -4,7 +4,8 @@ import DeferredPromise from './DeferredPromise';
 import {
   ResiftProvider,
   defineFetch,
-  useFetch,
+  useData,
+  useStatus,
   createDataService,
   useDispatch,
   isLoading,
@@ -28,7 +29,8 @@ test('basic lifecycle', async () => {
   function Person({ personId }) {
     const dispatch = useDispatch();
     const personFetch = makePersonFetch(personId);
-    const [person, status] = useFetch(personFetch);
+    const person = useData(personFetch);
+    const status = useStatus(personFetch);
 
     useEffect(() => {
       dispatch(personFetch());
@@ -83,7 +85,7 @@ test('basic lifecycle', async () => {
         "status": 0,
       },
       Object {
-        "person": undefined,
+        "person": null,
         "status": 2,
       },
       Object {

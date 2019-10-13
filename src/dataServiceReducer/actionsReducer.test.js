@@ -79,7 +79,11 @@ test('when given a success action, it adds a success payload and replaces the in
     Object {
       "example action | test-shortid": Object {
         "key:test arg": Object {
+          "data": Object {
+            "mock": "data",
+          },
           "error": false,
+          "errorData": null,
           "hadSuccess": true,
           "inflight": undefined,
           "meta": Object {
@@ -88,9 +92,6 @@ test('when given a success action, it adds a success payload and replaces the in
             "fetchFactoryId": "test-shortid",
             "key": "key:test arg",
             "share": undefined,
-          },
-          "payload": Object {
-            "mock": "data",
           },
           "shared": false,
           "updatedAt": "test-timestamp",
@@ -131,7 +132,11 @@ test('when given a clear action, it removes the sub-store', () => {
     Object {
       "example action | test-shortid": Object {
         "key:one": Object {
+          "data": Object {
+            "mock": "one",
+          },
           "error": false,
+          "errorData": null,
           "hadSuccess": true,
           "inflight": undefined,
           "meta": Object {
@@ -142,14 +147,15 @@ test('when given a clear action, it removes the sub-store', () => {
             "share": undefined,
             "type": "FETCH_INSTANCE",
           },
-          "payload": Object {
-            "mock": "one",
-          },
           "shared": false,
           "updatedAt": "test-timestamp",
         },
         "key:two": Object {
+          "data": Object {
+            "mock": "two",
+          },
           "error": false,
+          "errorData": null,
           "hadSuccess": true,
           "inflight": undefined,
           "meta": Object {
@@ -159,9 +165,6 @@ test('when given a clear action, it removes the sub-store', () => {
             "key": "key:two",
             "share": undefined,
             "type": "FETCH_INSTANCE",
-          },
-          "payload": Object {
-            "mock": "two",
           },
           "shared": false,
           "updatedAt": "test-timestamp",
@@ -181,7 +184,11 @@ test('when given a clear action, it removes the sub-store', () => {
     Object {
       "example action | test-shortid": Object {
         "key:two": Object {
+          "data": Object {
+            "mock": "two",
+          },
           "error": false,
+          "errorData": null,
           "hadSuccess": true,
           "inflight": undefined,
           "meta": Object {
@@ -191,9 +198,6 @@ test('when given a clear action, it removes the sub-store', () => {
             "key": "key:two",
             "share": undefined,
             "type": "FETCH_INSTANCE",
-          },
-          "payload": Object {
-            "mock": "two",
           },
           "shared": false,
           "updatedAt": "test-timestamp",
@@ -232,6 +236,7 @@ test('when given an error action, it adds an error payload and replaces the infl
       "example action | test-shortid": Object {
         "key:test arg": Object {
           "error": true,
+          "errorData": [Error: test error],
           "inflight": undefined,
           "meta": Object {
             "conflict": "cancel",
@@ -240,7 +245,6 @@ test('when given an error action, it adds an error payload and replaces the infl
             "key": "key:test arg",
             "share": undefined,
           },
-          "payload": [Error: test error],
           "shared": false,
           "updatedAt": "test-timestamp",
         },

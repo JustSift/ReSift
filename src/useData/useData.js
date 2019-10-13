@@ -9,12 +9,12 @@ const makeDataSelector = fetch => state => {
 
   const isFetchInstance = _get(fetch, ['meta', 'type']) === 'FETCH_INSTANCE';
   if (!isFetchInstance) {
-    throw new Error('[getFetch] expected to see a fetch instance in get fetch.');
+    throw new Error('[useData] expected to see a fetch instance in get fetch.');
   }
 
   if (!state.dataService) {
     throw new Error(
-      '[getFetch] "dataService" is a required key. Double check with the installation guide here: https://resift.org/docs/introduction/installation',
+      '[useData] "dataService" is a required key. Double check with the installation guide here: https://resift.org/docs/introduction/installation',
     );
   }
 
@@ -42,7 +42,7 @@ const makeDataSelector = fetch => state => {
 
 function useData(fetch) {
   if (!fetch) {
-    throw new Error('[getFetch] First argument, the fetch, is required');
+    throw new Error('[useData] You must pass a fetch into `useData`');
   }
 
   const dataSelector = makeDataSelector(fetch);
