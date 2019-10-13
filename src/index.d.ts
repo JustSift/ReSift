@@ -25,3 +25,4 @@ export { default as isUnknown } from './isUnknown';
 export { default as useClearFetch } from './useClearFetch';
 export { default as useDispatch } from './useDispatch';
 export { default as useFetch } from './useFetch';
+export { default as Guard } from './Guard';
