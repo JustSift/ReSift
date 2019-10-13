@@ -52,7 +52,9 @@ export default function getFetch(fetch, state, options) {
   if (!fetch) throw new Error('[getFetch] First argument, the fetch, is required');
   if (!state) throw new Error('[getFetch] State argument is required');
   if (!state.dataService) {
-    throw new Error('[getFetch] "dataService" is a required key. pass in the whole store state.');
+    throw new Error(
+      '[getFetch] "dataService" is a required key. Double check with the installation guide here: https://resift.org/docs/introduction/installation',
+    );
   }
 
   const isFetchInstance = _get(fetch, ['meta', 'type']) === 'FETCH_INSTANCE';
