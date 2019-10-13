@@ -161,7 +161,6 @@ describe('getFetch', () => {
       const actionCreator = defineFetch({
         displayName: 'Test',
         make: () => ({
-          key: [],
           request: () => () => {},
         }),
       });
@@ -177,7 +176,6 @@ describe('getFetch', () => {
       const actionCreator = defineFetch({
         displayName: 'Test',
         make: () => ({
-          key: [],
           request: () => () => {},
         }),
       });
@@ -204,7 +202,6 @@ describe('getFetch', () => {
     const makeMyFetch = defineFetch({
       displayName: 'Get My Fetch',
       make: () => ({
-        key: [],
         request: () => () => {},
       }),
     });
@@ -231,7 +228,6 @@ describe('getFetch', () => {
     const makeExampleFetch = defineFetch({
       displayName: 'example fetch',
       make: testArg => ({
-        key: [testArg],
         request: () => ({ exampleService }) => exampleService(testArg),
       }),
     });
@@ -249,7 +245,6 @@ describe('getFetch', () => {
     const makeFetch = defineFetch({
       displayName: 'Example Fetch',
       make: () => ({
-        key: [],
         request: () => () => {},
       }),
     });
@@ -307,7 +302,6 @@ describe('getFetch', () => {
       displayName: 'My Fetch',
       share: { namespace: 'example' },
       make: () => ({
-        key: [],
         request: () => () => {},
       }),
     });
@@ -329,7 +323,6 @@ describe('getFetch', () => {
       displayName: 'Example',
       share: { namespace: 'example' },
       make: () => ({
-        key: [],
         request: () => () => ({ foo: 'bar' }),
       }),
     });
@@ -408,7 +401,6 @@ describe('getFetch', () => {
       displayName: 'Example One',
       share: { namespace: 'example' },
       make: () => ({
-        key: [],
         request: () => () => {},
       }),
     });
@@ -417,7 +409,6 @@ describe('getFetch', () => {
       displayName: 'Example Two',
       share: { namespace: 'example' },
       make: () => ({
-        key: [],
         request: () => () => {},
       }),
     });

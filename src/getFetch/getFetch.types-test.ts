@@ -15,7 +15,6 @@ import defineFetch from '../defineFetch';
   const actionCreatorFactory = defineFetch({
     displayName: 'test',
     make: (personId: string) => ({
-      key: [personId],
       request: (_: Person) => () => exampleObject,
     }),
   });
@@ -52,7 +51,6 @@ import defineFetch from '../defineFetch';
       merge: (previous, next) => exampleObject,
     },
     make: (personId: string) => ({
-      key: [personId],
       request: (_: Person) => () => anotherExampleObject,
     }),
   });

@@ -18,7 +18,6 @@ test('it gets the fetch and returns the data and status', () => {
   const makePersonFetch = defineFetch({
     displayName: 'fetch person',
     make: personId => ({
-      key: [personId],
       request: () => ({ exampleService }) => exampleService(personId),
     }),
   });
@@ -75,7 +74,6 @@ test('it bails out of updating if the data does not change', () => {
   const makePersonFetch = defineFetch({
     displayName: 'fetch person',
     make: personId => ({
-      key: [personId],
       request: () => ({ exampleService }) => exampleService(personId),
     }),
   });
@@ -83,7 +81,6 @@ test('it bails out of updating if the data does not change', () => {
   const makeOtherFetch = defineFetch({
     displayName: 'fetch other',
     make: otherId => ({
-      key: [otherId],
       request: () => ({ exampleService }) => exampleService(otherId),
     }),
   });

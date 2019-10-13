@@ -19,7 +19,7 @@ export interface DefineFetchParams<
   displayName: string;
   make: (
     ...keyArgs: KeyArgs
-  ) => { key: string[]; request: (...fetchArgs: FetchArgs) => (services: any) => FetchResult };
+  ) => { request: (...fetchArgs: FetchArgs) => (services: any) => FetchResult };
   share?: ShareParams<MergeResult>;
   conflict?: 'cancel' | 'ignore';
   staticFetchFactoryId?: string;

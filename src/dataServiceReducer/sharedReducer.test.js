@@ -25,7 +25,6 @@ test('returns the previous state if the action is not shared', () => {
   const actionCreatorFactory = defineFetch({
     displayName: 'test action',
     make: testArg => ({
-      key: [testArg],
       request: () => () => {},
     }),
   });
@@ -54,7 +53,6 @@ test('clear fetch', () => {
     displayName: 'Get People',
     share: { namespace: 'people' },
     make: personId => ({
-      key: [personId],
       request: () => () => ({ id: personId, foo: 'bar' }),
     }),
   });

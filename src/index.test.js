@@ -18,7 +18,6 @@ test('basic lifecycle', async () => {
   const makePersonFetch = defineFetch({
     displayName: 'Get Person',
     make: personId => ({
-      key: [personId],
       request: () => () => ({
         personId,
         name: 'It worked!',

@@ -8,7 +8,6 @@ test('it creates a clear fetch action from a fetch with a dynamic key', () => {
   const makePersonFetch = defineFetch({
     displayName: 'person fetch',
     make: personId => ({
-      key: [personId],
       request: () => ({ exampleService }) => exampleService(personId),
     }),
   });
@@ -36,7 +35,6 @@ test('it creates a clear fetch action from a fetch with a static key', () => {
   const makeTestFetch = defineFetch({
     displayName: 'test fetch',
     make: () => ({
-      key: [],
       request: () => ({ exampleService }) => exampleService(),
     }),
   });
@@ -64,7 +62,6 @@ test('it throws if you try to use a dynamic key like a static key', () => {
   const personFetch = defineFetch({
     displayName: 'person fetch',
     make: personId => ({
-      key: [personId],
       request: () => ({ exampleService }) => exampleService(personId),
     }),
   });

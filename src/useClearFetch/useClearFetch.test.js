@@ -15,7 +15,6 @@ test('it returns a function that calls dispatch', () => {
   const makePersonFetch = defineFetch({
     displayName: 'fetch person',
     make: personId => ({
-      key: [personId],
       request: () => ({ exampleService }) => exampleService(),
     }),
   });

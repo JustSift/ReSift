@@ -11,7 +11,6 @@ import createContextFetch from './createContextFetch';
   const makeFetch = defineFetch({
     displayName: 'Get Example',
     make: (id: string) => ({
-      key: [id],
       request: (x: number) => ({ http }) =>
         http({
           method: 'GET',
