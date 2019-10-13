@@ -551,4 +551,324 @@ describe('getFetch', () => {
     const sharedStatus = getFetch(oneFetch, { dataService: finalState })[1];
     expect(isLoading(sharedStatus)).toBe(true);
   });
+
+  test('shared statuses, multiple keys, shared namespaces fetches', () => {
+    const makeGetMovieItem = defineFetch({
+      displayName: 'Get Movie Item',
+      share: {
+        namespace: 'movieItem',
+        merge: {
+          movieList: (prevMovie, nextList) => {
+            if (!prevMovie) return null;
+
+            return nextList.find(movie => movie.id === prevMovie.id);
+          },
+        },
+      },
+      make: id => ({
+        key: [id],
+        request: () => () => {},
+      }),
+    });
+    const makeGetMovieList = defineFetch({
+      displayName: 'Get Movie List',
+      share: {
+        namespace: 'movieList',
+        merge: {
+          movieItem: (prevList, nextItem) => {
+            if (!prevList) return null;
+
+            const index = prevList.findIndex(movie => movie.id === nextItem.id);
+
+            return [
+              ...prevList.slice(0, index),
+              nextItem,
+              ...prevList.slice(index + 1, prevList.length),
+            ];
+          },
+        },
+      },
+      make: () => ({
+        key: [],
+        request: () => () => {},
+      }),
+    });
+
+    const getMovieList = makeGetMovieList();
+    const getMovieItem123 = makeGetMovieItem('movie123');
+    const getMovieItem456 = makeGetMovieItem('movie456');
+
+    const initialState = dataServiceReducer({}, { type: 'NO_MATCH' });
+    expect(initialState).toMatchInlineSnapshot(`
+      Object {
+        "actions": Object {},
+        "shared": Object {
+          "data": Object {},
+          "merges": Object {},
+          "parents": Object {},
+        },
+      }
+    `);
+
+    const movieListRequest = getMovieList();
+    const movieItem123Request = getMovieItem123();
+    const movieItem456Request = getMovieItem456();
+
+    const requests = [movieListRequest, movieItem123Request, movieItem456Request];
+
+    const afterFetches = requests.reduce(dataServiceReducer, initialState);
+    expect(afterFetches.shared).toMatchInlineSnapshot(`
+      Object {
+        "data": Object {},
+        "merges": Object {
+          "movieItem": Object {
+            "movieItem": [Function],
+            "movieList": [Function],
+          },
+          "movieList": Object {
+            "movieItem": [Function],
+            "movieList": [Function],
+          },
+        },
+        "parents": Object {
+          "movieItem": Object {
+            "Get Movie Item | key:movie123 | test-short-id": Object {
+              "displayName": "Get Movie Item",
+              "fetchFactoryId": "test-short-id",
+              "key": "key:movie123",
+            },
+            "Get Movie Item | key:movie456 | test-short-id": Object {
+              "displayName": "Get Movie Item",
+              "fetchFactoryId": "test-short-id",
+              "key": "key:movie456",
+            },
+          },
+          "movieList": Object {
+            "Get Movie List | key: | test-short-id": Object {
+              "displayName": "Get Movie List",
+              "fetchFactoryId": "test-short-id",
+              "key": "key:",
+            },
+          },
+        },
+      }
+    `);
+
+    const movieListSuccess = {
+      type: createActionType(RESIFT_SUCCESS, movieListRequest.meta),
+      meta: movieListRequest.meta,
+      payload: [
+        { id: 'movie123', name: 'foo' },
+        { id: 'movie456', name: 'bar' },
+        { id: 'movie789', name: 'baz' },
+      ],
+    };
+
+    const afterMovieListSuccess = dataServiceReducer(afterFetches, movieListSuccess);
+    expect(afterMovieListSuccess.shared).toMatchInlineSnapshot(`
+      Object {
+        "data": Object {
+          "movieItem": Object {},
+          "movieList": Object {
+            "key:": Array [
+              Object {
+                "id": "movie123",
+                "name": "foo",
+              },
+              Object {
+                "id": "movie456",
+                "name": "bar",
+              },
+              Object {
+                "id": "movie789",
+                "name": "baz",
+              },
+            ],
+          },
+        },
+        "merges": Object {
+          "movieItem": Object {
+            "movieItem": [Function],
+            "movieList": [Function],
+          },
+          "movieList": Object {
+            "movieItem": [Function],
+            "movieList": [Function],
+          },
+        },
+        "parents": Object {
+          "movieItem": Object {
+            "Get Movie Item | key:movie123 | test-short-id": Object {
+              "displayName": "Get Movie Item",
+              "fetchFactoryId": "test-short-id",
+              "key": "key:movie123",
+            },
+            "Get Movie Item | key:movie456 | test-short-id": Object {
+              "displayName": "Get Movie Item",
+              "fetchFactoryId": "test-short-id",
+              "key": "key:movie456",
+            },
+          },
+          "movieList": Object {
+            "Get Movie List | key: | test-short-id": Object {
+              "displayName": "Get Movie List",
+              "fetchFactoryId": "test-short-id",
+              "key": "key:",
+            },
+          },
+        },
+      }
+    `);
+
+    const movieItem123Success = {
+      type: createActionType(RESIFT_SUCCESS, movieItem123Request.meta),
+      meta: movieItem123Request.meta,
+      payload: {
+        id: 'movie123',
+        name: 'foo CHANGED',
+      },
+    };
+    const afterMovieItem123Success = dataServiceReducer(afterMovieListSuccess, movieItem123Success);
+    expect(afterMovieItem123Success.shared).toMatchInlineSnapshot(`
+      Object {
+        "data": Object {
+          "movieItem": Object {
+            "key:movie123": Object {
+              "id": "movie123",
+              "name": "foo CHANGED",
+            },
+          },
+          "movieList": Object {
+            "key:": Array [
+              Object {
+                "id": "movie123",
+                "name": "foo CHANGED",
+              },
+              Object {
+                "id": "movie456",
+                "name": "bar",
+              },
+              Object {
+                "id": "movie789",
+                "name": "baz",
+              },
+            ],
+          },
+        },
+        "merges": Object {
+          "movieItem": Object {
+            "movieItem": [Function],
+            "movieList": [Function],
+          },
+          "movieList": Object {
+            "movieItem": [Function],
+            "movieList": [Function],
+          },
+        },
+        "parents": Object {
+          "movieItem": Object {
+            "Get Movie Item | key:movie123 | test-short-id": Object {
+              "displayName": "Get Movie Item",
+              "fetchFactoryId": "test-short-id",
+              "key": "key:movie123",
+            },
+            "Get Movie Item | key:movie456 | test-short-id": Object {
+              "displayName": "Get Movie Item",
+              "fetchFactoryId": "test-short-id",
+              "key": "key:movie456",
+            },
+          },
+          "movieList": Object {
+            "Get Movie List | key: | test-short-id": Object {
+              "displayName": "Get Movie List",
+              "fetchFactoryId": "test-short-id",
+              "key": "key:",
+            },
+          },
+        },
+      }
+    `);
+
+    const movieItem456Success = {
+      type: createActionType(RESIFT_SUCCESS, movieItem456Request.meta),
+      meta: movieItem456Request.meta,
+      payload: {
+        id: 'movie456',
+        name: 'bar CHANGED',
+      },
+    };
+    const afterMovieItem456Success = dataServiceReducer(
+      afterMovieItem123Success,
+      movieItem456Success,
+    );
+
+    expect(afterMovieItem456Success.shared).toMatchInlineSnapshot(`
+      Object {
+        "data": Object {
+          "movieItem": Object {
+            "key:movie123": Object {
+              "id": "movie123",
+              "name": "foo CHANGED",
+            },
+            "key:movie456": Object {
+              "id": "movie456",
+              "name": "bar CHANGED",
+            },
+          },
+          "movieList": Object {
+            "key:": Array [
+              Object {
+                "id": "movie123",
+                "name": "foo CHANGED",
+              },
+              Object {
+                "id": "movie456",
+                "name": "bar CHANGED",
+              },
+              Object {
+                "id": "movie789",
+                "name": "baz",
+              },
+            ],
+          },
+        },
+        "merges": Object {
+          "movieItem": Object {
+            "movieItem": [Function],
+            "movieList": [Function],
+          },
+          "movieList": Object {
+            "movieItem": [Function],
+            "movieList": [Function],
+          },
+        },
+        "parents": Object {
+          "movieItem": Object {
+            "Get Movie Item | key:movie123 | test-short-id": Object {
+              "displayName": "Get Movie Item",
+              "fetchFactoryId": "test-short-id",
+              "key": "key:movie123",
+            },
+            "Get Movie Item | key:movie456 | test-short-id": Object {
+              "displayName": "Get Movie Item",
+              "fetchFactoryId": "test-short-id",
+              "key": "key:movie456",
+            },
+          },
+          "movieList": Object {
+            "Get Movie List | key: | test-short-id": Object {
+              "displayName": "Get Movie List",
+              "fetchFactoryId": "test-short-id",
+              "key": "key:",
+            },
+          },
+        },
+      }
+    `);
+
+    const [data, status] = getFetch(getMovieItem456, { dataService: afterMovieItem123Success });
+    expect(status).toMatchInlineSnapshot(`3`);
+    expect(data).toMatchInlineSnapshot(`undefined`);
+    expect(isNormal(status)).toBe(false);
+  });
 });
