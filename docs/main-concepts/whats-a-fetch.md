@@ -180,6 +180,14 @@ In this case, the value `personFetch` will change when the `personId` changes. I
 > }, [dispatch, personFetch]);
 > ```
 
+## Fetches are global
+
+An important thing to note is that ReSift fetches are _global_ meaning that if a fetch has been completed and used in one component, it will be ready for any another component.
+
+This is a key concept of ReSift fetches because global fetches also means global cache/state. Global state allows the lifecycles of a fetch to be split up across many different components.
+
+For example, one component can be responsible for reacting to some event to pre-fetch (i.e. dispatch a request for) data for another component. These components can live anywhere in the component tree because the state of the fetches are hoisted above the component tree (i.e. they're global).
+
 ## Summary: The lifecycle of a fetch
 
 1. `defineFetch` returns a **fetch factory** (e.g. `makePersonFetch`)
