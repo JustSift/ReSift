@@ -26,7 +26,6 @@ describe('defineFetch', () => {
     const actionCreatorFactory = defineFetch({
       displayName: 'something',
       make: id => ({
-        key: [id],
         request: () => ({ exampleService }) => exampleService(),
       }),
     });
@@ -47,18 +46,18 @@ describe('defineFetch', () => {
     }).toThrowErrorMatchingInlineSnapshot(`"[defineFetch]: \`make\` must return an object"`);
   });
 
-  test('it throws if there is no `key`', () => {
+  test("it throws if the make args aren't strings or numbers", () => {
     expect(() => {
       const actionCreatorFactory = defineFetch({
         displayName: 'something',
         make: id => ({
-          noKey: [id],
+          request: () => () => {},
         }),
       });
 
-      actionCreatorFactory('test-id');
+      actionCreatorFactory(null);
     }).toThrowErrorMatchingInlineSnapshot(
-      `"[defineFetch] \`key\` must be an array in the object that \`make\` returns"`,
+      `"[defineFetch] make arguments must be either a string or a number. Found \\"null\\" for the fetch factory \\"something\\""`,
     );
   });
 
@@ -67,7 +66,6 @@ describe('defineFetch', () => {
       const actionCreatorFactory = defineFetch({
         displayName: 'something',
         make: id => ({
-          key: [id],
           request: 'not a function',
         }),
       });
@@ -82,7 +80,6 @@ describe('defineFetch', () => {
     const makeFetch = defineFetch({
       displayName: 'Example',
       make: () => ({
-        key: [],
         request: () => 'not a function',
       }),
     });
@@ -100,7 +97,6 @@ describe('defineFetch', () => {
     const actionCreatorFactory = defineFetch({
       displayName: 'example fetch',
       make: id => ({
-        key: [id],
         request: () => ({ exampleService }) => exampleService(),
       }),
     });
@@ -124,7 +120,6 @@ describe('defineFetch', () => {
     const actionCreatorFactory = defineFetch({
       displayName: 'example payload',
       make: testArg => ({
-        key: [testArg],
         request: () => ({ exampleService }) => exampleService(testArg),
       }),
     });
@@ -143,7 +138,6 @@ describe('defineFetch', () => {
     const actionCreatorFactory = defineFetch({
       displayName: 'example payload',
       make: testArg => ({
-        key: [testArg],
         request: () => ({ exampleService }) => exampleService(testArg),
       }),
     });
@@ -176,7 +170,6 @@ describe('defineFetch', () => {
     const makeActionCreator = defineFetch({
       displayName: 'action creator',
       make: id => ({
-        key: [id],
         request: () => () => {},
       }),
     });
@@ -204,7 +197,6 @@ describe('isFetchAction', () => {
     const actionCreatorFactory = defineFetch({
       displayName: 'test fetch',
       make: testArg => ({
-        key: [testArg],
         request: () => ({ exampleService }) => exampleService(),
       }),
     });

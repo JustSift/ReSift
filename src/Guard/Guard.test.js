@@ -18,7 +18,6 @@ test('it does not render if the status does not contain NORMAL', async () => {
   const makeGetMovie = defineFetch({
     displayName: 'Get Movie',
     make: movieId => ({
-      key: [movieId],
       request: () => async () => {
         await timer(100);
         return {

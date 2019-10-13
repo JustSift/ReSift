@@ -103,7 +103,6 @@ const makePersonFetch = defineFetch({
   displayName: 'Get Person',
   make: personId => ({
     // this 👇👇👇 is the "key" of this fetch
-    key: [personId],
     //     👆👆👆
 
     request: // ...
@@ -136,7 +135,6 @@ import { defineFetch } from 'resift';
 const makeConfigurationFetch = defineFetch({
   displayName: 'Get Configuration',
   make: () => ({
-    key: [],
     request: () => ({ http }) =>
       http({
         method: 'GET',
@@ -167,7 +165,6 @@ The `request` function…
 const makePersonFetch = defineFetch({
   displayName: 'Get Person',
   make: personId => ({
-    key: [personId],
 
     // 👇👇👇 (that's this thing)
     request: () => ({ http }) => http(/* */),
@@ -190,7 +187,6 @@ import { defineFetch } from 'resift';
 const makeUpdatePersonFetch = defineFetch({
   displayName: 'Update Person',
   make: personId => ({
-    key: [personId],
 
     // these 👇👇👇
     request: updatedPerson => ({ http }) =>
@@ -254,7 +250,6 @@ import { defineFetch } from 'resift';
 const makeUpdatePersonFetch = defineFetch({
   displayName: 'Update Person',
   make: personId => ({
-    key: [personId],
 
     //                   these 👇👇👇
     request: updatedPerson => ({ http }) =>
@@ -284,7 +279,6 @@ import { defineFetch } from 'resift';
 const makePersonFetch = defineFetch({
   displayName: 'Get Person',
   make: personId => ({
-    key: [personId],
     request: () => async ({ http }) => {
       // 👇👇👇 this is the request body
       const person = await http({
@@ -309,7 +303,6 @@ import { defineFetch } from 'resift';
 const makeMyFetch = defineFetch({
   displayName: 'Get Resource',
   make: id => ({
-    key: [id],
     request: requestArg => async ({ http }) => {
       const dataResultOne = await http({
         method: 'GET',

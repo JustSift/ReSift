@@ -13,7 +13,6 @@ import { HttpProxy } from '../createHttpProxy';
  * const makePersonFetch = defineFetch({
  *   displayName: 'Get Person',
  *   make: personId => ({
- *     key: [personId],
  *     request: () => ({ http }) => http({
  *       // see below for what can go here
  *       // 👇👇👇👇👇

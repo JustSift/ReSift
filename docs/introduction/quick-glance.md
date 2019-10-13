@@ -75,7 +75,6 @@ const makePersonFetch = defineFetch({
 
   // These 👇 are the arguments to `makePersonFetch`
   make: personId => ({
-    key: [personId], // 👈 This tells resift where to save the response
 
     // The `request` which is responsible for sending off the request
     //   These 👇 are the arguments when dispatching

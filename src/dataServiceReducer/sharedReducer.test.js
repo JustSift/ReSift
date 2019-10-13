@@ -25,7 +25,6 @@ test('returns the previous state if the action is not shared', () => {
   const actionCreatorFactory = defineFetch({
     displayName: 'test action',
     make: testArg => ({
-      key: [testArg],
       request: () => () => {},
     }),
   });
@@ -69,7 +68,6 @@ test('shared merges bidirectional case', () => {
       },
     },
     make: () => ({
-      key: [],
       request: () => ({ http }) =>
         http({
           method: 'GET',
@@ -90,7 +88,6 @@ test('shared merges bidirectional case', () => {
       },
     },
     make: movieId => ({
-      key: [movieId],
       request: () => ({ http }) =>
         http({
           method: 'GET',
@@ -279,7 +276,6 @@ test('shared merges one way case', () => {
       },
     },
     make: () => ({
-      key: [],
       request: () => ({ http }) =>
         http({
           method: 'GET',
@@ -295,7 +291,6 @@ test('shared merges one way case', () => {
       // NOTE: there are no custom merges here
     },
     make: movieId => ({
-      key: [movieId],
       request: () => ({ http }) =>
         http({
           method: 'GET',
@@ -481,7 +476,6 @@ test('clear fetch', () => {
       },
     },
     make: () => ({
-      key: [],
       request: () => ({ http }) =>
         http({
           method: 'GET',
@@ -502,7 +496,6 @@ test('clear fetch', () => {
       },
     },
     make: movieId => ({
-      key: [movieId],
       request: () => ({ http }) =>
         http({
           method: 'GET',

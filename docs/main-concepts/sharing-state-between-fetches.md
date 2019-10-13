@@ -29,7 +29,6 @@ const makePersonFetch = defineFetch({
   // 👆👆👆
 
   make: personId => ({
-    key: [personId],
     request: () => ({ http }) =>
       http({
         method: 'GET',
@@ -47,7 +46,6 @@ const makeUpdatePersonFetch = defineFetch({
   // 👆👆👆
 
   make: personId => ({
-    key: [personId],
     request: updatedPerson => ({ http }) =>
       http({
         method: 'PUT',
@@ -133,7 +131,6 @@ const makePeopleFetch = defineFetch({
     //
   },
   make: () => ({
-    key: [],
     request: page => ({ http }) =>
       http({
         method: 'GET',
@@ -246,7 +243,6 @@ const makeMovieItemFetch = defineFetch({
     },
   },
   make: movieId => ({
-    key: [movieId],
     request: () => ({ http }) =>
       http({
         method: 'GET',
@@ -278,7 +274,6 @@ const makeUpdateMovieFetch = defineFetch({
     },
   },
   make: movieId => ({
-    key: [movieId],
     request: updatedMovie => ({ http }) =>
       http({
         method: 'PUT',
@@ -324,7 +319,6 @@ const makeMovieListFetch = defineFetch({
     },
   },
   make: () => ({
-    key: [],
     request: () => ({ http }) =>
       http({
         method: 'GET',

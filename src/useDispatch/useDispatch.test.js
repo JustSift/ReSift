@@ -133,7 +133,6 @@ test('throws when you dispatch a fetch instance instead of calling it', async ()
   const makeFetch = defineFetch({
     displayName: 'Example',
     make: () => ({
-      key: [],
       request: () => () => {},
     }),
   });
@@ -186,7 +185,6 @@ test('throws when you dispatch a fetch factory', async () => {
   const makeFetch = defineFetch({
     displayName: 'Example',
     make: () => ({
-      key: [],
       request: () => () => {},
     }),
   });

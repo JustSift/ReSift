@@ -55,7 +55,6 @@ import { defineFetch } from 'resift';
 const makeConfigFetch = defineFetch({
   displayName: 'Get Configuration',
   make: () => ({
-    key: [],
     request: () => ({ http }) =>
       http({
         method: 'GET',

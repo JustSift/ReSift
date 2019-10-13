@@ -31,9 +31,6 @@ export interface DefineFetchParams<
    */
   make: (...keyArgs: KeyArgs) => MakeObject<FetchArgs, FetchResult>;
 
-  /**
-   * this is share
-   */
   share?: ShareParams<MergeResult>;
   conflict?: 'cancel' | 'ignore';
   staticFetchFactoryId?: string;
@@ -44,7 +41,6 @@ export interface DefineFetchParams<
  * When defining the `make` function in `defineFetch`, you must return this object.
  */
 interface MakeObject<FetchArgs extends any[], FetchResult> {
-  key: string[];
   request: (...fetchArgs: FetchArgs) => (services: any) => FetchResult;
 }
 

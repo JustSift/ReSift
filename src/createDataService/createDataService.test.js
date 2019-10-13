@@ -61,7 +61,6 @@ describe('middleware', () => {
     const fetchFactory = defineFetch({
       displayName: 'example fetch',
       make: () => ({
-        key: [],
         request: () => () => {},
       }),
     });
@@ -98,7 +97,6 @@ describe('middleware', () => {
     const makeFetch = defineFetch({
       displayName: 'example fetch',
       make: testArg => ({
-        key: [testArg],
         request: () => ({ testService }) => testService(testArg),
       }),
     });
@@ -159,7 +157,6 @@ Object {
     const makeActionCreator = defineFetch({
       displayName: 'example fetch',
       make: testArg => ({
-        key: [testArg],
         request: () => async ({ testService }) => {
           await timer(0);
           throw testError;
@@ -204,7 +201,6 @@ describe('handleAction', () => {
     const makeActionCreator = defineFetch({
       displayName: 'test action',
       make: testArg => ({
-        key: [testArg],
         request: () => ({ exampleService }) => exampleService(),
       }),
     });
@@ -250,7 +246,6 @@ Object {
     const makeActionCreator = defineFetch({
       displayName: 'test dispatch service',
       make: () => ({
-        key: [],
         request: () => ({ dispatch }) => {
           dispatch({ type: 'TEST_TYPE' });
           return null;
@@ -274,7 +269,6 @@ Object {
     const makeActionCreator = defineFetch({
       displayName: 'action creator',
       make: testArg => ({
-        key: [testArg],
         request: () => ({ exampleService }) => exampleService(testArg),
       }),
       conflict: 'ignore',
@@ -316,7 +310,6 @@ Object {
     const makeActionCreator = defineFetch({
       displayName: 'action creator',
       make: testArg => ({
-        key: [testArg],
         request: () => ({ exampleService }) => exampleService(testArg),
       }),
     });
@@ -366,7 +359,6 @@ Object {
     const makeActionCreator = defineFetch({
       displayName: 'action creator',
       make: testArg => ({
-        key: [testArg],
         request: () => ({ exampleService }) => exampleService(testArg),
       }),
     });
@@ -427,7 +419,6 @@ Object {
     const makeActionCreator = defineFetch({
       displayName: 'action creator',
       make: testArg => ({
-        key: [testArg],
         request: () => ({ exampleService }) => exampleService(testArg),
       }),
     });
@@ -501,7 +492,6 @@ describe('isSuccessAction', () => {
     const makeActionCreator = defineFetch({
       displayName: 'test',
       make: testArg => ({
-        key: [testArg],
         request: () => () => {},
       }),
     });
@@ -524,7 +514,6 @@ describe('isErrorAction', () => {
     const makeActionCreator = defineFetch({
       displayName: 'test',
       make: testArg => ({
-        key: [testArg],
         request: () => () => {},
       }),
     });

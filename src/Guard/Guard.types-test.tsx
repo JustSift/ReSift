@@ -6,7 +6,6 @@ import Guard from './Guard';
 const makeGetMovie = defineFetch({
   displayName: 'Get Movie',
   make: movieId => ({
-    key: [movieId],
     request: () => () => ({
       id: 'movie123',
       name: 'test',

@@ -31,7 +31,6 @@ test('createContextFetch hooks', async () => {
   const makeFetch = defineFetch({
     displayName: 'Get Example Fetch',
     make: id => ({
-      key: [id],
       request: x => () => ({ exampleValue: x }),
     }),
   });
@@ -92,7 +91,6 @@ test('createContextFetch hooks throws when there is no context value', async () 
   const makeFetch = defineFetch({
     displayName: 'Example',
     make: () => ({
-      key: [],
       request: () => () => {},
     }),
   });
@@ -130,7 +128,6 @@ test('render props/no hooks API', async () => {
   const makeFetch = defineFetch({
     displayName: 'Get Example Fetch',
     make: id => ({
-      key: [id],
       request: x => () => ({ exampleValue: x }),
     }),
   });
