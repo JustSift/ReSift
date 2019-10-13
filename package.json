@@ -1,6 +1,6 @@
 {
   "name": "resift",
-  "version": "0.0.1-alpha.8",
+  "version": "0.0.1-alpha.9",
   "description": "A state management for data fetches in React",
   "main": "index.js",
   "scripts": {
