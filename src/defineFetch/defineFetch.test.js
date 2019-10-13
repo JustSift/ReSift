@@ -47,18 +47,18 @@ describe('defineFetch', () => {
     }).toThrowErrorMatchingInlineSnapshot(`"[defineFetch]: \`make\` must return an object"`);
   });
 
-  test('it throws if there is no `key`', () => {
+  test("it throws if the make args aren't strings or numbers", () => {
     expect(() => {
       const actionCreatorFactory = defineFetch({
         displayName: 'something',
         make: id => ({
-          noKey: [id],
+          request: () => () => {},
         }),
       });
 
-      actionCreatorFactory('test-id');
+      actionCreatorFactory(null);
     }).toThrowErrorMatchingInlineSnapshot(
-      `"[defineFetch] \`key\` must be an array in the object that \`make\` returns"`,
+      `"[defineFetch] make arguments must be either a string or a number. Found \\"null\\" for the fetch factory \\"something\\""`,
     );
   });
 

@@ -8,21 +8,26 @@ export function isFetchAction(action) {
   return action.type.startsWith(FETCH);
 }
 
-function memoize(actionCreatorFactory, make, conflict) {
+function memoize(displayName, actionCreatorFactory, make, conflict) {
   // TODO: may need a way to clear this memo
   const memo = {};
 
   function memoized(...keyArgs) {
-    const keyResult = make(...keyArgs);
+    const makeResult = make(...keyArgs);
 
-    if (typeof keyResult !== 'object') {
+    if (typeof makeResult !== 'object') {
       throw new Error('[defineFetch]: `make` must return an object');
     }
 
-    const { key, request } = keyResult;
+    const { request } = makeResult;
 
-    if (!Array.isArray(key)) {
-      throw new Error('[defineFetch] `key` must be an array in the object that `make` returns');
+    if (!keyArgs.every(key => typeof key === 'string' || typeof key === 'number')) {
+      const rogueKey = keyArgs.find(key => typeof key !== 'string' && typeof key !== 'number');
+      throw new Error(
+        `[defineFetch] make arguments must be either a string or a number. Found "${JSON.stringify(
+          rogueKey,
+        )}" for the fetch factory "${displayName}"`,
+      );
     }
     if (typeof request !== 'function') {
       throw new Error(
@@ -30,7 +35,7 @@ function memoize(actionCreatorFactory, make, conflict) {
       );
     }
 
-    const hash = `key:${[...key, conflict].join(' | ')}`;
+    const hash = `key:${[...keyArgs, conflict].join(' | ')}`;
 
     if (memo[hash]) {
       return memo[hash];
@@ -60,7 +65,7 @@ export default function defineFetch({
 
     const meta = {
       fetchFactoryId,
-      key: `key:${makeResult.key.join(' | ')}`,
+      key: `key:${keyArgs.join(' | ')}`,
       displayName,
       share,
       conflict,
@@ -115,7 +120,7 @@ export default function defineFetch({
     return fetch;
   }
 
-  const memoizedFetchFactory = memoize(fetchFactory, make, conflict);
+  const memoizedFetchFactory = memoize(displayName, fetchFactory, make, conflict);
 
   memoizedFetchFactory.meta = {
     fetchFactoryId,
