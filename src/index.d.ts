@@ -23,3 +23,4 @@ export { default as ERROR } from './ERROR';
 export { default as NORMAL } from './NORMAL';
 export { default as LOADING } from './LOADING';
 export { default as UNKNOWN } from './UNKNOWN';
+export { default as Guard } from './Guard';
