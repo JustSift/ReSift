@@ -41,10 +41,6 @@
         "title": "createHttpService API",
         "sidebar_label": "createHttpService"
       },
-      "api/create-share-key": {
-        "title": "createShareKey API",
-        "sidebar_label": "createShareKey"
-      },
       "api/create-store-key": {
         "title": "createStoreKey API",
         "sidebar_label": "createStoreKey"

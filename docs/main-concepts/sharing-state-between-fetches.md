@@ -4,80 +4,23 @@ title: Sharing state between fetches
 sidebar_label: Sharing state between fetches
 ---
 
-By default, each fetch factory has its own state that is siloed to itself.
+By default, each fetch factory has its own state that's siloed to itself.
 
 This means that fetch instances that come from different fetch factories will have different states even if they share the same key or endpoint.
 
-For example:
+**ReSift won't ever assume that two fetch factories have related data. However, you can tell ReSift that two fetch factories should share the same data by using the `share` API.**
 
-```js
-import React, { useEffect } from 'react';
-import { defineFetch, useFetch } from 'resift';
-
-// define the fetch factories
-
-// get a person
-const makePersonFetch = defineFetch({
-  displayName: 'Get Person',
-  make: personId => ({
-    key: [personId],
-    request: () => ({ http }) =>
-      http({
-        method: 'GET',
-        route: `/people/${personId}`,
-      }),
-  }),
-});
-
-// update a person
-const makeUpdatePersonFetch = defineFetch({
-  displayName: 'Update Person',
-  make: personId => ({
-    key: [personId],
-    request: updatedPerson => ({ http }) =>
-      http({
-        method: 'PUT',
-        route: `/people/${personId}`,
-        data: updatedPerson,
-      }),
-  }),
-});
-
-function ExampleComponent() {
-  // example usage
-  const julesFetch = makePersonFetch('person-id-jules');
-  const updateJulesFetch = makeUpdatePersonFetch('person-id-jules');
-
-  const [jules] = useFetch(julesFetch);
-  const [shouldAlsoBeJules] = useFetch(updateJulesFetch);
-
-  //              👇👇👇
-  console.log(jules === shouldAlsoBeJules); // false !?
-  //              👆👆👆
-
-  return <div>{/* ... */}</div>;
-}
-```
-
-In the example above, even though both fetches share the same ID and endpoint, the `console.log` reveals that they don't actually share the same state.
-
-This is a problem because **inconsistent data causes inconsistent UIs**.
-
-For example, let's say we had a form component that used `makeUpdatePersonFetch` and then we had another display component that used `makePersonFetch`. If the fetches didn't share the same state, then the display component would _not_ update when the form component updates.
-
-Since they share the same state on the back end, it'd be ideal if we could allow these fetches to share the same state on the front end.
-
-This doc will show you how to do so using the `share` API.
+> ⚠️ This is an important concept necessary to do CRUD operations correctly in ReSift.
 
 ## Shares
 
-In order to share the state between fetch factories, add `share` and then `namespace`.
-
-`makePersonFetch.js`
+In order to tell ReSift that two or more fetches are related, add the `share` key to fetch factory definition in `defineFetch`:
 
 ```js
+import React, { useEffect } from 'react';
 import { defineFetch } from 'resift';
 
+// get a person
 const makePersonFetch = defineFetch({
   displayName: 'Get Person',
 
@@ -95,18 +38,11 @@ const makePersonFetch = defineFetch({
   }),
 });
 
-export default makePersonFetch;
-```
-
-`makeUpdatePersonFetch.js`
-
-```js
-import { defineFetch } from 'resift';
-
+// update a person
 const makeUpdatePersonFetch = defineFetch({
   displayName: 'Update Person',
 
-  // 👇👇👇 make sure this namespace is the same as above
+  // 👇👇👇
   share: { namespace: 'person' },
   // 👆👆👆
 
@@ -120,50 +56,31 @@ const makeUpdatePersonFetch = defineFetch({
       }),
   }),
 });
-
-export default makeUpdatePersonFetch;
 ```
 
-This will make it so that both fetch factories will share the same state for the same `key`s.
+Because both fetch definitions use the same `namespace`, ReSift will ensure they both share the same data.
 
-```js
-import makePersonFetch from './makePersonFetch';
-import makeUpdatePersonFetch from './makeUpdatePersonFetch';
-import { useFetch } from 'resift';
+That means:
 
-function ExampleComponent() {
-  // example usage
-  const julesFetch = makePersonFetch('person-id-jules');
-  const updateJulesFetch = makePersonFetch('person-id-jules');
-
-  const [julesOne] = useFetch(julesFetch);
-  const [shouldAlsoBeJules] = useFetch(updateJulesFetch);
-
-  //              👇👇👇
-  console.log(jules === shouldAlsoBeJules); // true ✅
-  //              👆👆👆
-
-  return <div>{/* ... */}</div>;
-}
-```
-
-Now that `share` has been added with a `namespace`, these fetches will share the same data and statuses!
-
-> **Note**: For shared fetches, ReSift will use a combination of the `namespace` and `key` to decide where to save and lookup your data. (e.g. `person` + `person-id-jules`). If the `key` is different between shared fetches, the state will also be different.
+- When one fetch receives data, it will be available for any other fetch that shares the same namespace + key combo.
+- When one fetch is loading, it will is will cause other fetches that share the same namespace + key to also be loading.
+- When one fetch has an error, it will cause any other related fetches to have an error.
 
 ## Merges
 
-The default behavior of a successful data request is to _replace_ the existing data with the new data from the response.
+When a fetch is shared, the default behavior of a successful data request is to _replace_ the existing data with the new data from the response.
 
 However, sometimes it's necessary to _update_ the current state of a fetch instance with new additional data instead of replacing the current state with the new state.
 
-The example we'll use is infinite scrolling using a paginated endpoint: when the user scrolls to the end of the list, we should dispatch a request for the next page and then merge the new results with the existing result.
+This is where you can use ReSift `merge`s.
 
-**`GET` `/people?page=0?pageSize=50`**
+**ReSift `merge`s allow you to override the default way ReSift merges a successful response to the existing data in the cache.**
+
+The example we'll use is infinite scrolling using a paginated endpoint: When the user scrolls to the end of the list, we should dispatch a request for the next page and then merge the new results with the existing result.
 
 The paginated endpoint:
 
-We'll make our UI call this endpoint multiple times to request more data.
+**`GET` `/people?page=0?pageSize=50`**
 
 ```json
 {
@@ -185,6 +102,8 @@ We'll make our UI call this endpoint multiple times to request more data.
   }
 }
 ```
+
+We'll make our UI call this endpoint multiple times to request more data.
 
 **`peopleFetch.js`**
 
@@ -278,8 +197,144 @@ function InfinitePeopleList() {
 
 The component above uses an effect that watches for when `requestMorePeople` changes. When it changes to `true`, it grabs the current pagination information and dispatches another request for the next page.
 
-When the next page comes in, the `merge` we defined will run and merge the previous movie list with the current one. After the merge returns the next state, it will push an update to all components subscribed via `useFetch` and the new people will populate the list.
+When the next page comes in, the `merge` we defined will run and merge the previous people list with the current one. After the merge returns the next state, it will push an update to all components subscribed via `useFetch` and the new people will populate the list.
 
 ## Merges across namespaces
+
+There are certain scenarios where you'd want _react_ to a successful response from a different fetch factory.
+
+For example, let's say you have three fetches:
+
+- `makeMovieItemFetch` — a fetch that grabs a single movie
+- `makeUpdateMovieItemFetch` — a fetch that updates a single movie item
+- `makeMovieListFetch` — a fetch that grabs all the movies
+
+These three fetches share the same backend and the same data so ideally want to connect them in a way where if one updates, the rest of the fetches can react accordingly.
+
+We can do this using the `merge` object syntax.
+
+Instead of passing a single function to `merge`, we can pass in an object. The keys of this object can be any other fetch's `namespace`. The value of the key will be a merge function that determines how the state of the current namespace will react to new state from another namespace (or even the current namespace).
+
+The examples below implement **merges across namespaces**.
+
+`makeMovieItemFetch.js`
+
+```js
+import { defineFetch } from 'resift';
+
+const makeMovieItemFetch = defineFetch({
+  displayName: 'Get Movie Item',
+  share: {
+    namespace: 'movieItem',
+    merge: {
+      // when data from the `movieList` namespace comes back, this merge
+      // function will be ran.
+      movieList: (prevMovieItem, nextMovieList) => {
+        // in the first merge, `prevMovieItem` will not be defined.
+        if (!prevMovieItem) return null;
+
+        // replace the `prevMovieItem` with a movie in the `nextMovieList` where
+        // the IDs match.
+        return nextMovieList.find(movie => movie.id === prevMovieItem.id);
+      },
+
+      // when data from the `movieItem` namespaces comes back, this merge
+      // function will be ran. note that this namespace is the same as the
+      // current fetch factory's namespace so implementing this merge is the
+      // same as doing `merge: (prevMovie, nextMovie) => nextMovie`
+      movieItem: (prevMovie, nextMovie) => nextMovie,
+    },
+  },
+  make: movieId => ({
+    key: [movieId],
+    request: () => ({ http }) =>
+      http({
+        method: 'GET',
+        route: `/movies/${movieId}`,
+      }),
+  }),
+});
+
+export default makeMoveItemFetch;
+```
+
+`makeUpdateMovieItemFetch.js`
+
+```js
+import { defineFetch } from 'resift';
+
+const makeUpdateMovieFetch = defineFetch({
+  displayName: 'Update Movie Item',
+  // note that this has the same namespace as above
+  share: {
+    namespace: 'movieItem',
+    merge: {
+      // these merges are copied and pasted from above.
+      movieList: (prevMovieItem, nextMovieList) => {
+        if (!prevMovieItem) return null;
+        return nextMovieList.find(movie => movie.id === prevMovieItem.id);
+      },
+      movieItem: (prevMovie, nextMovie) => nextMovie,
+    },
+  },
+  make: movieId => ({
+    key: [movieId],
+    request: updatedMovie => ({ http }) =>
+      http({
+        method: 'PUT',
+        route: `/movies/${movieId}`,
+        data: updatedMovie,
+      }),
+  }),
+});
+
+export default makeUpdateMovieFetch;
+```
+
+`movieListFetch.js`
+
+```js
+import { defineFetch } from 'resift';
+
+const makeMovieListFetch = defineFetch({
+  displayName: 'Get Movie List',
+  // note that this has a _different_ namespace as above because this fetch is shared
+  share: {
+    namespace: 'movieList',
+    merge: {
+      movieItem: (prevMovieList, nextMovieItem) => {
+        // in the first merge, `prevMovieList` will not be defined.
+        if (!prevMovieList) return null;
+
+        // if there was an update to the movie, find it in the list
+        const index = prevMovieList.findIndex(movie => movie.id === nextMovieItem.id);
+
+        // if we couldn't find it, just add it to the end
+        if (index === -1) {
+          return [...prevMovieList, nextMovieItem];
+        }
+
+        // replace the movie in the list with the next movie
+        return [
+          ...prevMovieList.slice(0, index),
+          nextMovieItem,
+          ...prevMovieList.slice(index + 1, prevMovieList.length),
+        ];
+      },
+    },
+  },
+  make: () => ({
+    key: [],
+    request: () => ({ http }) =>
+      http({
+        method: 'GET',
+        route: '/movies',
+      }),
+  }),
+});
+
+const movieListFetch = makeMovieListFetch();
+export default movieListFetch;
+```
 
 ## Statues and shares

@@ -36,7 +36,6 @@
       "api/create-data-service",
       "api/create-http-proxy",
       "api/create-http-service",
-      "api/create-share-key",
       "api/create-store-key",
       "api/data-service-reducer",
       "api/define-fetch",
