@@ -866,9 +866,23 @@ describe('getFetch', () => {
       }
     `);
 
-    const [data, status] = getFetch(getMovieItem456, { dataService: afterMovieItem123Success });
-    expect(status).toMatchInlineSnapshot(`3`);
-    expect(data).toMatchInlineSnapshot(`undefined`);
-    expect(isNormal(status)).toBe(false);
+    (() => {
+      const [data, status] = getFetch(getMovieItem456, { dataService: afterMovieItem123Success });
+      expect(status).toMatchInlineSnapshot(`2`);
+      expect(data).toMatchInlineSnapshot(`undefined`);
+      expect(isNormal(status)).toBe(false);
+    })();
+
+    (() => {
+      const [data, status] = getFetch(getMovieItem456, { dataService: afterMovieItem456Success });
+      expect(status).toMatchInlineSnapshot(`1`);
+      expect(data).toMatchInlineSnapshot(`
+        Object {
+          "id": "movie456",
+          "name": "bar CHANGED",
+        }
+      `);
+      expect(isNormal(status)).toBe(true);
+    })();
   });
 });

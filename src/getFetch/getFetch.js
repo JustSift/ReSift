@@ -11,6 +11,7 @@ import UNKNOWN from '../UNKNOWN';
 import LOADING from '../LOADING';
 import ERROR from '../ERROR';
 import NORMAL from '../NORMAL';
+import combineStatuses from '../combineStatuses';
 
 // Combining shared statuses is different because of the `normal` case.
 //
@@ -95,7 +96,28 @@ export default function getFetch(fetch, state, options) {
   const targetNamespaces = Object.keys(mergeObj);
 
   // `parentLocations` are paths to the state in the `actions` sub-store
-  const parentLocations = _flatten(
+  const parentLocationsFromTheSameNamespace = _flatten(
+    targetNamespaces
+      .map(targetNamespace => {
+        const parentLocations = _get(state, ['dataService', 'shared', 'parents', namespace]);
+        if (!parentLocations) {
+          return null;
+        }
+
+        if (targetNamespace !== namespace) {
+          return null;
+        }
+
+        const validParentLocations = Object.values(parentLocations).filter(
+          parentLocation => parentLocation.key === key,
+        );
+
+        return validParentLocations;
+      })
+      .filter(x => !!x),
+  );
+
+  const parentLocationsFromDifferentNamespaces = _flatten(
     targetNamespaces
       .map(targetNamespace => {
         const parentLocations = _get(state, ['dataService', 'shared', 'parents', namespace]);
@@ -104,11 +126,7 @@ export default function getFetch(fetch, state, options) {
         }
 
         if (targetNamespace === namespace) {
-          const validParentLocations = Object.values(parentLocations).filter(
-            parentLocation => parentLocation.key === key,
-          );
-
-          return validParentLocations;
+          return null;
         }
 
         return Object.values(parentLocations);
@@ -119,20 +137,29 @@ export default function getFetch(fetch, state, options) {
   // this takes all those paths and grabs the action sub-state.
   // this sub-state is ran through `getStatus` which returns the corresponding status for the
   // sub-state.
-  const sharedStatuses = parentLocations
+  const sharedStatusesFromSameNamespace = parentLocationsFromTheSameNamespace
     .map(parentLocation => {
       const storeKey = createStoreKey(parentLocation.displayName, parentLocation.fetchFactoryId);
       const parentAction = _get(state, ['dataService', 'actions', storeKey, parentLocation.key]);
-      if (!parentAction) {
-        return null;
-      }
+
+      return getStatus(parentAction);
+    })
+    .filter(x => x !== null);
+
+  const sharedStatuesFromDifferentNamespace = parentLocationsFromDifferentNamespaces
+    .map(parentLocation => {
+      const storeKey = createStoreKey(parentLocation.displayName, parentLocation.fetchFactoryId);
+      const parentAction = _get(state, ['dataService', 'actions', storeKey, parentLocation.key]);
 
       return getStatus(parentAction);
     })
     .filter(x => x !== null);
 
   // all of those status are folded into one shared status
-  const sharedStatus = combineSharedStatuses(...sharedStatuses);
+  const sharedStatus = combineStatuses(
+    ...sharedStatuesFromDifferentNamespace,
+    combineSharedStatuses(...sharedStatusesFromSameNamespace),
+  );
 
   return [sharedData, sharedStatus];
 }
