@@ -12,6 +12,7 @@ import isLoading from '../isLoading';
 import isError from '../isError';
 import isNormal from '../isNormal';
 import combineStatuses from '../combineStatuses';
+import usePreserveReference from 'use-preserve-reference';
 
 // Combining shared statuses is different because of the `normal` case.
 //
@@ -161,7 +162,11 @@ export const makeStatusSelector = (fetch, options) => state => {
 };
 
 function useStatus(fetch, options) {
-  const statusSelector = useMemo(() => makeStatusSelector(fetch, options), [fetch]);
+  const preservedOptions = usePreserveReference(options);
+  const statusSelector = useMemo(() => makeStatusSelector(fetch, preservedOptions), [
+    fetch,
+    preservedOptions,
+  ]);
   return useSelector(statusSelector);
 }
 
