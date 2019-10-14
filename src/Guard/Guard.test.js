@@ -10,7 +10,7 @@ import DeferredPromise from '../DeferredPromise';
 import { makeStatusSelector } from '../useStatus/useStatus';
 import useStatus from '../useStatus';
 import isUnknown from '../isUnknown';
-import timer from '../timer';
+import delay from 'delay';
 import isNormal from '../isNormal';
 import isLoading from '../isLoading';
 
@@ -19,7 +19,7 @@ test('it does not render if the status does not contain NORMAL', async () => {
     displayName: 'Get Movie',
     make: movieId => ({
       request: () => async () => {
-        await timer(100);
+        await delay(100);
         return {
           id: movieId,
           name: 'Hello World',
@@ -94,6 +94,6 @@ test('it does not render if the status does not contain NORMAL', async () => {
     expect(isNormal(thirdStatus)).toBe(true);
     expect(guardHandler).toHaveBeenCalled();
 
-    await timer(500);
+    await delay(500);
   });
 });

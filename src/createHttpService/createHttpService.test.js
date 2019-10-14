@@ -1,6 +1,6 @@
 import _noop from 'lodash/noop';
 import DeferredPromise from '../DeferredPromise';
-import timer from '../timer';
+import delay from 'delay';
 import createHttpProxy from '../createHttpProxy';
 
 import createHttpService from '../createHttpService';
@@ -340,7 +340,7 @@ test('it gets the prefix from an async function', async () => {
   // given
   const httpService = createHttpService({
     getPrefix: async () => {
-      await timer(0);
+      await delay(0);
       return `http://localhost:${port}`;
     },
     getHeaders: () => ({}),

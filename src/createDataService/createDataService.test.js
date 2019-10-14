@@ -1,6 +1,6 @@
 import SUCCESS from '../prefixes/SUCCESS';
 import ERROR from '../prefixes/ERROR';
-import timer from '../timer';
+import delay from 'delay';
 import DeferredPromise from '../DeferredPromise';
 import defineFetch from '../defineFetch';
 import _noop from 'lodash/noop';
@@ -80,7 +80,7 @@ describe('middleware', () => {
     // given
     const mockErrorHandler = jest.fn();
     const middleware = createDataService({
-      services: { testService: ({ onCancel }) => () => timer(0) },
+      services: { testService: ({ onCancel }) => () => delay(0) },
       onError: mockErrorHandler,
     });
     const mockNext = jest.fn();
@@ -104,18 +104,18 @@ describe('middleware', () => {
     const action = fetch();
 
     expect(action).toMatchInlineSnapshot(`
-Object {
-  "meta": Object {
-    "conflict": "cancel",
-    "displayName": "example fetch",
-    "fetchFactoryId": "test-short-id",
-    "key": "key:test-arg",
-    "share": undefined,
-  },
-  "payload": [Function],
-  "type": "@@RESIFT/FETCH | example fetch | test-short-id",
-}
-`);
+      Object {
+        "meta": Object {
+          "conflict": "cancel",
+          "displayName": "example fetch",
+          "fetchFactoryId": "test-short-id",
+          "key": "key:test-arg",
+          "share": undefined,
+        },
+        "payload": [Function],
+        "type": "@@RESIFT/FETCH | example fetch | test-short-id",
+      }
+    `);
 
     // when
     middleware(mockStore)(mockNext)(action);
@@ -123,18 +123,18 @@ Object {
     // then
     const successAction = await dispatchCalled;
     expect(successAction).toMatchInlineSnapshot(`
-Object {
-  "meta": Object {
-    "conflict": "cancel",
-    "displayName": "example fetch",
-    "fetchFactoryId": "test-short-id",
-    "key": "key:test-arg",
-    "share": undefined,
-  },
-  "payload": "TIMER",
-  "type": "@@RESIFT/SUCCESS | example fetch | test-short-id",
-}
-`);
+      Object {
+        "meta": Object {
+          "conflict": "cancel",
+          "displayName": "example fetch",
+          "fetchFactoryId": "test-short-id",
+          "key": "key:test-arg",
+          "share": undefined,
+        },
+        "payload": undefined,
+        "type": "@@RESIFT/SUCCESS | example fetch | test-short-id",
+      }
+    `);
   });
 
   test('it asynchronously dispatches an ERROR if the payload fails and calls onError', async () => {
@@ -158,7 +158,7 @@ Object {
       displayName: 'example fetch',
       make: testArg => ({
         request: () => async ({ testService }) => {
-          await timer(0);
+          await delay(0);
           throw testError;
         },
       }),
@@ -178,19 +178,19 @@ Object {
     expect(errorAction.payload).toBe(testError);
     expect(mockErrorHandler).toHaveBeenCalledWith(testError);
     expect(errorAction).toMatchInlineSnapshot(`
-Object {
-  "error": true,
-  "meta": Object {
-    "conflict": "cancel",
-    "displayName": "example fetch",
-    "fetchFactoryId": "test-short-id",
-    "key": "key:test-arg",
-    "share": undefined,
-  },
-  "payload": [Error: test error],
-  "type": "@@RESIFT/ERROR | example fetch | test-short-id",
-}
-`);
+      Object {
+        "error": true,
+        "meta": Object {
+          "conflict": "cancel",
+          "displayName": "example fetch",
+          "fetchFactoryId": "test-short-id",
+          "key": "key:test-arg",
+          "share": undefined,
+        },
+        "payload": [Error: test error],
+        "type": "@@RESIFT/ERROR | example fetch | test-short-id",
+      }
+    `);
   });
 });
 
@@ -215,18 +215,18 @@ describe('handleAction', () => {
 
     const action = actionCreator();
     expect(action).toMatchInlineSnapshot(`
-Object {
-  "meta": Object {
-    "conflict": "cancel",
-    "displayName": "test action",
-    "fetchFactoryId": "test-short-id",
-    "key": "key:test-arg",
-    "share": undefined,
-  },
-  "payload": [Function],
-  "type": "@@RESIFT/FETCH | test action | test-short-id",
-}
-`);
+      Object {
+        "meta": Object {
+          "conflict": "cancel",
+          "displayName": "test action",
+          "fetchFactoryId": "test-short-id",
+          "key": "key:test-arg",
+          "share": undefined,
+        },
+        "payload": [Function],
+        "type": "@@RESIFT/FETCH | test action | test-short-id",
+      }
+    `);
 
     // when
     await handleAction({
@@ -277,18 +277,18 @@ Object {
     const actionCreator = makeActionCreator(testArg);
     const initialAction = actionCreator(testArg);
     expect(initialAction).toMatchInlineSnapshot(`
-Object {
-  "meta": Object {
-    "conflict": "ignore",
-    "displayName": "action creator",
-    "fetchFactoryId": "test-short-id",
-    "key": "key:test arg",
-    "share": undefined,
-  },
-  "payload": [Function],
-  "type": "@@RESIFT/FETCH | action creator | test-short-id",
-}
-`);
+      Object {
+        "meta": Object {
+          "conflict": "ignore",
+          "displayName": "action creator",
+          "fetchFactoryId": "test-short-id",
+          "key": "key:test arg",
+          "share": undefined,
+        },
+        "payload": [Function],
+        "type": "@@RESIFT/FETCH | action creator | test-short-id",
+      }
+    `);
     const dataServiceState = dataServiceReducer({}, initialAction);
 
     const repeatAction = actionCreator(testArg);
@@ -317,18 +317,18 @@ Object {
     const actionCreator = makeActionCreator(testArg);
     const initialAction = actionCreator(testArg);
     expect(initialAction).toMatchInlineSnapshot(`
-Object {
-  "meta": Object {
-    "conflict": "cancel",
-    "displayName": "action creator",
-    "fetchFactoryId": "test-short-id",
-    "key": "key:test arg",
-    "share": undefined,
-  },
-  "payload": [Function],
-  "type": "@@RESIFT/FETCH | action creator | test-short-id",
-}
-`);
+      Object {
+        "meta": Object {
+          "conflict": "cancel",
+          "displayName": "action creator",
+          "fetchFactoryId": "test-short-id",
+          "key": "key:test arg",
+          "share": undefined,
+        },
+        "payload": [Function],
+        "type": "@@RESIFT/FETCH | action creator | test-short-id",
+      }
+    `);
     const dataServiceState = dataServiceReducer({}, initialAction);
 
     const repeatAction = actionCreator(testArg);
@@ -366,18 +366,18 @@ Object {
     const actionCreator = makeActionCreator(testArg);
     const initialAction = actionCreator(testArg);
     expect(initialAction).toMatchInlineSnapshot(`
-Object {
-  "meta": Object {
-    "conflict": "cancel",
-    "displayName": "action creator",
-    "fetchFactoryId": "test-short-id",
-    "key": "key:test arg",
-    "share": undefined,
-  },
-  "payload": [Function],
-  "type": "@@RESIFT/FETCH | action creator | test-short-id",
-}
-`);
+      Object {
+        "meta": Object {
+          "conflict": "cancel",
+          "displayName": "action creator",
+          "fetchFactoryId": "test-short-id",
+          "key": "key:test arg",
+          "share": undefined,
+        },
+        "payload": [Function],
+        "type": "@@RESIFT/FETCH | action creator | test-short-id",
+      }
+    `);
     // the `initialAction` is now "inflight" because we merged it into the store state
     const dataServiceState = dataServiceReducer({}, initialAction);
 
@@ -426,18 +426,18 @@ Object {
     const actionCreator = makeActionCreator(testArg);
     const initialAction = actionCreator();
     expect(initialAction).toMatchInlineSnapshot(`
-Object {
-  "meta": Object {
-    "conflict": "cancel",
-    "displayName": "action creator",
-    "fetchFactoryId": "test-short-id",
-    "key": "key:test arg",
-    "share": undefined,
-  },
-  "payload": [Function],
-  "type": "@@RESIFT/FETCH | action creator | test-short-id",
-}
-`);
+      Object {
+        "meta": Object {
+          "conflict": "cancel",
+          "displayName": "action creator",
+          "fetchFactoryId": "test-short-id",
+          "key": "key:test arg",
+          "share": undefined,
+        },
+        "payload": [Function],
+        "type": "@@RESIFT/FETCH | action creator | test-short-id",
+      }
+    `);
     // the `initialAction` is now "inflight" because we merged it into the store state
     const dataServiceState = dataServiceReducer({}, initialAction);
 
