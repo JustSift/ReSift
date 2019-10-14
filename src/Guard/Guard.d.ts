@@ -10,7 +10,6 @@ type PickResult<FetchResult, MergeResult> = unknown extends MergeResult
 interface Props<FetchArgs extends any[] = any, FetchResult = any, MergeResult = any> {
   fetch: FetchActionCreator<FetchArgs, FetchResult, MergeResult>;
   children: (data: PickResult<FetchResult, MergeResult>) => JSX.Element;
-  shouldShowWhen?: (status: number) => boolean;
 }
 
 declare function Guard<FetchArgs extends any[] = any, FetchResult = any, MergeResult = any>(
