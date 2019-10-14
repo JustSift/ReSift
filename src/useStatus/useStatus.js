@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import _get from 'lodash/get';
 import _flatten from 'lodash/flatten';
@@ -160,11 +161,7 @@ export const makeStatusSelector = (fetch, options) => state => {
 };
 
 function useStatus(fetch, options) {
-  if (!fetch) {
-    throw new Error('[useStatus] You must pass a fetch into `useData`');
-  }
-
-  const statusSelector = makeStatusSelector(fetch, options);
+  const statusSelector = useMemo(() => makeStatusSelector(fetch, options), [fetch]);
   return useSelector(statusSelector);
 }
 

@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import _get from 'lodash/get';
 import { useSelector } from 'react-redux';
 import createStoreKey from '../createStoreKey';
@@ -41,11 +42,7 @@ const makeDataSelector = fetch => state => {
 };
 
 function useData(fetch) {
-  if (!fetch) {
-    throw new Error('[useData] You must pass a fetch into `useData`');
-  }
-
-  const dataSelector = makeDataSelector(fetch);
+  const dataSelector = useMemo(() => makeDataSelector(fetch), [fetch]);
   return useSelector(dataSelector);
 }
 
