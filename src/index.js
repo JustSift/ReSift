@@ -26,3 +26,5 @@ export { default as useDispatch } from './useDispatch';
 export { default as useData } from './useData';
 export { default as useStatus } from './useStatus';
 export { default as Guard } from './Guard';
+export { default as useFetch } from './useFetch';
+export { default as useError } from './useError';
