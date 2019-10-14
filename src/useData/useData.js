@@ -10,7 +10,7 @@ const makeDataSelector = fetch => state => {
 
   const isFetchInstance = _get(fetch, ['meta', 'type']) === 'FETCH_INSTANCE';
   if (!isFetchInstance) {
-    throw new Error('[useData] expected to see a fetch instance in get fetch.');
+    throw new Error('[useData] expected to see a fetch instance.');
   }
 
   if (!state.dataService) {
