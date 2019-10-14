@@ -53,11 +53,11 @@ function memoize(displayName, actionCreatorFactory, make, conflict) {
     const { request } = makeResult;
 
     if (!keyArgs.every(key => typeof key === 'string' || typeof key === 'number')) {
-      const rogueKey = keyArgs.find(key => typeof key !== 'string' && typeof key !== 'number');
+      const rogueKeys = keyArgs.filter(key => typeof key !== 'string' && typeof key !== 'number');
       throw new Error(
-        `[defineFetch] make arguments must be either a string or a number. Found "${JSON.stringify(
-          rogueKey,
-        )}" for the fetch factory "${displayName}"`,
+        `[defineFetch] make arguments must be either a string or a number. Found "${rogueKeys
+          .map(key => JSON.stringify(key))
+          .join(', ')}" for the fetch factory "${displayName}"`,
       );
     }
     if (typeof request !== 'function') {

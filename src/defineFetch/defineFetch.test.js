@@ -49,7 +49,7 @@ describe('defineFetch', () => {
   test("it throws if the make args aren't strings or numbers", () => {
     expect(() => {
       const actionCreatorFactory = defineFetch({
-        displayName: 'something',
+        displayName: 'Get Something',
         make: id => ({
           request: () => () => {},
         }),
@@ -57,7 +57,7 @@ describe('defineFetch', () => {
 
       actionCreatorFactory(null);
     }).toThrowErrorMatchingInlineSnapshot(
-      `"[defineFetch] make arguments must be either a string or a number. Found \\"null\\" for the fetch factory \\"something\\""`,
+      `"[defineFetch] make arguments must be either a string or a number. Found \\"null\\" for the fetch factory \\"Get Something\\""`,
     );
   });
 
