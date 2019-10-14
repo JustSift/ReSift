@@ -13,7 +13,8 @@
       "main-concepts/using-the-http-service"
     ],
     "Examples": [
-      "examples/crud-example"
+      "examples/crud-example",
+      "examples/multiple-request-defineFetch"
     ],
     "Guides": [
       "guides/context-fetches",
