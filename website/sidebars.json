@@ -3,7 +3,8 @@
     "Introduction": [
       "introduction/what-is-resift",
       "introduction/quick-glance",
-      "introduction/installation"
+      "introduction/installation",
+      "introduction/tutorial-resift-rentals"
     ],
     "Main Concepts": [
       "main-concepts/whats-a-fetch",
@@ -12,9 +13,7 @@
       "main-concepts/making-sense-of-statuses",
       "main-concepts/using-the-http-service"
     ],
-    "Examples": [
-      "examples/crud-example"
-    ],
+    "Examples": ["examples/crud-example"],
     "Guides": [
       "guides/context-fetches",
       "guides/writing-fetch-services",
