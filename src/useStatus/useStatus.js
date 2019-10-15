@@ -51,7 +51,7 @@ export function getStatus(actionState) {
 
 export const makeStatusSelector = (fetch, options) => state => {
   if (!fetch) {
-    return null;
+    return UNKNOWN;
   }
 
   const isFetchInstance = _get(fetch, ['meta', 'type']) === 'FETCH_INSTANCE';
