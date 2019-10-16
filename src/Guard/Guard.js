@@ -6,7 +6,10 @@ function Guard({ fetch, children }) {
   const data = useData(fetch);
   const status = useStatus(fetch);
 
-  return isNormal(status) && children(data);
+  if (!isNormal(status)) return null;
+  if (data === null) return null;
+  if (data === undefined) return null;
+  return children(data);
 }
 
 export default Guard;
