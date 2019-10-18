@@ -854,7 +854,7 @@ describe('useStatus', () => {
     })();
   });
 
-  test.only('shared statuses: deleting an item', () => {
+  test('shared statuses: deleting an item', () => {
     const makeGetNoteList = defineFetch({
       staticFetchFactoryId: 'get-note-list',
       displayName: 'Get Note List',
