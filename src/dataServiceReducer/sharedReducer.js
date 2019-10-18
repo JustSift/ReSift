@@ -60,7 +60,7 @@ export default function sharedReducer(state = initialState, action) {
     if (!share) return state;
     const { namespace } = share;
 
-    const merges = _get(state, ['merges', namespace]);
+    const merges = _get(state, ['merges', namespace], {});
 
     const nextData = { ..._get(state, ['data']) };
 
