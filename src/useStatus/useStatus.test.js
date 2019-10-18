@@ -853,4 +853,92 @@ describe('useStatus', () => {
       expect(isNormal(status)).toBe(true);
     })();
   });
+
+  test.only('shared statuses: deleting an item', () => {
+    const makeGetNoteList = defineFetch({
+      staticFetchFactoryId: 'get-note-list',
+      displayName: 'Get Note List',
+      share: {
+        namespace: 'noteList',
+        merge: {
+          noteItem: (prevNoteList, nextNoteItem) => {
+            if (!prevNoteList) return null;
+
+            const index = prevNoteList.findIndex(note => note.id === nextNoteItem.id);
+
+            if (index === -1) {
+              return prevNoteList;
+            }
+
+            if (nextNoteItem.deleted) {
+              return prevNoteList.filter(note => note.id !== nextNoteItem.id);
+            }
+
+            return [
+              ...prevNoteList.slice(0, index),
+              nextNoteItem,
+              ...prevNoteList.slice(index + 1, prevNoteList.length),
+            ];
+          },
+          newNoteItem: (prevNoteList, newNoteItem) => {
+            if (!prevNoteList) return null;
+
+            return [...prevNoteList, newNoteItem];
+          },
+        },
+      },
+      make: () => ({
+        request: () => ({ http }) =>
+          http({
+            method: 'GET',
+            route: '/notes',
+          }),
+      }),
+    });
+
+    const makeDeleteNoteItem = defineFetch({
+      staticFectFactoryId: 'delete-note',
+      displayName: 'Delete Note Item',
+      share: { namespace: 'noteItem' },
+      make: noteId => ({
+        request: updatedNote => async ({ http }) => {
+          // server doesn't return anything...
+          await http({
+            method: 'DELETE',
+            route: `/notes/${noteId}`,
+          });
+
+          // ...so return an entity with a deleted flag
+          return { id: noteId, deleted: true };
+        },
+      }),
+    });
+
+    const getNoteList = makeGetNoteList();
+    const deleteNoteItem123 = makeDeleteNoteItem('note123');
+
+    const noteListSuccess = {
+      type: createActionType(RESIFT_SUCCESS, getNoteList.meta),
+      meta: getNoteList.meta,
+      payload: [
+        {
+          id: 'note123',
+          content: 'bar',
+        },
+        {
+          id: 'note456',
+          content: 'foo',
+        },
+      ],
+    };
+
+    const state = [{ type: 'first' }, getNoteList(), noteListSuccess, deleteNoteItem123()].reduce(
+      dataServiceReducer,
+      {},
+    );
+
+    const status = makeStatusSelector(getNoteList)({ dataService: state });
+
+    expect(isLoading(status)).toBe(true);
+  });
 });
