@@ -941,4 +941,90 @@ describe('useStatus', () => {
 
     expect(isLoading(status)).toBe(true);
   });
+
+  test.only("shared statuses: shared statues from different namespaces don't cause the current namespace to be UNKNOWN", () => {
+    const makeGetNoteList = defineFetch({
+      staticFetchFactoryId: 'get-note-list',
+      displayName: 'Get Note List',
+      share: {
+        namespace: 'noteList',
+        merge: {
+          noteItem: (prevNoteList, nextNoteItem) => {
+            if (!prevNoteList) return null;
+
+            const index = prevNoteList.findIndex(note => note.id === nextNoteItem.id);
+
+            if (index === -1) {
+              return prevNoteList;
+            }
+
+            if (nextNoteItem.deleted) {
+              return prevNoteList.filter(note => note.id !== nextNoteItem.id);
+            }
+
+            return [
+              ...prevNoteList.slice(0, index),
+              nextNoteItem,
+              ...prevNoteList.slice(index + 1, prevNoteList.length),
+            ];
+          },
+          newNoteItem: (prevNoteList, newNoteItem) => {
+            if (!prevNoteList) return null;
+
+            return [...prevNoteList, newNoteItem];
+          },
+        },
+      },
+      make: () => ({
+        request: () => ({ http }) =>
+          http({
+            method: 'GET',
+            route: '/notes',
+          }),
+      }),
+    });
+
+    const makeGetNoteItem = defineFetch({
+      staticFetchFactoryId: 'get-note',
+      displayName: 'Get Note Item',
+      share: { namespace: 'noteItem' },
+      make: noteId => ({
+        request: () => ({ http }) =>
+          http({
+            method: 'GET',
+            route: `/notes/${noteId}`,
+          }),
+      }),
+    });
+
+    const getNoteList = makeGetNoteList();
+    const getNoteItem123 = makeGetNoteItem('note123');
+
+    const noteListSuccess = {
+      type: createActionType(RESIFT_SUCCESS, getNoteList.meta),
+      meta: getNoteList.meta,
+      payload: [
+        {
+          id: 'note123',
+          content: 'bar',
+        },
+        {
+          id: 'note456',
+          content: 'foo',
+        },
+      ],
+    };
+
+    const state = [{ type: 'note' }, getNoteList(), noteListSuccess, getNoteItem123()].reduce(
+      dataServiceReducer,
+      {},
+    );
+
+    const status = makeStatusSelector(getNoteList)({ dataService: state });
+
+    expect(status).toMatchInlineSnapshot(`2`);
+    expect(isNormal(status)).toBe(true);
+    expect(isLoading(status)).toBe(true);
+    expect(isUnknown(status)).toBe(false);
+  });
 });
