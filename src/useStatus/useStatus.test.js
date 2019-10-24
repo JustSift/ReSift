@@ -1015,14 +1015,20 @@ describe('useStatus', () => {
       ],
     };
 
-    const state = [{ type: 'note' }, getNoteList(), noteListSuccess, getNoteItem123()].reduce(
-      dataServiceReducer,
-      {},
-    );
+    const state = [
+      // start off the reducer
+      { type: 'blah' },
+      // fetch the note list
+      getNoteList(),
+      // get the not list response back
+      noteListSuccess,
+      // fetch the note item
+      getNoteItem123(),
+    ].reduce(dataServiceReducer, {});
 
     const status = makeStatusSelector(getNoteList)({ dataService: state });
 
-    expect(status).toMatchInlineSnapshot(`2`);
+    expect(status).toMatchInlineSnapshot(`3`);
     expect(isNormal(status)).toBe(true);
     expect(isLoading(status)).toBe(true);
     expect(isUnknown(status)).toBe(false);

@@ -143,7 +143,7 @@ export const makeStatusSelector = (fetch, options) => state => {
     })
     .filter(x => x !== null);
 
-  const sharedStatuesFromDifferentNamespace = parentLocationsFromDifferentNamespaces
+  const sharedStatuesFromDifferentNamespaces = parentLocationsFromDifferentNamespaces
     .map(parentLocation => {
       const storeKey = createStoreKey(parentLocation.displayName, parentLocation.fetchFactoryId);
       const parentAction = _get(state, ['dataService', 'actions', storeKey, parentLocation.key]);
@@ -152,11 +152,15 @@ export const makeStatusSelector = (fetch, options) => state => {
     })
     .filter(x => x !== null);
 
+  const otherNamespaceLoading = sharedStatuesFromDifferentNamespaces.some(status =>
+    isLoading(status),
+  )
+    ? LOADING
+    : UNKNOWN;
+
   // all of those status are folded into one shared status
-  const sharedStatus = combineStatuses(
-    ...sharedStatuesFromDifferentNamespace,
-    combineSharedStatuses(...sharedStatusesFromSameNamespace),
-  );
+  const sharedStatus =
+    otherNamespaceLoading | combineSharedStatuses(...sharedStatusesFromSameNamespace);
 
   return sharedStatus;
 };
