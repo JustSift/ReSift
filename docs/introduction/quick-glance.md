@@ -4,6 +4,11 @@ title: Quick glance
 sidebar_label: Quick glance
 ---
 
+## Demo with codesandbox
+
+<iframe src="https://codesandbox.io/embed/resift-notes-mol0k?fontsize=14" title="ReSift Notes" allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb" style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;" sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"></iframe>
+<br />
+
 After a lot of feedback on these docs, we realized the first thing you all wanted to see was some code.
 
 This quick glance is just that. Without too many words, here are some quick code examples that _show_ how ReSift dispatches requests, gives status updates, and pulls data from memory.
@@ -61,7 +66,7 @@ export default Person;
 
 ---
 
-`makePersonFetch.js`
+`makeGetPerson.js`
 
 ```js
 import { defineFetch } from 'resift';
@@ -90,9 +95,5 @@ const makeGetPerson = defineFetch({
 
 export default makeGetPerson;
 ```
-
-## Quick tutorial with codesandbox
-
-<iframe src="https://codesandbox.io/embed/resift-notes-mol0k?fontsize=14" title="ReSift Notes" allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb" style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;" sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"></iframe>
 
 Intrigued? Continue to the [Main Concepts](../main-concepts/whats-a-fetch.md) to learn more.
