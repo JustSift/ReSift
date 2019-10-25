@@ -57,10 +57,6 @@
         "title": "ERROR API",
         "sidebar_label": "ERROR"
       },
-      "api/get-fetch": {
-        "title": "getFetch API",
-        "sidebar_label": "getFetch"
-      },
       "api/is-error": {
         "title": "isError API",
         "sidebar_label": "isError"
@@ -101,10 +97,6 @@
         "title": "useDispatch API",
         "sidebar_label": "useDispatch"
       },
-      "api/use-fetch": {
-        "title": "useFetch API",
-        "sidebar_label": "useFetch"
-      },
       "doc1": {
         "title": "Latin-ish",
         "sidebar_label": "Example Page"
@@ -133,6 +125,10 @@
         "title": "HTTP proxies",
         "sidebar_label": "HTTP proxies"
       },
+      "guides/usage-with-classes": {
+        "title": "Usage with classes",
+        "sidebar_label": "Usage with classes"
+      },
       "guides/usage-with-redux": {
         "title": "Usage with Redux",
         "sidebar_label": "Usage with Redux"
@@ -149,9 +145,17 @@
         "title": "Quick glance",
         "sidebar_label": "Quick glance"
       },
+      "introduction/tutorial-resift-rentals": {
+        "title": "Tutorial: ReSift Rentals",
+        "sidebar_label": "Tutorial"
+      },
       "introduction/what-is-resift": {
         "title": "What is ReSift?",
         "sidebar_label": "What is ReSift?"
+      },
+      "main-concepts/error-handling": {
+        "title": "Error handling",
+        "sidebar_label": "Error handling"
       },
       "main-concepts/how-to-define-a-fetch": {
         "title": "How to define a fetch",

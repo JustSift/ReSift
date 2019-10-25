@@ -7,12 +7,16 @@ sidebar_label: Installation
 ## Installation
 
 ```
-npm i -s resift redux react-redux
+npm i resift redux react-redux
 ```
 
-> Redux 4 and React-Redux >= 7.1 are required peer dependencies to ReSift
+> Redux 4 and React-Redux >= 7.1 are required peer dependencies to ReSift.
+
+> ⚠️ If you're already using Redux in your project, [follow this guide here](../guides/usage-with-redux.md).
 
 ## Creating the data service and HTTP service
+
+Create a file called `dataService`. Create a data service instance and then export it.
 
 `dataService.js`
 
@@ -20,9 +24,11 @@ npm i -s resift redux react-redux
 import { createHttpService, createDataService } from 'resift';
 
 const http = createHttpService({
+  // if all your endpoints share the same prefix, you can prefix them all here
   prefix: '/api',
+  // if you need to add headers (for auth etc), you can do so using `getHeaders`
   getHeaders: () => {
-    const token = localStorage.getItem('auth_token'); // or however you get your authentication token
+    const token = localStorage.getItem('auth_token');
 
     return {
       Authorization: `Bearer ${token}`,
@@ -30,11 +36,11 @@ const http = createHttpService({
   },
 });
 
-const services = { http };
-
 const dataService = createDataService({
-  services,
+  services: { http },
   onError: e => {
+    // see https://resift.org/docs/main-concepts/error-handling for more info
+    // on how to handle errors in resift.
     throw e;
   },
 });
@@ -43,6 +49,8 @@ export default dataService;
 ```
 
 ## Adding the `<ResiftProvider />`
+
+Lastly, wrap your application in the `ResiftProvider`. This will enable all the hooks APIs.
 
 `App.js`
 
