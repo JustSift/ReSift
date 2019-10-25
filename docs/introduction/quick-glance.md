@@ -50,7 +50,7 @@ function Person({ personId, expand }) {
       {/* show a spinner overlay during the initial fetch or any re-fetches */}
       {isLoading(status) && <SpinnerOverlay />}
 
-      {/* the guard ensures that the data will also be there */}
+      {/* the guard ensures that the data will be there */}
       <Guard fetch={getPerson}>{person => <div>Hello, {person.name}!</div>}</Guard>
     </div>
   );
