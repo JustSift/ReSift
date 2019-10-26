@@ -1,8 +1,10 @@
-import useFetch from '../useFetch';
 import isNormal from '../isNormal';
+import useData from '../useData';
+import useStatus from '../useStatus';
 
 function Guard({ fetch, children }) {
-  const [data, status] = useFetch(fetch);
+  const data = useData(fetch);
+  const status = useStatus(fetch);
 
   return isNormal(status) && children(data);
 }

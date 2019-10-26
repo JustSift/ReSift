@@ -6,9 +6,8 @@ type PickResult<FetchResult, MergeResult> = unknown extends MergeResult
   ? Unwrap<FetchResult>
   : Unwrap<MergeResult>;
 
-declare function useFetch<FetchArgs extends any[] = any, FetchResult = any, MergeResult = any>(
+declare function useData<FetchArgs extends any[] = any, FetchResult = any, MergeResult = any>(
   fetch: FetchActionCreator<FetchArgs, FetchResult, MergeResult>,
-  options?: any,
-): [PickResult<FetchResult, MergeResult> | null, number];
+): PickResult<FetchResult, MergeResult> | null;
 
-export default useFetch;
+export default useData;

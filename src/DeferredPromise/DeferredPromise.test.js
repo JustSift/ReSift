@@ -1,10 +1,10 @@
 import DeferredPromise from './DeferredPromise';
-import timer from '../timer';
+import delay from 'delay';
 
 test('it allows resolve to be called outside of the scope of itself', async () => {
   const deferredPromise = new DeferredPromise();
 
-  timer(0).then(() => deferredPromise.resolve('done'));
+  delay(0).then(() => deferredPromise.resolve('done'));
 
   const value = await deferredPromise;
   expect(value).toBe('done');
@@ -14,7 +14,7 @@ test('it allows reject to be called outside of the scope of itself', async () =>
   const deferredPromise = new DeferredPromise();
   const testError = new Error('test');
 
-  timer(0).then(() => deferredPromise.reject(testError));
+  delay(0).then(() => deferredPromise.reject(testError));
 
   let gotHere = false;
   try {

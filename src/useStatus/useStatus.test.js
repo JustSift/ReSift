@@ -12,7 +12,7 @@ import isLoading from '../isLoading';
 import isNormal from '../isNormal';
 import isUnknown from '../isUnknown';
 
-import getFetch, { getStatus, combineSharedStatuses } from './getFetch';
+import { makeStatusSelector, getStatus, combineSharedStatuses } from './useStatus';
 
 jest.mock('shortid', () => () => 'test-short-id');
 jest.mock('../timestamp', () => () => 'test-timestamp');
@@ -149,42 +149,38 @@ describe('combineSharedStatuses', () => {
   });
 });
 
-describe('getFetch', () => {
-  test('throws if there is no fetch action', () => {
-    expect(() => {
-      getFetch();
-    }).toThrowErrorMatchingInlineSnapshot(`"[getFetch] First argument, the fetch, is required"`);
-  });
-
+describe('useStatus', () => {
   test('throws if there is no state', () => {
     expect(() => {
-      const actionCreator = defineFetch({
+      const makeFetch = defineFetch({
         displayName: 'Test',
         make: () => ({
           request: () => () => {},
         }),
       });
+      const fetch = makeFetch();
 
       const noState = undefined;
 
-      getFetch(actionCreator(), noState);
-    }).toThrowErrorMatchingInlineSnapshot(`"[getFetch] State argument is required"`);
+      makeStatusSelector(fetch)(noState);
+    }).toThrowErrorMatchingInlineSnapshot(`"Cannot read property 'dataService' of undefined"`);
   });
 
   test('throws if there is no data service key', () => {
     expect(() => {
-      const actionCreator = defineFetch({
+      const makeFetch = defineFetch({
         displayName: 'Test',
         make: () => ({
           request: () => () => {},
         }),
       });
+      const fetch = makeFetch();
 
       const noState = {};
 
-      getFetch(actionCreator(), noState);
+      makeStatusSelector(fetch)(noState);
     }).toThrowErrorMatchingInlineSnapshot(
-      `"[getFetch] \\"dataService\\" is a required key. pass in the whole store state."`,
+      `"[useStatus] \\"dataService\\" is a required key. Double check with the installation guide here: https://resift.org/docs/introduction/installation"`,
     );
   });
 
@@ -211,13 +207,13 @@ describe('getFetch', () => {
     });
 
     expect(() => {
-      getFetch(makeMyFetch, state);
+      makeStatusSelector(makeMyFetch)(state);
     }).toThrowErrorMatchingInlineSnapshot(
-      `"[getFetch] expected to see a fetch instance in get fetch."`,
+      `"[useStatus] expected to see a fetch instance in get fetch."`,
     );
   });
 
-  test("unshared: returns null and UNKNOWN if the values isn't in the store", () => {
+  test("unshared: returns UNKNOWN if the values isn't in the store", () => {
     // given
     const state = { dataService: dataServiceReducer({}, {}) };
     expect(state).toMatchInlineSnapshot(`
@@ -242,14 +238,13 @@ describe('getFetch', () => {
     const exampleFetch = makeExampleFetch('test arg');
 
     // when
-    const [data, status] = getFetch(exampleFetch, state);
+    const status = makeStatusSelector(exampleFetch)(state);
 
     // then
-    expect(data).toBe(null);
     expect(isUnknown(status)).toBe(true);
   });
 
-  test('unshared: returns null and ERROR if the value is an error', () => {
+  test('unshared: returns ERROR if the value is an error', () => {
     const makeFetch = defineFetch({
       displayName: 'Example Fetch',
       make: () => ({
@@ -278,6 +273,7 @@ describe('getFetch', () => {
           "Example Fetch | test-short-id": Object {
             "key:": Object {
               "error": true,
+              "errorData": Object {},
               "inflight": undefined,
               "meta": Object {
                 "conflict": "cancel",
@@ -287,7 +283,6 @@ describe('getFetch', () => {
                 "share": undefined,
                 "type": "FETCH_INSTANCE",
               },
-              "payload": Object {},
               "shared": false,
               "updatedAt": "test-timestamp",
             },
@@ -301,13 +296,12 @@ describe('getFetch', () => {
       }
     `);
 
-    const [data, status] = getFetch(fetch, { dataService: errorState });
+    const status = makeStatusSelector(fetch)({ dataService: errorState });
 
-    expect(data).toBe(null);
     expect(isError(status)).toBe(true);
   });
 
-  test("shared: returns null and UNKNOWN if the values aren't the in the shared store", () => {
+  test("shared: returns UNKNOWN if the values aren't the in the shared store", () => {
     const state = { dataService: dataServiceReducer({}, {}) };
 
     const makeMyFetch = defineFetch({
@@ -320,17 +314,12 @@ describe('getFetch', () => {
 
     const myFetch = makeMyFetch();
 
-    const result = getFetch(myFetch, state);
+    const status = makeStatusSelector(myFetch)(state);
 
-    expect(result).toMatchInlineSnapshot(`
-      Array [
-        undefined,
-        0,
-      ]
-    `);
+    expect(isUnknown(status)).toBe(true);
   });
 
-  test('shared: returns a shared state if the fetch is shared', () => {
+  test('shared: returns a shared status if the fetch is shared', () => {
     const makeFetch = defineFetch({
       displayName: 'Example',
       share: { namespace: 'example' },
@@ -358,7 +347,11 @@ describe('getFetch', () => {
         "actions": Object {
           "Example | test-short-id": Object {
             "key:": Object {
+              "data": Object {
+                "foo": "bar",
+              },
               "error": false,
+              "errorData": null,
               "hadSuccess": true,
               "inflight": undefined,
               "meta": Object {
@@ -373,9 +366,6 @@ describe('getFetch', () => {
                   "namespace": "example",
                 },
                 "type": "FETCH_INSTANCE",
-              },
-              "payload": Object {
-                "foo": "bar",
               },
               "shared": true,
               "updatedAt": "test-timestamp",
@@ -408,14 +398,7 @@ describe('getFetch', () => {
       }
     `);
 
-    const [data, status] = getFetch(fetch, { dataService: successState });
-
-    expect(data).toMatchInlineSnapshot(`
-      Object {
-        "foo": "bar",
-      }
-    `);
-
+    const status = makeStatusSelector(fetch)({ dataService: successState });
     expect(isNormal(status)).toBe(true);
   });
 
@@ -458,7 +441,11 @@ describe('getFetch', () => {
         "actions": Object {
           "Example One | test-short-id": Object {
             "key:": Object {
+              "data": Object {
+                "one": "done",
+              },
               "error": false,
+              "errorData": null,
               "hadSuccess": true,
               "inflight": undefined,
               "meta": Object {
@@ -473,9 +460,6 @@ describe('getFetch', () => {
                   "namespace": "example",
                 },
                 "type": "FETCH_INSTANCE",
-              },
-              "payload": Object {
-                "one": "done",
               },
               "shared": true,
               "updatedAt": "test-timestamp",
@@ -532,14 +516,12 @@ describe('getFetch', () => {
       }
     `);
 
-    const isolatedStatus = getFetch(
-      oneFetch,
-      { dataService: finalState },
-      { isolatedStatus: true },
-    )[1];
+    const isolatedStatus = makeStatusSelector(oneFetch, { isolatedStatus: true })({
+      dataService: finalState,
+    });
     expect(isLoading(isolatedStatus)).toBe(false);
 
-    const sharedStatus = getFetch(oneFetch, { dataService: finalState })[1];
+    const sharedStatus = makeStatusSelector(oneFetch)({ dataService: finalState });
     expect(isLoading(sharedStatus)).toBe(true);
   });
 
@@ -856,21 +838,18 @@ describe('getFetch', () => {
     `);
 
     (() => {
-      const [data, status] = getFetch(getMovieItem456, { dataService: afterMovieItem123Success });
+      const status = makeStatusSelector(getMovieItem456)({
+        dataService: afterMovieItem123Success,
+      });
       expect(status).toMatchInlineSnapshot(`2`);
-      expect(data).toMatchInlineSnapshot(`undefined`);
       expect(isNormal(status)).toBe(false);
     })();
 
     (() => {
-      const [data, status] = getFetch(getMovieItem456, { dataService: afterMovieItem456Success });
+      const status = makeStatusSelector(getMovieItem456)({
+        dataService: afterMovieItem456Success,
+      });
       expect(status).toMatchInlineSnapshot(`1`);
-      expect(data).toMatchInlineSnapshot(`
-        Object {
-          "id": "movie456",
-          "name": "bar CHANGED",
-        }
-      `);
       expect(isNormal(status)).toBe(true);
     })();
   });

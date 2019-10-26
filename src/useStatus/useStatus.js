@@ -1,17 +1,18 @@
+import { useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import _get from 'lodash/get';
 import _flatten from 'lodash/flatten';
 import createStoreKey from '../createStoreKey';
-
-import isUnknown from '../isUnknown';
-import isLoading from '../isLoading';
-import isNormal from '../isNormal';
-import isError from '../isError';
-
 import UNKNOWN from '../UNKNOWN';
 import LOADING from '../LOADING';
 import ERROR from '../ERROR';
 import NORMAL from '../NORMAL';
+import isUnknown from '../isUnknown';
+import isLoading from '../isLoading';
+import isError from '../isError';
+import isNormal from '../isNormal';
 import combineStatuses from '../combineStatuses';
+import usePreserveReference from 'use-preserve-reference';
 
 // Combining shared statuses is different because of the `normal` case.
 //
@@ -48,20 +49,23 @@ export function getStatus(actionState) {
   return inflightStatus | errorStatus | normalStatus;
 }
 
-export default function getFetch(fetch, state, options) {
-  if (!fetch) throw new Error('[getFetch] First argument, the fetch, is required');
-  if (!state) throw new Error('[getFetch] State argument is required');
-  if (!state.dataService) {
-    throw new Error('[getFetch] "dataService" is a required key. pass in the whole store state.');
+export const makeStatusSelector = (fetch, options) => state => {
+  if (!fetch) {
+    return null;
   }
 
   const isFetchInstance = _get(fetch, ['meta', 'type']) === 'FETCH_INSTANCE';
   if (!isFetchInstance) {
-    throw new Error('[getFetch] expected to see a fetch instance in get fetch.');
+    throw new Error('[useStatus] expected to see a fetch instance in get fetch.');
+  }
+
+  if (!state.dataService) {
+    throw new Error(
+      '[useStatus] "dataService" is a required key. Double check with the installation guide here: https://resift.org/docs/introduction/installation',
+    );
   }
 
   const { fetchFactoryId, displayName, key, share } = fetch.meta;
-
   const storeKey = createStoreKey(displayName, fetchFactoryId);
 
   const value = _get(state, ['dataService', 'actions', storeKey, key]);
@@ -71,25 +75,18 @@ export default function getFetch(fetch, state, options) {
   // in this path, all we do is return the "non-shared" value and the "non-shared" state from the
   // `actions` sub-store (vs the `shared` sub-store)
   if (!share) {
-    // if there is no value, then all we can do is return null and UNKNOWN
-    if (!value) return [null, UNKNOWN];
-
-    const data = value.error ? null : value.payload;
-
-    return [data, nonSharedStatus];
+    return nonSharedStatus;
   }
 
   // otherwise if the fetch _is_ shared, then continue down this code path
   const { namespace, mergeObj } = share;
 
-  // the value comes from the `shared` sub-store instead of the `actions` sub-store
-  const sharedData = _get(state, ['dataService', 'shared', 'data', namespace, key]);
   const shouldReturnIsolatedStatus = _get(options, ['isolatedStatus'], false);
 
   // if the user put in `isolatedStatus: true` in their options then we should return the status
   // derived from the `actions` sub-store
   if (shouldReturnIsolatedStatus) {
-    return [sharedData, nonSharedStatus];
+    return nonSharedStatus;
   }
 
   // otherwise do all the stuff below to get the shared status
@@ -161,5 +158,16 @@ export default function getFetch(fetch, state, options) {
     combineSharedStatuses(...sharedStatusesFromSameNamespace),
   );
 
-  return [sharedData, sharedStatus];
+  return sharedStatus;
+};
+
+function useStatus(fetch, options) {
+  const preservedOptions = usePreserveReference(options);
+  const statusSelector = useMemo(() => makeStatusSelector(fetch, preservedOptions), [
+    fetch,
+    preservedOptions,
+  ]);
+  return useSelector(statusSelector);
 }
+
+export default useStatus;

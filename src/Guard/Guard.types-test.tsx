@@ -1,6 +1,5 @@
 import React from 'react';
 import defineFetch from '../defineFetch';
-import useFetch from '../useFetch';
 import Guard from './Guard';
 
 const makeGetMovie = defineFetch({
@@ -15,7 +14,6 @@ const makeGetMovie = defineFetch({
 
 function Example() {
   const getMovie = makeGetMovie('movie123');
-  const [movie] = useFetch(getMovie);
 
   return <Guard fetch={getMovie}>{movie => <span>{movie.name}</span>}</Guard>;
 }

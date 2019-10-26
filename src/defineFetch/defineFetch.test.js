@@ -1,5 +1,5 @@
 import defineFetch, { isFetchAction, normalizeMerge, replace } from './defineFetch';
-import timer from '../timer';
+import delay from 'delay';
 import DeferredPromise from '../DeferredPromise';
 
 jest.mock('shortid', () => () => 'test-short-id');
@@ -149,7 +149,7 @@ describe('defineFetch', () => {
 
     action.payload({
       exampleService: async testArg => {
-        await timer(100);
+        await delay(100);
         return testArg;
       },
     });

@@ -7,10 +7,10 @@ import dataServiceReducer from '../dataServiceReducer';
 import createDataService from '../createDataService';
 import { Provider } from 'react-redux';
 import DeferredPromise from '../DeferredPromise';
-import getFetch from '../getFetch';
-import useFetch from '../useFetch';
+import { makeStatusSelector } from '../useStatus/useStatus';
+import useStatus from '../useStatus';
 import isUnknown from '../isUnknown';
-import timer from '../timer';
+import delay from 'delay';
 import isNormal from '../isNormal';
 import isLoading from '../isLoading';
 
@@ -19,7 +19,7 @@ test('it does not render if the status does not contain NORMAL', async () => {
     displayName: 'Get Movie',
     make: movieId => ({
       request: () => async () => {
-        await timer(100);
+        await delay(100);
         return {
           id: movieId,
           name: 'Hello World',
@@ -40,7 +40,7 @@ test('it does not render if the status does not contain NORMAL', async () => {
   const store = createStore(rootReducer, {}, applyMiddleware(dataService));
 
   // first render with UNKNOWN state, expect not to render
-  expect(isUnknown(getFetch(getMovie, store.getState())[1])).toBe(true);
+  expect(isUnknown(makeStatusSelector(getMovie)(store.getState()))).toBe(true);
   const guardHandler = jest.fn(() => null);
 
   const first = new DeferredPromise();
@@ -50,7 +50,7 @@ test('it does not render if the status does not contain NORMAL', async () => {
   let calls = 0;
 
   function ExampleComponent() {
-    const status = useFetch(getMovie)[1];
+    const status = useStatus(getMovie);
 
     useEffect(() => {
       if (calls === 0) {
@@ -94,6 +94,6 @@ test('it does not render if the status does not contain NORMAL', async () => {
     expect(isNormal(thirdStatus)).toBe(true);
     expect(guardHandler).toHaveBeenCalled();
 
-    await timer(500);
+    await delay(500);
   });
 });
