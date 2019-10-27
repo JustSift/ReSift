@@ -3,7 +3,8 @@
     "Introduction": [
       "introduction/what-is-resift",
       "introduction/quick-glance",
-      "introduction/installation"
+      "introduction/installation",
+      "introduction/tutorial-resift-rentals"
     ],
     "Main Concepts": [
       "main-concepts/whats-a-fetch",
@@ -21,7 +22,8 @@
       "guides/context-fetches",
       "guides/writing-fetch-services",
       "guides/http-proxies",
-      "guides/usage-with-redux"
+      "guides/usage-with-redux",
+      "guides/usage-with-classes"
     ],
     "API": [
       "api/about-api-docs",
@@ -41,14 +43,12 @@
       "api/create-store-key",
       "api/data-service-reducer",
       "api/define-fetch",
-      "api/get-fetch",
       "api/is-error",
       "api/is-loading",
       "api/is-normal",
       "api/is-unknown",
       "api/use-clear-fetch",
-      "api/use-dispatch",
-      "api/use-fetch"
+      "api/use-dispatch"
     ]
   }
 }

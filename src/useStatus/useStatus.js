@@ -51,7 +51,7 @@ export function getStatus(actionState) {
 
 export const makeStatusSelector = (fetch, options) => state => {
   if (!fetch) {
-    return null;
+    return UNKNOWN;
   }
 
   const isFetchInstance = _get(fetch, ['meta', 'type']) === 'FETCH_INSTANCE';
@@ -96,7 +96,7 @@ export const makeStatusSelector = (fetch, options) => state => {
   const parentLocationsFromTheSameNamespace = _flatten(
     targetNamespaces
       .map(targetNamespace => {
-        const parentLocations = _get(state, ['dataService', 'shared', 'parents', namespace]);
+        const parentLocations = _get(state, ['dataService', 'shared', 'parents', targetNamespace]);
         if (!parentLocations) {
           return null;
         }
@@ -117,7 +117,7 @@ export const makeStatusSelector = (fetch, options) => state => {
   const parentLocationsFromDifferentNamespaces = _flatten(
     targetNamespaces
       .map(targetNamespace => {
-        const parentLocations = _get(state, ['dataService', 'shared', 'parents', namespace]);
+        const parentLocations = _get(state, ['dataService', 'shared', 'parents', targetNamespace]);
         if (!parentLocations) {
           return null;
         }
@@ -143,7 +143,7 @@ export const makeStatusSelector = (fetch, options) => state => {
     })
     .filter(x => x !== null);
 
-  const sharedStatuesFromDifferentNamespace = parentLocationsFromDifferentNamespaces
+  const sharedStatuesFromDifferentNamespaces = parentLocationsFromDifferentNamespaces
     .map(parentLocation => {
       const storeKey = createStoreKey(parentLocation.displayName, parentLocation.fetchFactoryId);
       const parentAction = _get(state, ['dataService', 'actions', storeKey, parentLocation.key]);
@@ -152,11 +152,15 @@ export const makeStatusSelector = (fetch, options) => state => {
     })
     .filter(x => x !== null);
 
+  const otherNamespaceLoading = sharedStatuesFromDifferentNamespaces.some(status =>
+    isLoading(status),
+  )
+    ? LOADING
+    : UNKNOWN;
+
   // all of those status are folded into one shared status
-  const sharedStatus = combineStatuses(
-    ...sharedStatuesFromDifferentNamespace,
-    combineSharedStatuses(...sharedStatusesFromSameNamespace),
-  );
+  const sharedStatus =
+    otherNamespaceLoading | combineSharedStatuses(...sharedStatusesFromSameNamespace);
 
   return sharedStatus;
 };

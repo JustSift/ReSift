@@ -133,6 +133,10 @@
         "title": "ReSift vs Apollo and Relay",
         "sidebar_label": "ReSift vs Apollo and Relay"
       },
+      "guides/usage-with-classes": {
+        "title": "Usage with classes",
+        "sidebar_label": "Usage with classes"
+      },
       "guides/usage-with-redux": {
         "title": "Usage with Redux",
         "sidebar_label": "Usage with Redux"
@@ -149,9 +153,17 @@
         "title": "Quick glance",
         "sidebar_label": "Quick glance"
       },
+      "introduction/tutorial-resift-rentals": {
+        "title": "Tutorial: ReSift Rentals",
+        "sidebar_label": "Tutorial"
+      },
       "introduction/what-is-resift": {
         "title": "What is ReSift?",
         "sidebar_label": "What is ReSift?"
+      },
+      "main-concepts/error-handling": {
+        "title": "Error handling",
+        "sidebar_label": "Error handling"
       },
       "main-concepts/how-to-define-a-fetch": {
         "title": "How to define a fetch",
