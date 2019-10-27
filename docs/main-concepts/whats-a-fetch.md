@@ -6,45 +6,56 @@ sidebar_label: What's a fetch?
 
 > **A small disclaimer:** Naming collisions are an unfortunate thing we have to deal with in software engineering and ReSift's "fetches" are no different. For now, please forget what you know about fetches or [`window.fetch`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) because they are _different_ from the fetches we define here.
 
-## A fetch is like an order
+## A fetch is noun
 
-ReSift has the concept of a **fetch**, which is loosely analogous to an **order** (on a shopping website, in a restaurant, etc).
+ReSift has this concept of a **fetch** (used as a noun). Fetches are tokens you pass to different ReSift functions to get _stuff_ about your fetch.
 
-Generally speaking, an **order** is a noun we use to describe multiple pieces of information resulting from walking through an ordering process, including:
+Here's the general workflow steps:
 
-- The product(s) to buy
-- Any options or variations of the product(s) (Size, color, etc)
-- A confirmation of the order (items, price)
-- A order confirmation and tracking number
+1. create a **fetch factory** that will produce fetch instance/tokens.
+2. (within a component,) call the fetch factory to get a **fetch instance** (aka just a "fetch").
+3. pass that fetch into ReSift functions to get _stuff_
 
-etc.
+```js
+// call defineFetch to create a "fetch factory"
+const makeGetPerson = defineFetch(/* ... */);
+//         👆 this is the fetch factory
 
-This analogy isn't perfect but it helps stage the idea of a fetch as defined by ReSift.
+function MyComponent() {
+  // call the fetch factory with some ID to get a "fetch"
+  const getPerson = makeGetPerson('person-id-123');
+  //         👆 this is a fetch
 
----
+  // pass this fetch into ReSift functions to
+  // get stuff about your fetch
+  const status = useStatus(getPerson); // 👈
+  const data = useData(getPerson); // 👈
 
-**Much like an order is a noun _and_ a verb, so is our concept of a fetch.**
+  return (
+    //               👇
+    <Guard fetch={getPerson}>{person => <span>{person.name}</span>}</Guard>
+  );
+}
+```
 
-In ReSift, fetches are our unit/word that encapsulates everything you need to know about:
-
-- a predefined type of request you can make,
-- the status of a request (finished/normal, inflight/loading), and
-- how to pull the response from memory and into your components.
+We'll go over what you can do with a fetch in the next sections. For now, the takeaway is that fetches are tokens/nouns you can give to ReSift in exchange for a status or data.
 
 ## Defining a fetch
 
-Similar to how you need to have a product listing before you place an order, you first need to have a fetch defined before you make a request.
+In ReSift, you start by defining a **fetch factory**.
+
+A fetch factory is a function that will produce fetch instances. It describes how you'll get data and how your data is related to other things in the cache ([described in an upcoming doc](./sharing-state-between-fetches.md)).
 
 To define a fetch, use the function `defineFetch` from ReSift. Take a look at this next code example to get a sneak peak in to how to define a fetch.
 
-> Don't get too caught up in the example just yet. In the next section, we'll go in depth into [how to define a fetch](./how-to-define-a-fetch.md).
+> Don't get too caught up in the example just yet. In the next doc, we'll go in depth into [how to define a fetch](./how-to-define-a-fetch.md).
 
-`makePersonFetch.js`
+`makeGetPerson.js`
 
 ```js
 import { defineFetch } from 'resift';
 
-const makePersonFetch = defineFetch({
+const makeGetPerson = defineFetch({
   displayName: 'Get Person',
   make: personId => ({
     request: () => ({ http }) =>
@@ -55,17 +66,17 @@ const makePersonFetch = defineFetch({
   }),
 });
 
-export default makePersonFetch;
+export default makeGetPerson;
 ```
 
-`defineFetch` returns a **fetch factory** (e.g. `makePersonFetch`).
+`defineFetch` returns a **fetch factory** (e.g. `makeGetPerson`).
 
 A **fetch factory** is a producer of a type of fetch. When you call a fetch factory, you get a **fetch instance**.
 
 ```js
 //                    👇 invoke this fetch factory...
-const personFetch = makePersonFetch('person123');
-//            👆
+const getPerson = makeGetPerson('person123');
+//        👆
 // ...to get a fetch instance
 ```
 
@@ -73,126 +84,131 @@ const personFetch = makePersonFetch('person123');
 
 In order to make a fetch instance, you need to call the fetch factory with the arguments you define in `make` of `defineFetch`.
 
-After you make the fetch instance, you can then use it to pull the data and the status of the request into your component by using the hook `useFetch`.
+> These arguments _must_ be strings or numbers. ReSift will use these values to decide where to save data in its internal cache.
 
-> This examples uses [React Hooks](https://reactjs.org/docs/hooks-intro.html). We highly recommend, using our Hooks API, but if you're not using React >= 16.8.x, we also offer a way to use this library with [React-Redux's `connect`](../TODO.md).
+After you make the fetch instance, you can then use it to pull the data and the status of the request into your component by using the `Guard` component and the `useStatus` hook respectively.
 
 `Person.js`
 
 ```js
 import React from 'react';
-import PropTypes from 'prop-types';
-import { useFetch, isNormal, isLoading } from 'resift';
-import makePersonFetch from './makePersonFetch';
+import { Guard, useStatus, isNormal, isLoading } from 'resift';
+import makeGetPerson from './makeGetPerson';
 import Spinner from './Spinner';
 
 function Person({ personId }) {
   // call the `makePersonFetch` "fetch factory" to get a "fetch" back
-  const personFetch = makePersonFetch(personId);
-  // these are the arguments from `make` 👆 above
+  const getPerson = makeGetPerson(personId);
+  // these are the args from `make` 👆 above
 
-  // use the fetch to get the data and status associated to your fetch
-  const [data, status] = useFetch(personFetch);
-  // (this 👆 syntax is array destructuring)
+  // get the status
+  const status = useStatus(getPerson);
 
   return (
     <div>
-      {/* use the `isLoading` and `isNormal` helpers to show spinners or data */}
+      {/* use the `isLoading` helper to show spinners */}
       {isLoading(status) && <Spinner />}
-      {isNormal(status) && <div>Hello, {person.name}!</div>}
+
+      {/* pass the fetch to the Guard component to get data */}
+      <Guard fetch={getPerson}>
+        {person => (
+          // 👆 person will never be null because of the Guard
+          <div>Hello, {person.name}!</div>
+        )}
+      </Guard>
     </div>
   );
 }
 
-Person.propTypes = {
-  personId: PropTypes.string.isRequired,
-};
+export default Person;
+```
+
+The `<Guard />` component takes a function as a child. This function is called by the `<Guard />` component when the data is present and it's safe to render the contents of the Guard.
+
+We recommend using `Guard`s in your components. However, alternatively, you can use the `useData` hook to pull the current value of the fetch. This value may be `null` if there is no data available with the associated fetch.
+
+```js
+import React from 'react';
+import { useStatus, useData, isNormal, isLoading } from 'resift';
+import makeGetPerson from './makeGetPerson';
+import Spinner from './Spinner';
+
+function Person({ personId }) {
+  const getPerson = makeGetPerson(personId);
+
+  const status = useStatus(getPerson);
+  // ⚠️ `person` may `null` if there is no data ready
+  const person = useData(getPerson);
+
+  return (
+    <div>
+      {/* use the `isLoading` helper to show spinners */}
+      {isLoading(status) && <Spinner />}
+
+      {person && <div>Hello, {person.name}!</div>}
+    </div>
+  );
+}
 
 export default Person;
 ```
 
-`useFetch` is a hook that takes in a fetch instance as an argument and returns an array of length two:
+## Dispatching requests
 
-1. The first item is the data associated with the fetch instance or `null` if no data is available
-2. The second item is the status associated with the fetch instance. There are helpers that exist (e.g. `isNormal`, `isLoading`) that you can use to unwrap this value into their different boolean values. [Jump to Making sense of statuses to learn more.](../TODO.md)
-
-Since `useFetch` is a hook, it has the ability to re-render your component when either the data or the status changes.
-
-Use this hook to react to data changes and the different statuses of your fetches.
-
-## Making a request then dispatching it
-
-The last example showed you how to pull data from a fetch instance but not how to initially dispatch the request when the component first mounts.
+The last example showed you how to pull data from a fetch instance but not how to initially dispatch the request.
 
 Below is a modified example that will dispatch a request when the `personId` changes (including the first mount).
 
 ```js
 import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { useDispatch, useFetch, isNormal, isLoading } from 'resift';
-import makePersonFetch from './makePersonFetch';
+import { Guard, useDispatch, useStatus, isNormal, isLoading } from 'resift';
+import makeGetPerson from './makeGetPerson';
 import Spinner from './Spinner';
 
 function Person({ personId }) {
   // `useDispatch` to get back the `dispatch` function
   const dispatch = useDispatch();
 
-  const personFetch = makePersonFetch(personId);
-  const [person, status] = useFetch(personFetch);
+  const getPerson = makeGetPerson(personId);
+  const status = useStatus(getPerson);
 
   // Use an effect to watch for fetches in `personId` and
-  // re-fetch accordingly. This also occurs after the initial mount.
-  // (e.g. `componentDidMount` too)
+  // re-fetch accordingly. This also can occur after the initial mount.
   useEffect(() => {
-    // make the request
-    const request = personFetch();
-    // dispatch
-    dispatch(request);
-  }, [dispatch, personFetch]);
+    dispatch(getPerson());
+  }, [dispatch, getPerson()]);
 
   return (
     <div>
       {isLoading(status) && <Spinner />}
-      {isNormal(status) && <div>Hello, {person.name}!</div>}
+      <Guard fetch={getPerson}>{person => <div>Hello, {person.name}!</div>}</Guard>
     </div>
   );
 }
-
-Person.propTypes = {
-  personId: PropTypes.string.isRequired,
-};
 
 export default Person;
 ```
 
 In the example above, this component is fetching and re-fetching the person based on the `personId`.
 
-This occurs because of the effect (via `useEffect`) that watches the dependencies array (the second argument of `useEffect`) and calls the callback (the first argument) when any value in the dependencies array changes. [See the official React docs for usage of the Effect Hook for more info.](https://reactjs.org/docs/hooks-effect.html)
+This occurs because of the effect (via `useEffect`) that watches the dependencies array (the second argument of `useEffect`) and calls the callback when any value in the dependencies array changes. [See the official React docs for usage of the Effect Hook for more info.](https://reactjs.org/docs/hooks-effect.html)
 
-In this case, the value `personFetch` will change when the `personId` changes. If `personId` changes, then `personFetch` will change, and that will tell the effect to re-run and send off another request.
-
-> **Small note:** In the example above, we made the request and dispatched it on different lines to explain what's going on, however, it's recommended to make the request and dispatch it in the same line for brevity:
->
-> ```js
-> useEffect(() => {
->   dispatch(personFetch());
-> }, [dispatch, personFetch]);
-> ```
+In this case, the value `getPerson` will change when the `personId` changes. If `personId` changes, then `getPerson` will change, and that will tell the effect to re-run and send off another request.
 
 ## Fetches are global
 
 An important thing to note is that ReSift fetches are _global_ meaning that if a fetch has been completed and used in one component, it will be ready for any another component.
 
-This is a key concept of ReSift fetches because global fetches also means global cache/state. Global state allows the lifecycles of a fetch to be split up across many different components.
+This is a key concept of ReSift fetches because global fetches also means global cache/state. Global state allows the lifecycles of a fetch to be split up across many different components enabling ["fetch-then-render"](https://reactjs.org/docs/concurrent-mode-suspense.html#approach-2-fetch-then-render-not-using-suspense) and ["render-as-you-fetch"](https://reactjs.org/docs/concurrent-mode-suspense.html#approach-3-render-as-you-fetch-using-suspense) patterns.
 
 For example, one component can be responsible for reacting to some event to pre-fetch (i.e. dispatch a request for) data for another component. These components can live anywhere in the component tree because the state of the fetches are hoisted above the component tree (i.e. they're global).
 
 ## Summary: The lifecycle of a fetch
 
-1. `defineFetch` returns a **fetch factory** (e.g. `makePersonFetch`)
-2. When `makePersonFetch` is called with a `personId`, it returns a **fetch instance** (e.g. `personFetch`)
+1. `defineFetch` returns a **fetch factory** (e.g. `makeGetPerson`)
+2. When `makeGetPerson` is called with a `personId`, it returns a **fetch instance** associated with that ID (e.g. `getPerson`)
 3. Then either:
-   1. The fetch can be used to get the data and the status via **`useFetch`**.
-      <br />(e.g. `const [data, status] = useFetch(personFetch)`)
-   2. The fetch instance can be invoked to get a **request**. That request can be dispatched via **`dispatch`**.
-      <br />(e.g. `dispatch(personFetch())`)
+   1. The fetch can be used to get the data and the status via **`useStatus`** and **`<Guard />`**.
+      <br />(e.g. `const status = useStatus(getPerson)`)
+   2. The fetch instance can be invoked and dispatched to initiate the request.
+      <br />(e.g. `dispatch(getPerson())`)
