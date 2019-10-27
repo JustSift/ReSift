@@ -17,6 +17,7 @@
       "examples/multiple-request-defineFetch"
     ],
     "Guides": [
+      "guides/resift-vs-apollo-relay",
       "guides/context-fetches",
       "guides/writing-fetch-services",
       "guides/http-proxies",

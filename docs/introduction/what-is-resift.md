@@ -6,6 +6,8 @@ sidebar_label: What is ReSift?
 
 Simply put, **ReSift is a state management library for fetches** with the goal of giving your team a capable standard for fetching, storing, and reacting to data.
 
+ReSift is in the same class of tools as Relay and the Apollo Client. However, ReSift does _not_ require GraphQL. [See this doc for a comparison of ReSift vs Relay/Apollo](../guides/resift-vs-apollo-relay.md).
+
 ## Motivation
 
 When you start to develop a React application, you soon realize that there is a lot more than meets the eye regarding data fetching.
@@ -33,3 +35,14 @@ ReSift is a capable and versatile library for data fetches. ReSift is opinionate
 - 🌐 Universal — Share code amongst your apps. Works with React Native!
 - 🎣 Hooks API
 - ⚛️ Optional Redux integration with Redux dev tools support
+
+
+
+
+
+
+
+
+
+
+
