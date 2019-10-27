@@ -4,43 +4,39 @@ title: Quick glance
 sidebar_label: Quick glance
 ---
 
-## Demo with codesandbox
-
-<iframe src="https://codesandbox.io/embed/resift-notes-mol0k?fontsize=14" title="ReSift Notes" allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb" style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;" sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"></iframe>
-<br />
-
 After a lot of feedback on these docs, we realized the first thing you all wanted to see was some code.
 
 This quick glance is just that. Without too many words, here are some quick code examples that _show_ how ReSift dispatches requests, gives status updates, and pulls data from memory.
 
 > These examples makes use of [React Hooks](https://reactjs.org/docs/hooks-intro.html). If you're not familiar with React Hooks, these examples may look a bit foreign as they are hooks idiomatic.
 >
-> This library is hooks-first, meaning it's meant to be used with newer function components. If you would like to use this library with classes, [see this guide](../guides/usage-with-classes.md).
+> This library is hooks-first, meaning it's meant to be used with function components. If you would like to use this library with classes, [see this guide](../guides/usage-with-classes.md).
 
 `Person.js`
 
 ```js
 import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
 import { useDispatch, useStatus, isLoading, Guard } from 'resift';
 import SpinnerOverlay from './SpinnerOverlay';
 
-// import a pre-defined fetch factory
+// import a pre-defined "fetch factory"
 import makeGetPerson from './makeGetPerson';
 
-function Person({ personId, expand }) {
+function Person({ personId }) {
   const dispatch = useDispatch();
 
-  // make a fetch from a fetch factory
+  // make a "fetch instance" from a fetch factory
   const getPerson = makeGetPerson(personId);
   // fetches 👆 are nouns
   //                 this is a 👆 fetch factory
 
   // use an effect to re-dispatch requests when the fetch changes
-  // or its request args changes
   useEffect(() => {
-    dispatch(getPerson(expand));
-  }, [dispatch, getPerson, expand]);
+    // NOTE: this dispatching doesn't have to occur in this
+    // component. you can initiate the fetch from any component
+    // because ReSift's fetches are _global_.
+    dispatch(getPerson());
+  }, [dispatch, getPerson]);
 
   // get the status associated with your fetch
   const status = useStatus(getPerson);
@@ -55,11 +51,6 @@ function Person({ personId, expand }) {
     </div>
   );
 }
-
-Person.propTypes = {
-  personId: PropTypes.string.isRequired,
-  expand: PropTypes.string,
-};
 
 export default Person;
 ```
@@ -78,17 +69,12 @@ const makeGetPerson = defineFetch({
 
   // These 👇 are the arguments to `makeGetPerson`
   make: personId => ({
-    // The `request` which is responsible for sending off the request
-    //   These 👇 are the arguments when dispatching
-    request: expand => ({ http }) =>
-      //        The http  👆 service is being "picked off" and used
-      //        to send off the request
+    request: () => ({ http }) =>
+      //      The http  👆 service is being "picked off" and used
+      //      to send off the request
       http({
         method: 'GET',
         route: `/people/${personId}`,
-        // This will add the query param `expand` to the request
-        // e.g. `/people/person123?expand=blah
-        query: { expand },
       }),
   }),
 });
@@ -96,4 +82,19 @@ const makeGetPerson = defineFetch({
 export default makeGetPerson;
 ```
 
-Intrigued? Continue to the [Main Concepts](../main-concepts/whats-a-fetch.md) to learn more.
+Intrigued? This only scratches the surface. Check out the demo below!
+
+## Demo app
+
+This is a full demo application including:
+
+- all CRUD actions,
+- updating data across different "namespaces", and
+- carefully placed loading spinners.
+
+It's note taking app! Read the pre-made notes to learn more, then edit the code to get better idea of how it works.
+
+<iframe src="https://codesandbox.io/embed/resift-notes-mol0k?fontsize=14" title="ReSift Notes" allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb" style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;" sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"></iframe>
+<br />
+
+When you're done, continue to the [Main Concepts](../main-concepts/whats-a-fetch.md) to learn more!
