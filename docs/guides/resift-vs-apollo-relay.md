@@ -18,10 +18,20 @@ ReSift is agnostic on how to get data. You can use traditional RESTful services,
 
 However, the since Apollo and Relay are GraphQL only, they can leverage data schemas from GraphQL to normalize incoming data inside their caching solutions automatically. This means that if you update a piece of information using Apollo or Relay, that piece of information will update anywhere it's used.
 
-This is the major trade off of ReSift — because ReSift doesn't have schema information, **it can't automatically normalize your data**.
+This is the major trade off of ReSift — because ReSift doesn't have schema information, **ReSift _can't_ automatically normalize your data**.
 
 Instead of requiring schemas, **ReSift allows you specify how a piece of information should be updated when another piece of information changes**. See the [Sharing state between fetches](../main-concepts/sharing-state-between-fetches.md#merges-across-namespaces) doc for more info.
 
 We believe this is sufficient for creating data-driven applications and a great alternative to Apollo and Relay.
 
 (However, if you are using GraphQL, we recommend you just use Apollo or Relay.)
+
+## Comparision chart
+
+| Feature 👇            | ReSift | Relay | Apollo |
+|----------------------------------|----|----|----|
+| Global cache/global injection    | ✅ | ✅ | ✅ |
+| Automatic pending status         | ✅ | ✅ | ✅ |
+| Able to enforce data consistency | ✅ | ✅ | ✅ |
+| Automatic normalization          | 🔴 | ✅ | ✅ |
+| Compatible with REST             | ✅ | 🔴 | 🔴 |
