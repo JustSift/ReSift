@@ -58,6 +58,8 @@ Lastly, wrap your application in the `ResiftProvider`. This will enable all the 
 import React from 'react';
 import { ResiftProvider } from 'resift';
 import RestOfYourApplication from '...';
+
+// import the data service we just created
 import dataService from './dataService';
 
 function App() {
