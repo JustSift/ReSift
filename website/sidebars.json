@@ -3,9 +3,9 @@
     "Introduction": [
       "introduction/what-is-resift",
       "introduction/quick-glance",
-      "introduction/installation",
-      "introduction/tutorial-resift-rentals"
+      "introduction/installation"
     ],
+    "Tutorial": ["tutorial-resift-rentals"],
     "Main Concepts": [
       "main-concepts/whats-a-fetch",
       "main-concepts/how-to-define-a-fetch",
@@ -13,10 +13,7 @@
       "main-concepts/making-sense-of-statuses",
       "main-concepts/using-the-http-service"
     ],
-    "Examples": [
-      "examples/crud-example",
-      "examples/multiple-request-defineFetch"
-    ],
+    "Examples": ["examples/crud-example", "examples/multiple-request-defineFetch"],
     "Guides": [
       "guides/resift-vs-apollo-relay",
       "guides/context-fetches",

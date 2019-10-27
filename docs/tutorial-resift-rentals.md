@@ -1,7 +1,7 @@
 ---
 id: tutorial-resift-rentals
 title: Tutorial: ReSift Rentals
-sidebar_label: Tutorial
+sidebar_label: Tutorial: ReSift Rentals
 ---
 
 Welcome to the ReSift tutorial!

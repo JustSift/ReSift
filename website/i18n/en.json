@@ -153,10 +153,6 @@
         "title": "Quick glance",
         "sidebar_label": "Quick glance"
       },
-      "introduction/tutorial-resift-rentals": {
-        "title": "Tutorial: ReSift Rentals",
-        "sidebar_label": "Tutorial"
-      },
       "introduction/what-is-resift": {
         "title": "What is ReSift?",
         "sidebar_label": "What is ReSift?"
@@ -190,6 +186,10 @@
       },
       "todo": {
         "title": "TODO"
+      },
+      "tutorial-resift-rentals": {
+        "title": "Tutorial: ReSift Rentals",
+        "sidebar_label": "Tutorial: ReSift Rentals"
       }
     },
     "links": {
@@ -200,6 +200,7 @@
     },
     "categories": {
       "Introduction": "Introduction",
+      "Tutorial": "Tutorial",
       "Main Concepts": "Main Concepts",
       "Examples": "Examples",
       "Guides": "Guides",
