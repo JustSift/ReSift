@@ -88,7 +88,7 @@ The example we'll use is infinite scrolling using a paginated endpoint: When the
 
 The paginated endpoint:
 
-**`GET` `/people?page=0?pageSize=50`**
+**`GET` `/people?page=0?pageSize=10`**
 
 ```json
 {
@@ -105,8 +105,8 @@ The paginated endpoint:
   ],
   "pagination": {
     "page": 0,
-    "pageSize": 50,
-    "total": 200
+    "pageSize": 10,
+    "total": 50
   }
 }
 ```
@@ -124,21 +124,16 @@ const makeGetPeople = defineFetch({
   displayName: 'Get People',
   share: {
     namespace: 'people',
+    merge: (prevPeople, nextPeople) => {
+      // during the first fetch, the data is not present so return the next
+      if (!prevPeople) return nextPeople;
 
-    // 👇👇👇
-    merge: (previous, response) => {
-      // in the first merge, `previous` will not be defined
-      if (!previous) return response;
-
+      // otherwise combine the data
       return {
-        // combine both lists
-        people: [...previous.people, ...response.people],
-        // take the most recent pagination
-        pagination: response.pagination,
+        ...nextPeople,
+        results: [...prevPeople.results, ...nextPeople.results],
       };
     },
-    // 👆👆👆
-    //
   },
   make: () => ({
     request: page => ({ http }) =>
@@ -147,9 +142,8 @@ const makeGetPeople = defineFetch({
         route: '/people',
         query: {
           page,
-          pageSize: 50,
+          pageSize: 10,
         },
-        // (👆 this will add query params to the URL)
       }),
   }),
 });
@@ -158,54 +152,104 @@ const getPeople = makeGetPeople();
 export default getPeople;
 ```
 
-**`InfinitePeopleList.js`**
+**`InfiniteList.js`**
 
 The component below shows how you can use the fetch above to create an infinite scrolling list!
 
 ```js
-import React, { useEffect } from 'react';
+import React, { useRef } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import { Guard, useDispatch, useData, useStatus, isLoading } from 'resift';
 import getPeople from './getPeople';
-import InfiniteList from './InfiniteList';
-import { useDispatch, useFetch, isLoading } from 'resift';
+import useInterval from 'use-interval';
+import { CircularProgress, List, ListItem, ListItemText } from '@material-ui/core';
 
-function InfinitePeopleList() {
+function InfiniteList() {
   const dispatch = useDispatch();
-  const [requestMorePeople, setRequestMorePeople] = useState(true);
-  const people = useData(getPeople) || []; // the data could be null
+
+  const data = useData(getPeople);
   const status = useStatus(getPeople);
+  const scrollAnchorRef = useRef();
+  const rootRef = useRef();
 
-  useEffect(() => {
-    if (!requestMorePeople) return;
+  const checkToLoadMore = () => {
+    // if already loading, then early return
+    if (isLoading(status)) return;
 
-    setRequestMorePeople(false);
-
-    // first request, no previous pagination yet
-    if (!people) {
-      dispatch(peopleFetch(0));
+    // if there is no data, then make the first request
+    if (!data) {
+      dispatch(getPeople(0));
       return;
     }
 
-    // pull off pagination info, use it to request the next
-    const { page, total, pageSize } = people.pagination;
-    if (page * pageSize > total) return; // bounds check
+    const { page, pageSize, total } = data;
 
-    dispatch(peopleFetch(page + 1));
-  }, [requestMorePeople, dispatch]);
+    // check if there is more content to fetch, if not, early return
+    if (page * pageSize >= total) return;
+
+    // get the element instances
+    const scrollAnchor = scrollAnchorRef.current;
+    if (!scrollAnchor) return;
+    const root = rootRef.current;
+    if (!root) return;
+
+    const { top } = scrollAnchor.getBoundingClientRect();
+    const { height } = root.getBoundingClientRect();
+
+    // early return if the scroll anchor is out of view
+    if (top > height) return;
+
+    dispatch(getPeople(page + 1));
+  };
+
+  useInterval(checkToLoadMore, 500);
 
   return (
-    <InfiniteList
-      items={people}
-      // 👇 this will fire when the user hits the end of the list
-      onScrollToEnd={() => setRequestMorePeople(true)}
-      loading={isLoading(status)}
-    />
+    <List ref={rootRef}>
+      <Guard fetch={getPeople}>
+        {({ results: people }) =>
+          people.map(person => (
+            <ListItem key={person.id}>
+              <ListItemText>{person.name}</ListItemText>
+            </ListItem>
+          ))
+        }
+      </Guard>
+
+      <div ref={scrollAnchorRef}>{isLoading(status) && <CircularProgress size={24} />}</div>
+
+      <Guard fetch={getPeople}>
+        {({ page, pageSize, total }) => {
+          if (page * pageSize < total) return null;
+
+          return (
+            <ListItem>
+              <ListItemText>-- End of list --</ListItemText>
+            </ListItem>
+          );
+        }}
+      </Guard>
+    </List>
   );
 }
+
+export default InfiniteList;
 ```
 
-The component above uses an effect that watches for when `requestMorePeople` changes. When it changes to `true`, it grabs the current pagination information and dispatches another request for the next page.
+The component above uses the hook `useInterval` to poll and run the function `checkToLoadMore`. This function will run checks and then `dispatch` a fetch for the next page.
 
-When the next page comes in, the `merge` we defined will run and merge the previous people list with the current one. After the merge returns the next state, it will push an update to all components subscribed via `useFetch` and the new people will populate the list.
+When the next page comes in, the `merge` we defined will run and merge the previous people list with the current one. After the merge returns the next state, it will push an update to all components and the new people will populate the list.
+
+---
+
+See the working example below:
+
+<iframe src="https://codesandbox.io/embed/resift-infinite-scroll-df5kt?fontsize=14"
+     style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;"
+     title="ReSift Infinite Scroll"
+     allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
+     sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
+   ></iframe>
 
 ## Merges across namespaces
 
@@ -213,24 +257,24 @@ There are certain scenarios where you'd want _react_ to a successful response fr
 
 For example, let's say you have three fetches:
 
-- `makeMovieItemFetch` — a fetch that grabs a single movie
-- `makeUpdateMovieItemFetch` — a fetch that updates a single movie item
-- `makeMovieListFetch` — a fetch that grabs all the movies
+- `makeGetMovieItem` — a fetch that grabs a single movie
+- `makeUpdateMovieItem` — a fetch that updates a single movie item
+- `getMovieListFetch` — a fetch that grabs all the movies
 
 These three fetches share the same backend and the same data so ideally want to connect them in a way where if one updates, the rest of the fetches can react accordingly.
 
-We can do this using the `merge` object syntax.
+We can do this using the `merge` _object_ syntax.
 
 Instead of passing a single function to `merge`, we can pass in an object. The keys of this object can be any other fetch's `namespace`. The value of the key will be a merge function that determines how the state of the current namespace will react to new state from another namespace (or even the current namespace).
 
 The examples below implement **merges across namespaces**.
 
-`makeMovieItemFetch.js`
+`makeGetMovieItem.js`
 
 ```js
 import { defineFetch } from 'resift';
 
-const makeMovieItemFetch = defineFetch({
+const makeGetMovieItem = defineFetch({
   displayName: 'Get Movie Item',
   share: {
     namespace: 'movieItem',
@@ -262,15 +306,15 @@ const makeMovieItemFetch = defineFetch({
   }),
 });
 
-export default makeMoveItemFetch;
+export default makeGetMovieItem;
 ```
 
-`makeUpdateMovieItemFetch.js`
+`makeUpdateMovieItem.js`
 
 ```js
 import { defineFetch } from 'resift';
 
-const makeUpdateMovieFetch = defineFetch({
+const makeUpdateMovieItem = defineFetch({
   displayName: 'Update Movie Item',
   // note that this has the same namespace as above
   share: {
@@ -294,15 +338,15 @@ const makeUpdateMovieFetch = defineFetch({
   }),
 });
 
-export default makeUpdateMovieFetch;
+export default makeUpdateMovieItem;
 ```
 
-`movieListFetch.js`
+`getMovieList.js`
 
 ```js
 import { defineFetch } from 'resift';
 
-const makeMovieListFetch = defineFetch({
+const makeGetMovieList = defineFetch({
   displayName: 'Get Movie List',
   // note that this has a _different_ namespace as above because this fetch is shared
   share: {
@@ -338,8 +382,17 @@ const makeMovieListFetch = defineFetch({
   }),
 });
 
-const movieListFetch = makeMovieListFetch();
-export default movieListFetch;
+const getMovieList = makeGetMovieList();
+export default getMovieList;
 ```
 
-## Statues and shares
+The `movieItem` and `movieList` implements merge functions that tell ReSift what to do when a response comes back from either namespace.
+
+---
+
+See the ReSift Notes example app from the [Quick glance](../introduction/quick-glance.md#demo-app) for a complete example of this concept.
+
+The `makeGetNoteItem` fetch and the `getNoteList` fetch both implement ReSift object syntax shares. Notice how when a note item is updated, the note list updates as well.
+
+<iframe src="https://codesandbox.io/embed/resift-notesj-xwp9r?fontsize=14" title="ReSift Notes" allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb" style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;" sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"></iframe>
+<br />
