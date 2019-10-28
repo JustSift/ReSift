@@ -21,7 +21,7 @@ import React, { useEffect } from 'react';
 import { defineFetch } from 'resift';
 
 // get a person
-const makePersonFetch = defineFetch({
+const makeGetPerson = defineFetch({
   displayName: 'Get Person',
 
   // 👇👇👇
@@ -38,7 +38,7 @@ const makePersonFetch = defineFetch({
 });
 
 // update a person
-const makeUpdatePersonFetch = defineFetch({
+const makeUpdatePerson = defineFetch({
   displayName: 'Update Person',
 
   // 👇👇👇
@@ -60,9 +60,19 @@ Because both fetch definitions use the same `namespace`, ReSift will ensure they
 
 That means:
 
-- When one fetch receives data, it will be available for any other fetch that shares the same namespace + key combo.
+- When one fetch receives data, it will be available for any other fetch that shares the same namespace and ID.
 - When one fetch is loading, it will is will cause other fetches that share the same namespace + key to also be loading.
 - When one fetch has an error, it will cause any other related fetches to have an error.
+
+---
+
+Check out the demo below:
+
+- When you edit the unshared post, it does not update immediately because ReSift does not know the get and update fetch are related. If you REFRESH the data manually, then you'll see the content update.
+- When you edit the shared post, you'll see the data change immediately, without needing to manually refresh the data.
+
+<iframe src="https://codesandbox.io/embed/shared-vs-non-shared-fetches-usk9t?fontsize=14" style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;" title="Shared vs Non-Shared Fetches" allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb" sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
+></iframe>
 
 ## Merges
 
@@ -74,7 +84,7 @@ This is where you can use ReSift `merge`s.
 
 **ReSift `merge`s allow you to override the default way ReSift merges a successful response to the existing data in the cache.**
 
-The example we'll use is infinite scrolling using a paginated endpoint: When the user scrolls to the end of the list, we should dispatch a request for the next page and then merge the new results with the existing result.
+The example we'll use is infinite scrolling using a paginated endpoint: When the user scrolls to the end of the list, we should dispatch a request for the next page and then _merge_ the new results with the existing result.
 
 The paginated endpoint:
 
@@ -103,14 +113,14 @@ The paginated endpoint:
 
 We'll make our UI call this endpoint multiple times to request more data.
 
-**`peopleFetch.js`**
+**`getPeople.js`**
 
 This is the fetch itself. Notice how the `merge` will take the new response data and merge it back onto the previous state.
 
 ```js
 import { defineFetch } from 'resift';
 
-const makePeopleFetch = defineFetch({
+const makeGetPeople = defineFetch({
   displayName: 'Get People',
   share: {
     namespace: 'people',
@@ -144,8 +154,8 @@ const makePeopleFetch = defineFetch({
   }),
 });
 
-const peopleFetch = makePeopleFetch();
-export default peopleFetch;
+const getPeople = makeGetPeople();
+export default getPeople;
 ```
 
 **`InfinitePeopleList.js`**
@@ -154,14 +164,15 @@ The component below shows how you can use the fetch above to create an infinite 
 
 ```js
 import React, { useEffect } from 'react';
-import peopleFetch from './peopleFetch';
+import getPeople from './getPeople';
 import InfiniteList from './InfiniteList';
 import { useDispatch, useFetch, isLoading } from 'resift';
 
 function InfinitePeopleList() {
   const dispatch = useDispatch();
   const [requestMorePeople, setRequestMorePeople] = useState(true);
-  const [people, status] = useFetch(peopleFetch);
+  const people = useData(getPeople) || []; // the data could be null
+  const status = useStatus(getPeople);
 
   useEffect(() => {
     if (!requestMorePeople) return;
