@@ -13,7 +13,7 @@ You can think of a context fetch as just a regular fetch that uses the built-in 
 
 React context is ideal for ["low frequency unlikely updates (like locale/theme)"](https://github.com/facebook/react/issues/14110#issuecomment-448074060) because it uses "tree walking" to get updates (vs Redux's subscription mechanism). In essence, this means you can pull data from context as desired at near zero-cost with no worries of "tearing" (i.e. inconsistent state due to different parts of the tree getting updates at different times).
 
-When we have app-wide fetches for app-wide data, it's ideal to use a context to grab the data from the fetch because these objects (e.g. the Sift configuration) may be used several times in one component (due to many custom hooks that use the config). If context is not used, then each use of the config would result in a Redux subscription.
+When we have app-wide fetches for app-wide data, it's ideal to use a context to grab the data from the fetch because these objects (e.g. an app configuration) may be used several times in one component (due to many custom hooks that use the config). If context is not used, then each use of the config would result in a Redux subscription.
 
 Subscription mechanisms require components to subscribe on mount and then unsubscribe on un-mount. Since Resift uses Redux subscriptions internally, that means any component that use `useFetch` adds a subscription to Redux. This is usually the ideal path for most fetches however there are cases where too many Redux subscriptions causes problems. Specifically has occurred when we unknowingly created a list 500+ Redux subscriptions by having items of a list use `useFetch`.
 
