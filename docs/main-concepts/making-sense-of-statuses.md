@@ -107,7 +107,7 @@ You can combine statuses using the same logic as above with the function `combin
 ```js
 import { combineStatuses, useStatus } from 'resift';
 
-function Container() {
+function MyComponent() {
   const getPerson123 = makeGetPerson('123');
   const getPerson456 = makeGetPerson('456');
 
@@ -117,5 +117,25 @@ function Container() {
   const status = combineStatuses(status123, status456);
 
   // ...
+}
+```
+
+## The behavior of shared fetches
+
+You might have noticed that when you have a shared fetch, its status is affected by any fetch instances that are loading.
+
+So for example, if you had two fetches that were shared e.g. `getPerson` and `updatePerson`, then when the `updatePerson` fetch has a status of `LOADING` so does the `getPerson` fetch. This is intensional. However, if you would only like the status of your fetch to be the fetch in question (vs a combined status of all the related shared fetches), then you pass the option `isolatedStatus: true` to the options fo `useStatus`.
+
+```js
+function MyComponent() {
+  const updateStatus = useStatus(updatePerson, {
+    isolatedStatus: true, // 👈 this tells resift to only consider the status of `updatePerson`
+  });
+
+  if (isLoading(updateStatus)) {
+    // ...
+  }
+
+  return /* ... */;
 }
 ```
