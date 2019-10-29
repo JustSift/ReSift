@@ -51,9 +51,9 @@ If we changed the name of the service to something else besides `http`, then tha
 
 ## Writing a data service
 
-In order to write a data service, you must define a curried function. The first set of parameters (`onCancel` and `getCanceled`) are injected by ReSift. These methods are for the cancellation mechanism. The second set of parameters are injected by the callers of your services.
-
 The following example defines a function `createGraphQlService` that will return a service that makes GraphQL requests.
+
+In order to write a data service, you must define a curried function. The first set of parameters (`onCancel` and `getCanceled`) are injected by ReSift. These methods are for the cancellation mechanism. The second set of parameters are injected by the callers of your services.
 
 It takes in a `rootEndpoint` for configuration and returns the curried function defining what the services does.
 

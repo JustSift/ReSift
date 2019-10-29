@@ -12,9 +12,9 @@ Similar to ReSift, the Apollo client and Relay are state management libraries fo
 
 ReSift has the same responsibilities as the Apollo client and Relay. The Apollo client, Relay, and ReSift function as libraries that handle fetching, caching, and reporting the status of inflight requests. They're are all global state containers that will hold the state of your data fetches outside of your component tree.
 
-ReSift is has one major advantage/trade-off — **ReSift does _not_ require GraphQL**.
+ReSift is has one major advantage: **ReSift does _not_ require GraphQL**.
 
-ReSift is agnostic on how to get data. You can use traditional RESTful services, local or async storage, and even GraphQL too.
+ReSift is agnostic on how to get data. You can use traditional RESTful services, local or async storage, and [even GraphQL too](../main-concepts/what-are-data-services.md#writing-a-data-service).
 
 However, the since Apollo and Relay are GraphQL only, they can leverage data schemas from GraphQL to normalize incoming data inside their caching solutions automatically. This means that if you update a piece of information using Apollo or Relay, that piece of information will update anywhere it's used.
 
