@@ -195,6 +195,37 @@ This occurs because of the effect (via `useEffect`) that watches the dependencie
 
 In this case, the value `getPerson` will change when the `personId` changes. If `personId` changes, then `getPerson` will change, and that will tell the effect to re-run and send off another request.
 
+## Clearing fetches from the cache
+
+If you no longer have use for the data in the cache, you can optionally clear it using `useClearFetch`.
+
+> **NOTE:** we don't expect you to be needing to clear the cache often. ReSift's cache is in-memory and will be reset on refresh or reboot.
+
+```js
+import React from 'react';
+import { Guard, useDispatch, useClearFetch } from 'resift';
+import getResource from './getResource';
+
+function Component() {
+  const clear = useClearFetch();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getResource);
+
+    // clear fetch works great with `useEffect`'s clean-up phase
+    // https://reactjs.org/docs/hooks-effect.html#effects-with-cleanup
+    return () => {
+      clear(getResource);
+    };
+  }, []);
+
+  return <Guard fetch={getResource}>{resource => <>{/* ... */}</>}</Guard>;
+}
+
+export default Component;
+```
+
 ## Fetches are global
 
 An important thing to note is that ReSift fetches are _global_ meaning that if a fetch has been completed and used in one component, it will be ready for any another component.
@@ -212,3 +243,4 @@ For example, one component can be responsible for reacting to some event to pre-
       <br />(e.g. `const status = useStatus(getPerson)`)
    2. The fetch instance can be invoked and dispatched to initiate the request.
       <br />(e.g. `dispatch(getPerson())`)
+4. Optionally, you can clear the data from the cache using `useClearFetch`
