@@ -5,7 +5,6 @@
       "introduction/quick-glance",
       "introduction/installation"
     ],
-    "Tutorial": ["tutorial-resift-rentals"],
     "Main Concepts": [
       "main-concepts/whats-a-fetch",
       "main-concepts/how-to-define-a-fetch",

@@ -4,9 +4,9 @@ title: Usage with Redux
 sidebar_label: Usage with Redux
 ---
 
-The installation is a bit different if you're already using Redux.
-
----
+> The installation is a bit different if you're already using Redux. **Please only follow this guide if you're already using Redux.** If you're not please follow the [normal installation](../introduction/installation.md).
+>
+> We'll most likely be moving away from a Redux implementation. [See here.](https://github.com/JustSift/ReSift/issues/32)
 
 Create the data service as you normally…
 
