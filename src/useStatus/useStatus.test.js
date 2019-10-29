@@ -942,7 +942,7 @@ describe('useStatus', () => {
     expect(isLoading(status)).toBe(true);
   });
 
-  test.only("shared statuses: shared statues from different namespaces don't cause the current namespace to be UNKNOWN", () => {
+  test("shared statuses: shared statues from different namespaces don't cause the current namespace to be UNKNOWN", () => {
     const makeGetNoteList = defineFetch({
       staticFetchFactoryId: 'get-note-list',
       displayName: 'Get Note List',
