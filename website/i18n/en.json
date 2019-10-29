@@ -125,10 +125,6 @@
         "title": "ReSift Rentals",
         "sidebar_label": "ReSift Rentals"
       },
-      "guides/context-fetches": {
-        "title": "Context fetches",
-        "sidebar_label": "Context fetches"
-      },
       "guides/http-proxies": {
         "title": "HTTP proxies",
         "sidebar_label": "HTTP proxies"
@@ -148,10 +144,6 @@
       "guides/usage-with-redux": {
         "title": "Usage with Redux",
         "sidebar_label": "Usage with Redux"
-      },
-      "guides/writing-fetch-services": {
-        "title": "Writing fetch services",
-        "sidebar_label": "Writing fetch services"
       },
       "introduction/installation": {
         "title": "Installation",

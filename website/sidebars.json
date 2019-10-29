@@ -17,7 +17,6 @@
     "Examples": ["examples/resift-notes", "examples/resift-rentals", "examples/infinite-scroll"],
     "Guides": [
       "guides/resift-vs-apollo-relay",
-      "guides/writing-fetch-services",
       "guides/http-proxies",
       "guides/usage-with-redux",
       "guides/usage-with-classes",
