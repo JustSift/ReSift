@@ -16,7 +16,7 @@ ReSift is has one major advantage: **ReSift does _not_ require GraphQL**.
 
 ReSift is agnostic on how to get data. You can use traditional RESTful services, local or async storage, and [even GraphQL too](../main-concepts/what-are-data-services.md#writing-a-data-service).
 
-However, the since Apollo and Relay are GraphQL only, they can leverage data schemas from GraphQL to normalize incoming data inside their caching solutions automatically. This means that if you update a piece of information using Apollo or Relay, that piece of information will update anywhere it's used.
+However, since Apollo and Relay are GraphQL only, they can leverage data schemas from GraphQL to normalize incoming data inside their caching solutions automatically. This means that if you update a piece of information using Apollo or Relay, that piece of information will update anywhere it's used.
 
 This is the major trade off of ReSift — because ReSift doesn't have schema information, **ReSift _can't_ automatically normalize your data**.
 
