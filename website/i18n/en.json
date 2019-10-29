@@ -145,6 +145,10 @@
         "title": "Usage with Redux",
         "sidebar_label": "Usage with Redux"
       },
+      "introduction/demo-app": {
+        "title": "Demo app",
+        "sidebar_label": "Demo app"
+      },
       "introduction/installation": {
         "title": "Installation",
         "sidebar_label": "Installation"
