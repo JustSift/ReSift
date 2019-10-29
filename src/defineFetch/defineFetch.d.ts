@@ -2,25 +2,15 @@
  * @docs `defineFetch`
  * This function create a fetch factory.
  */
-export default function defineFetch<
-  KeyArgs extends any[],
-  FetchArgs extends any[],
-  FetchResult,
-  MergeResult
->(
-  params: DefineFetchParams<KeyArgs, FetchArgs, FetchResult, MergeResult>,
-): FetchActionFactory<KeyArgs, FetchArgs, FetchResult, MergeResult>;
+export default function defineFetch<KeyArgs extends any[], FetchArgs extends any[]>(
+  params: DefineFetchParams<KeyArgs, FetchArgs>,
+): FetchActionFactory<KeyArgs, FetchArgs>;
 
 /**
  * @docs `DefineFetchParams`
  * the shape of the parameter object that goes into `defineFetch`
  */
-export interface DefineFetchParams<
-  KeyArgs extends any[],
-  FetchArgs extends any[],
-  FetchResult,
-  MergeResult
-> {
+export interface DefineFetchParams<KeyArgs extends any[], FetchArgs extends any[]> {
   /**
    * this is a display name
    */
@@ -29,9 +19,9 @@ export interface DefineFetchParams<
   /**
    * this is make.
    */
-  make: (...keyArgs: KeyArgs) => MakeObject<FetchArgs, FetchResult>;
+  make: (...keyArgs: KeyArgs) => MakeObject<FetchArgs>;
 
-  share?: ShareParams<MergeResult>;
+  share?: ShareParams;
   conflict?: 'cancel' | 'ignore';
   staticFetchFactoryId?: string;
 }
@@ -40,30 +30,27 @@ export interface DefineFetchParams<
  * @docs `MakeObject`
  * When defining the `make` function in `defineFetch`, you must return this object.
  */
-interface MakeObject<FetchArgs extends any[], FetchResult> {
-  request: (...fetchArgs: FetchArgs) => (services: any) => FetchResult;
+interface MakeObject<FetchArgs extends any[]> {
+  request: (...fetchArgs: FetchArgs) => (services: any) => any;
 }
 
 /**
  * @docs `ShareParams`
  */
-export interface ShareParams<MergeResult> {
+export interface ShareParams {
   namespace: string;
-  merge?: (previous: any, next: any) => MergeResult;
+  merge?:
+    | ((previous: any, next: any) => any)
+    | { [key: string]: (previous: any, next: any) => any };
 }
 
 /**
  * @docs `FetchActionFactory`
  * the result of calling `defineFetch` is a factory that returns an action creator with meta data
  */
-export type FetchActionFactory<
-  KeyArgs extends any[],
-  FetchArgs extends any[],
-  FetchResult,
-  MergeResult
-> = (
+export type FetchActionFactory<KeyArgs extends any[], FetchArgs extends any[]> = (
   ...args: KeyArgs
-) => FetchActionCreator<FetchArgs, FetchResult, MergeResult> & {
+) => FetchActionCreator<FetchArgs> & {
   meta: {
     fetchFactoryId: string;
     displayName: string;
@@ -98,7 +85,7 @@ export interface FetchActionMeta {
   fetchFactoryId: string;
   key: string;
   displayName: string;
-  share?: ShareParams<any>;
+  share?: ShareParams;
   conflict: 'cancel' | 'ignore';
 }
 

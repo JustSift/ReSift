@@ -18,35 +18,21 @@ This quick glance is just that. Without too many words, here are some quick code
 import React, { useEffect } from 'react';
 import { useDispatch, useStatus, isLoading, Guard } from 'resift';
 import SpinnerOverlay from './SpinnerOverlay';
-
-// import a pre-defined "fetch factory"
 import makeGetPerson from './makeGetPerson';
 
 function Person({ personId }) {
   const dispatch = useDispatch();
-
-  // make a "fetch instance" from a fetch factory
   const getPerson = makeGetPerson(personId);
-  // fetches 👆 are nouns
-  //                 this is a 👆 fetch factory
 
-  // use an effect to re-dispatch requests when the fetch changes
   useEffect(() => {
-    // NOTE: this dispatching doesn't have to occur in this
-    // component. you can initiate the fetch from any component
-    // because ReSift's fetches are _global_.
     dispatch(getPerson());
   }, [dispatch, getPerson]);
 
-  // get the status associated with your fetch
   const status = useStatus(getPerson);
 
   return (
     <div>
-      {/* show a spinner overlay during the initial fetch or any re-fetches */}
       {isLoading(status) && <SpinnerOverlay />}
-
-      {/* the guard ensures that the data will be there */}
       <Guard fetch={getPerson}>{person => <div>Hello, {person.name}!</div>}</Guard>
     </div>
   );
@@ -62,16 +48,10 @@ export default Person;
 ```js
 import { defineFetch } from 'resift';
 
-// `makeGetPerson` is a "fetch factory" which defines what this fetch does and
-// how it gets data
 const makeGetPerson = defineFetch({
   displayName: 'Get Person',
-
-  // These 👇 are the arguments to `makeGetPerson`
   make: personId => ({
     request: () => ({ http }) =>
-      //      The http  👆 service is being "picked off" and used
-      //      to send off the request
       http({
         method: 'GET',
         route: `/people/${personId}`,
