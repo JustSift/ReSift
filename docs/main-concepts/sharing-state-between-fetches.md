@@ -245,11 +245,11 @@ When the next page comes in, the `merge` we defined will run and merge the previ
 See the working example below:
 
 <iframe src="https://codesandbox.io/embed/resift-infinite-scroll-df5kt?fontsize=14"
-     style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;"
-     title="ReSift Infinite Scroll"
-     allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
-     sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
-   ></iframe>
+  style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;"
+  title="ReSift Infinite Scroll"
+  allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
+  sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
+></iframe>
 
 ## Merges across namespaces
 
