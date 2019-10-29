@@ -11,7 +11,8 @@
       "main-concepts/how-to-define-a-fetch",
       "main-concepts/sharing-state-between-fetches",
       "main-concepts/making-sense-of-statuses",
-      "main-concepts/what-are-data-services"
+      "main-concepts/what-are-data-services",
+      "main-concepts/error-handling"
     ],
     "Examples": ["examples/crud-example", "examples/multiple-request-defineFetch"],
     "Guides": [
@@ -20,7 +21,8 @@
       "guides/writing-fetch-services",
       "guides/http-proxies",
       "guides/usage-with-redux",
-      "guides/usage-with-classes"
+      "guides/usage-with-classes",
+      "guides/typescript-support"
     ],
     "API": [
       "api/about-api-docs",

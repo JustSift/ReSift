@@ -133,6 +133,10 @@
         "title": "ReSift vs Apollo and Relay",
         "sidebar_label": "ReSift vs Apollo and Relay"
       },
+      "guides/typescript-support": {
+        "title": "TypeScript support",
+        "sidebar_label": "TypeScript support"
+      },
       "guides/usage-with-classes": {
         "title": "Usage with classes",
         "sidebar_label": "Usage with classes"
@@ -174,7 +178,8 @@
         "sidebar_label": "Sharing state between fetches"
       },
       "main-concepts/using-the-http-service": {
-        "title": "main-concepts/using-the-http-service"
+        "title": "Using the HTTP service",
+        "sidebar_label": "Using the HTTP service"
       },
       "main-concepts/using-your-fetch": {
         "title": "Using your fetch",
