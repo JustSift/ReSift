@@ -11,7 +11,7 @@
       "main-concepts/how-to-define-a-fetch",
       "main-concepts/sharing-state-between-fetches",
       "main-concepts/making-sense-of-statuses",
-      "main-concepts/using-the-http-service"
+      "main-concepts/what-are-data-services"
     ],
     "Examples": ["examples/crud-example", "examples/multiple-request-defineFetch"],
     "Guides": [
