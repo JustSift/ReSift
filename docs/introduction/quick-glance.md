@@ -17,7 +17,6 @@ This quick glance is just that. Without too many words, here are some quick code
 ```js
 import React, { useEffect } from 'react';
 import { useDispatch, useStatus, isLoading, Guard } from 'resift';
-import SpinnerOverlay from './SpinnerOverlay';
 import makeGetPerson from './makeGetPerson';
 
 function Person({ personId }) {
@@ -32,7 +31,7 @@ function Person({ personId }) {
 
   return (
     <div>
-      {isLoading(status) && <SpinnerOverlay />}
+      {isLoading(status) && <div>Loading...</div>}
       <Guard fetch={getPerson}>{person => <div>Hello, {person.name}!</div>}</Guard>
     </div>
   );
