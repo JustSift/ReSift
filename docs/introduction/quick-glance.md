@@ -66,7 +66,7 @@ function Person({ personId }) {
     <div>
       {isLoading(status) && <div>Loading...</div>}
 
-      {/* 3) pull data from a _pre-loaded_ fetch */}
+      {/* 3) pull data from a potentially _pre-loaded_ fetch */}
       <Guard fetch={getPerson}>{person => <>Hello, {person.name}!</>}</Guard>
     </div>
   );

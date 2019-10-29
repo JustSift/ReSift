@@ -38,4 +38,5 @@ ReSift is a capable and versatile library for data fetches. ReSift is opinionate
 - 🔌 Pluggable via custom "data services"
 - 🌐 Universal — Share code amongst your apps. **Works with React Native!**
 - 🎣 Hooks API
-- ⚛️ Optional Redux integration with Redux dev tools support
+- 🤝 Full TypeScript support
+  <!-- - 📅 Coming soon: Experimental Suspense and Concurrent Mode support -->
