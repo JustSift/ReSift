@@ -26,7 +26,7 @@ We believe this is sufficient for creating data-driven applications and a great 
 
 (However, if you are using GraphQL, we recommend you just use Apollo or Relay.)
 
-## Comparision chart
+## Comparison chart
 
 | Feature 👇                    | ReSift | Relay | Apollo |
 | ----------------------------- | ------ | ----- | ------ |
