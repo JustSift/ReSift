@@ -67,6 +67,13 @@ export default function createHttpService({
 }) {
   return ({ onCancel, getCanceled }) => async requestParams => {
     const { route } = requestParams;
+    if (process.env.NODE_ENV !== 'production') {
+      if (route.includes('?')) {
+        console.warn(
+          `[createHttpService] You included a \`?\` in your route "${route}". We recommend using \`query\` instead. https://resift.org/docs/api/create-http-service#httpparams`,
+        );
+      }
+    }
 
     try {
       if (getCanceled()) {
