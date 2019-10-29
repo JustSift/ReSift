@@ -14,7 +14,7 @@
       "main-concepts/what-are-data-services",
       "main-concepts/error-handling"
     ],
-    "Examples": ["examples/resift-notes", "examples/resift-rentals", "examples/infinite-scroll"],
+    "Examples": ["examples/resift-notes", "examples/infinite-scroll"],
     "Guides": [
       "guides/resift-vs-apollo-relay",
       "guides/http-proxies",
