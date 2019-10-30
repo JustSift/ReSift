@@ -6,7 +6,7 @@ sidebar_label: ReSift vs Apollo and Relay
 
 ## What are Apollo and Relay?
 
-Similar to ReSift, the Apollo client and Relay are state management libraries for fetches. They have the same goals as ReSift. However, the biggest distinction between Apollo and Relay and ReSift is that Apollo and Relay are GraphQL clients. This means that you must to use GraphQL if you want to use Apollo or Relay.
+Similar to ReSift, [the Apollo client](https://www.apollographql.com/docs/react/) and [Relay](https://relay.dev/) are state management libraries for fetches. They have the same goals as ReSift. However, the biggest distinction between Apollo and Relay and ReSift is that Apollo and Relay are [GraphQL](https://graphql.org/) clients. This means that you must to use [GraphQL](https://graphql.org/) if you want to use Apollo or Relay.
 
 ## ReSift vs Apollo/Relay
 

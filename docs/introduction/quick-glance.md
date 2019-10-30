@@ -6,7 +6,7 @@ sidebar_label: Quick glance
 
 **ReSift is the [Relay](https://relay.dev/)/[Apollo](https://www.apollographql.com/docs/react/) of REST.**
 
-This just means that we've taken the time understand why tools like Relay and Apollo are good and apply that knowledge to ReSift.
+This just means that we've taken the time to understand why tools like Relay and Apollo are good and apply that knowledge to ReSift.
 
 [(see here for a comparison)](../guides/resift-vs-apollo-relay.md)
 
@@ -37,7 +37,7 @@ export default makeGetPerson;
 
 ---
 
-Use this fetch factory to:
+Then you can use this fetch factory to:
 
 1. kick off the initial request
 2. get the status of the fetch
@@ -52,7 +52,10 @@ import makeGetPerson from './makeGetPerson';
 
 function Person({ personId }) {
   const dispatch = useDispatch();
+
+  //                   👇👇👇  this is using the "fetch factory"
   const getPerson = makeGetPerson(personId);
+  //      👆👆👆 this is a "fetch instance"
 
   useEffect(() => {
     // 1) kick off the initial request
