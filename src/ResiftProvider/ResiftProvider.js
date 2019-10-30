@@ -23,8 +23,7 @@ function ResiftProvider({ children, dataService, suppressOutsideReduxWarning }) 
   if (process.env.NODE_ENV !== 'production') {
     if (sawReduxContext && !suppressOutsideReduxWarning) {
       console.warn(
-        // TODO: add docs
-        "[ResiftProvider] Saw an outside Redux context in this tree. If you're using Redux in your application, you don't need to wrap your app in the ResiftProvider.",
+        "[ResiftProvider] Saw an outside Redux context in this tree. If you're using Redux in your application, you don't need to wrap your app in the ResiftProvider. See https://resift.org/docs/guides/usage-with-redux",
       );
     }
   }

@@ -35,7 +35,7 @@ The following sections will go over how to fill out this shape.
 
 ## The `displayName`
 
-The display name should be a human readable string to help you debug. These display names are seen in the [Dev Tools](../TODO.md) and can help you get some information when each fetch is dispatched, finished, or finished with errors. [See the Dev Tools section for more info.](../TODO.md)
+The display name should be a human readable string to help you debug. These display names are seen in the Redux Dev Tools and can help you get some information when each fetch is dispatched, finished, or finished with errors.
 
 The suggested naming convention is: **{[CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) operation} {Resource name}**
 
@@ -140,9 +140,9 @@ const makeGetPerson = defineFetch({
 });
 ```
 
-…defines how to request data from ReSift's [data services](../TODO.md).
+…defines how to request data from ReSift's [data services](../main-concepts/what-are-data-services.md).
 
-You define the `request` function as a [curried function](https://stackoverflow.com/a/36321/5776910) that separates the application of "request arguments" from the application of "[data service](../TODO.md) arguments".
+You define the `request` function as a [curried function](https://stackoverflow.com/a/36321/5776910) that separates the application of "request arguments" from the application of "[data service](../main-concepts/what-are-data-services.md) arguments".
 
 ### What are request arguments/parameter?
 
@@ -202,7 +202,7 @@ export default ExamplePersonForm;
 
 ### What are data service parameters?
 
-The inner set of parameters in the curried `request` function is the [data service](../TODO.md) parameter.
+The inner set of parameters in the curried `request` function is the [data service](../main-concepts/what-are-data-services.md) parameter.
 
 ```js
 const makeUpdatePerson = defineFetch({
@@ -222,9 +222,9 @@ const makeUpdatePerson = defineFetch({
 });
 ```
 
-The **data service parameter** is an object that you can [destructure](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment#Unpacking_fields_from_objects_passed_as_function_parameter) to "pick off" a [data service](../TODO.md). This data service can then be used to make data calls to your backend.
+The **data service parameter** is an object that you can [destructure](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment#Unpacking_fields_from_objects_passed_as_function_parameter) to "pick off" a [data service](../main-concepts/what-are-data-services.md). This data service can then be used to make data calls to your backend.
 
-> Hang tight for now! There is an [in-depth tutorial on data services in a later doc](../TODO.md) that details this more. For now, just know what the data service argument is.
+> Hang tight for now! There is an [in-depth tutorial on data services in a later doc](../main-concepts/what-are-data-services.md) that details this more. For now, just know what the data service argument is.
 
 ### The `request` function body
 

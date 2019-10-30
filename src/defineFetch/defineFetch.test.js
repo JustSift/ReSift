@@ -89,7 +89,7 @@ describe('defineFetch', () => {
     expect(() => {
       fetch();
     }).toThrowErrorMatchingInlineSnapshot(
-      `"[defineFetch] Expected \`fetch\` to return a curried function"`,
+      `"[defineFetch] Expected \`fetch\` to return a curried function. https://resift.org/docs/main-concepts/how-to-define-a-fetch#the-request-function"`,
     );
   });
 
@@ -286,7 +286,7 @@ describe('normalizeMerge', () => {
     expect(() => {
       normalizeMerge('test', namespace);
     }).toThrowErrorMatchingInlineSnapshot(
-      `"[sharedReducer] Could not match typeof merge. See docs. (TODO add docs link)"`,
+      `"[sharedReducer] Could not match typeof merge. See here for how to define merges: https://resift.org/docs/main-concepts/sharing-state-between-fetches#merges"`,
     );
   });
 });

@@ -30,7 +30,9 @@ export function normalizeMerge(merge, namespace) {
     return merge;
   }
 
-  throw new Error('[sharedReducer] Could not match typeof merge. See docs. (TODO add docs link)');
+  throw new Error(
+    '[sharedReducer] Could not match typeof merge. See here for how to define merges: https://resift.org/docs/main-concepts/sharing-state-between-fetches#merges',
+  );
 }
 
 export function isFetchAction(action) {
@@ -118,8 +120,9 @@ export default function defineFetch({
       const resolvablePayload = makeResult.request(...requestArgs);
 
       if (typeof resolvablePayload !== 'function') {
-        // TODO: add docs
-        throw new Error('[defineFetch] Expected `fetch` to return a curried function');
+        throw new Error(
+          '[defineFetch] Expected `fetch` to return a curried function. https://resift.org/docs/main-concepts/how-to-define-a-fetch#the-request-function',
+        );
       }
 
       // cancellation mechanism

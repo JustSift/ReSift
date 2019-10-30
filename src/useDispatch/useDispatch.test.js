@@ -51,7 +51,7 @@ test('it throws if there is no provider', async () => {
   const error = await gotError;
 
   expect(error.message).toMatchInlineSnapshot(
-    `"[useDispatch] Could not find the respective context. In order to \`useDispatch\` you must add the respective provider."`,
+    `"[useDispatch] Could not find the respective context. In order to \`useDispatch\` you must add the respective provider. https://resift.org/docs/introduction/installation#adding-the-resiftprovider"`,
   );
 });
 

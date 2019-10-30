@@ -6,9 +6,8 @@ import CLEAR from '../prefixes/CLEAR';
 export default function useDispatch() {
   const contextValue = useContext(ReactReduxContext);
   if (!contextValue) {
-    // TODO: add docs link
     throw new Error(
-      '[useDispatch] Could not find the respective context. In order to `useDispatch` you must add the respective provider.',
+      '[useDispatch] Could not find the respective context. In order to `useDispatch` you must add the respective provider. https://resift.org/docs/introduction/installation#adding-the-resiftprovider',
     );
   }
   const { store } = contextValue;

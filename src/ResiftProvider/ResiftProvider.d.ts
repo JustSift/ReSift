@@ -5,7 +5,7 @@ import React from 'react';
  *
  * The provider ReSift gives you that configures Redux for you.
  *
- * [More documentation coming soon](../TODO.md)
+ * See [Usage with Redux](../guides/usage-with-redux) for more info.
  */
 declare const ResiftProvider: React.ComponentType<Props>;
 
@@ -19,7 +19,6 @@ interface Props {
   dataService: any;
   /**
    * Use this option to suppress any warnings about external Redux contexts.
-   * [See this doc for more info.](../TODO.md)
    */
   suppressOutsideReduxWarning?: boolean;
   children?: React.ReactNode;
