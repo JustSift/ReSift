@@ -55,11 +55,8 @@ function memoize(displayName, actionCreatorFactory, make, conflict) {
     const { request } = makeResult;
 
     if (!keyArgs.every(key => typeof key === 'string' || typeof key === 'number')) {
-      const rogueKeys = keyArgs.filter(key => typeof key !== 'string' && typeof key !== 'number');
       throw new Error(
-        `[defineFetch] make arguments must be either a string or a number. Found "${rogueKeys
-          .map(key => JSON.stringify(key))
-          .join(', ')}" for the fetch factory "${displayName}"`,
+        `[defineFetch] make arguments must be either a string or a number. Check calls to the fetch factory "${displayName}" See here https://resift.org/docs/main-concepts/whats-a-fetch#making-a-fetch-and-pulling-data-from-it`,
       );
     }
     if (typeof request !== 'function') {
