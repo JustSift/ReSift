@@ -14,7 +14,10 @@
       "main-concepts/what-are-data-services",
       "main-concepts/error-handling"
     ],
-    "Examples": ["examples/resift-notes", "examples/infinite-scroll"],
+    "Examples": [
+      "examples/resift-notes",
+      "examples/infinite-scroll"
+    ],
     "Guides": [
       "guides/resift-vs-apollo-relay",
       "guides/http-proxies",
@@ -45,7 +48,10 @@
       "api/is-normal",
       "api/is-unknown",
       "api/use-clear-fetch",
-      "api/use-dispatch"
+      "api/use-data",
+      "api/use-dispatch",
+      "api/use-error",
+      "api/use-status"
     ]
   }
 }

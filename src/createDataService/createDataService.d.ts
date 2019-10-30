@@ -12,7 +12,7 @@ export default function createDataService(params: DataServiceParams): any;
  * @docs `DataServiceParams`
  *
  * You must provide an object with the following shape into `createDataService`.
- * See [Writing fetch services](../guides/writing-fetch-services.md) for more info.
+ * See [What are data services](../main-concepts/what-are-data-services.md) for more info.
  */
 export interface DataServiceParams {
   /**
@@ -99,6 +99,13 @@ export interface ErrorAction {
   error: true;
 }
 
+/**
+ * @docs `ServicesFrom`
+ * @keepGenerics
+ *
+ * This is a typescript only module. It's used to get the type of the services object.
+ * [See here for more info.](../guides/usage-with-typescript.md)
+ */
 export type ServicesFrom<ServicesObject extends { [key: string]: (...args: any[]) => any }> = {
   [P in keyof ServicesObject]: ReturnType<ServicesObject[P]>;
 };

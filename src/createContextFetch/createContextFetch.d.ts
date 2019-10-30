@@ -3,9 +3,9 @@ import { FetchInstance } from '../defineFetch';
 
 /**
  * @docs `createContextFetch`
- * Creates a [context fetch](../guides/context-fetches.md).
  *
- * Please [see this doc](../guides/context-fetches.md) to read more about context fetches.
+ * Context fetches are deprecated given that we'll probably switch to a complete
+ * context implementation to support concurrent mode.
  */
 export default function createContextFetch<Data = any>(
   fetch: FetchInstance<any[], Data>,

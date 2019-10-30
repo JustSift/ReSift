@@ -95,7 +95,8 @@ function generateApiDoc(filename, contents) {
       .map(x => x.trim())
       .join('\n')
       .trim()
-      .replace(/@omitRequired/g, '');
+      .replace(/@omitRequired/g, '')
+      .replace(/@keepGenerics/g, '');
   }
 
   function getMarkdownFromJsDoc(node) {
@@ -232,18 +233,23 @@ function generateApiDoc(filename, contents) {
     ]);
   }
 
-  function getFormattedCode(node) {
-    return formatCode(
-      getText(node)
-        // remove js doc comments
-        .replace(/\/\*\*[\s\S]*\*\//g, '')
-        // remove generics (bc they are confusing for non-ts users)
-        .replace(/<[^<>]*>/g, '')
-        // remove export keyword
-        .replace(/\s?export\s/g, '')
-        // remove default keyword
-        .replace(/\s?default\s/g, ''),
-    );
+  function getFormattedCode(node, keepGenerics) {
+    let text = getText(node);
+
+    // remove js doc comments
+    text = text.replace(/\/\*\*[\s\S]*\*\//g, '');
+
+    if (!keepGenerics) {
+      // remove generics (bc they are confusing for non-ts users)
+      text = text.replace(/<[^<>]*>/g, '');
+    }
+
+    text = text // remove export keyword
+      .replace(/\s?export\s/g, '')
+      // remove default keyword
+      .replace(/\s?default\s/g, '');
+
+    return formatCode(text);
   }
 
   const apiBlocks = flatten(getChildren(rootNode).map(child => findApiBlocks(child, rootNode)));
@@ -267,7 +273,7 @@ function generateApiDoc(filename, contents) {
       ${body}
 
       \`\`\`ts
-      ${getFormattedCode(apiBlock)}
+      ${getFormattedCode(apiBlock, getText(apiBlock).includes('@keepGenerics'))}
       \`\`\`
     `;
   });

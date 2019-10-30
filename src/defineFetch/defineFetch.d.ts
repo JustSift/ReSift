@@ -1,6 +1,6 @@
 /**
  * @docs `defineFetch`
- * This function create a fetch factory.
+ * This function creates a fetch factory. See [How to define a fetch](../main-concepts/how-to-define-a-fetch.md) to learn more
  */
 export default function defineFetch<KeyArgs extends any[], FetchArgs extends any[]>(
   params: DefineFetchParams<KeyArgs, FetchArgs>,
@@ -12,17 +12,41 @@ export default function defineFetch<KeyArgs extends any[], FetchArgs extends any
  */
 export interface DefineFetchParams<KeyArgs extends any[], FetchArgs extends any[]> {
   /**
-   * this is a display name
+   * The display name should be a human readable string to help you debug.
    */
   displayName: string;
 
   /**
-   * this is make.
+   * The make function defines two things:
+   *
+   * - how your fetch factory will make fetch instances and
+   * - how your fetch instances will get their data.
+   *
+   * See [How to define a fetch](../main-concepts/how-to-define-a-fetch.md) for more info.
    */
   make: (...keyArgs: KeyArgs) => MakeObject<FetchArgs>;
 
+  /**
+   * If `share` is present, this fetch factory can have its state shared.
+   */
   share?: ShareParams;
+
+  /**
+   * This determines the conflict resolution of ReSift. When two of the same
+   * fetches are inflight, one of the fetches needs to be discard. If the
+   * conflict resolution is set to `cancel`, the older request will be
+   * canceled. If the conflict resolution is set to `ignore`, the newer request
+   * will be ignored in favor of the older request.
+   *
+   * The default is `cancel`
+   */
   conflict?: 'cancel' | 'ignore';
+
+  /**
+   * On creation, fetch factories keep an internal random ID. If you're trying
+   * to re-hydrate this state and would like your fetch factories to resolve to
+   * the same ID instead of a random ID, you can set this property.
+   */
   staticFetchFactoryId?: string;
 }
 
@@ -38,7 +62,19 @@ interface MakeObject<FetchArgs extends any[]> {
  * @docs `ShareParams`
  */
 export interface ShareParams {
+  /**
+   * This namespace represents the group you want this fetch factory to be in.
+   * If you are doing CRUD operations to the same resource on the back-end, then
+   * you probably want to use the same namespace.
+   *
+   * See [Sharing state between fetches](../main-concepts/sharing-state-between-fetches.md)
+   * for more info.
+   */
   namespace: string;
+
+  /**
+   * [See here for more info.](../main-concepts/sharing-state-between-fetches.md#merges-across-namespaces)
+   */
   merge?:
     | ((previous: any, next: any) => any)
     | { [key: string]: (previous: any, next: any) => any };
@@ -82,6 +118,14 @@ export interface FetchActionMeta {
 
 export function isFetchAction(action: any): action is FetchAction;
 
+/**
+ * @docs `typedFetchFactory`
+ *
+ * A helper used to allow you to set the type of data your fetch factory will
+ * return.
+ *
+ * See [Usage with typescript](../guides/usage-with-typescript.md) for more info.
+ */
 export function typedFetchFactory<Data>(): <KeyArgs extends any[], FetchArgs extends any[]>(
   fetchFactory: FetchFactory<KeyArgs, FetchArgs>,
 ) => FetchFactory<KeyArgs, FetchArgs, Data>;

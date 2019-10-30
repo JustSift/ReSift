@@ -93,9 +93,21 @@
         "title": "useClearFetch API",
         "sidebar_label": "useClearFetch"
       },
+      "api/use-data": {
+        "title": "useData API",
+        "sidebar_label": "useData"
+      },
       "api/use-dispatch": {
         "title": "useDispatch API",
         "sidebar_label": "useDispatch"
+      },
+      "api/use-error": {
+        "title": "useError API",
+        "sidebar_label": "useError"
+      },
+      "api/use-status": {
+        "title": "useStatus API",
+        "sidebar_label": "useStatus"
       },
       "doc1": {
         "title": "Latin-ish",
