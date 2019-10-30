@@ -106,7 +106,7 @@ export default function sharedReducer(state = initialState, action) {
     const mergeState = { ..._get(state, ['merges']) };
     // (eslint bug)
     // eslint-disable-next-line no-unused-vars
-    for (const [targetNamespace, mergeFn] of Object.entries(mergeObj)) {
+    for (const targetNamespace of Object.keys(mergeObj)) {
       const merges = { ..._get(mergeState, [targetNamespace]) };
       delete merges[namespace];
 
