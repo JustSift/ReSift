@@ -11,7 +11,6 @@ import isUnknown from '../isUnknown';
 import isLoading from '../isLoading';
 import isError from '../isError';
 import isNormal from '../isNormal';
-import combineStatuses from '../combineStatuses';
 import usePreserveReference from 'use-preserve-reference';
 
 // Combining shared statuses is different because of the `normal` case.
