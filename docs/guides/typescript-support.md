@@ -4,7 +4,7 @@ title: TypeScript support
 sidebar_label: TypeScript support
 ---
 
-Proper usage with TypeScript requires that you type your [fetch factories](../main-concepts/whats-a-fetch.md#defining-a-fetch) and [data services](../main-concepts/whats-a-data-service.md).
+Proper usage with TypeScript requires that you type your [fetch factories](../main-concepts/whats-a-fetch.md#defining-a-fetch) and [data services](../main-concepts/what-are-data-services.md).
 
 ## Getting the types of the data services
 
