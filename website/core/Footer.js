@@ -54,7 +54,11 @@ class Footer extends React.Component {
             >
               Open an issue
             </a>
-            <a href="https://stackoverflow.com/" target="_blank" rel="noreferrer noopener">
+            <a
+              href="https://stackoverflow.com/questions/tagged/resift"
+              target="_blank"
+              rel="noreferrer noopener"
+            >
               Stack Overflow
             </a>
             <a href="https://twitter.com/ricokahler" target="_blank" rel="noreferrer noopener">
