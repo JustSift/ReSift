@@ -45,7 +45,7 @@ const dataService = createDataService({
 export default dataService;
 ```
 
-When you create an HTTP proxy, you provide a path or path options. The HTTP service will iterate through the proxies until it finds a match. The first match found will be the proxy it uses.
+When you create an HTTP proxy, you provide a path or [path options](https://reacttraining.com/react-router/web/api/matchPath/props). The HTTP service will iterate through the proxies until it finds a match. The first match found will be the proxy it uses.
 
 The matching algorithm is a blatant copy/paste of `react-router`'s [`matchPath`](https://reacttraining.com/react-router/web/api/matchPath)
 
