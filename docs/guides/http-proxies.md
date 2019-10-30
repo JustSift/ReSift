@@ -4,7 +4,7 @@ title: HTTP proxies
 sidebar_label: HTTP proxies
 ---
 
-HTTP Proxies are a feature of the HTTP [data service](../main-concepts/what-are-data-services.md).
+**HTTP proxies** is a feature of the HTTP [data service](../main-concepts/what-are-data-services.md).
 
 HTTP proxies allow you to intercept `http` data service calls within fetches and potentially do something else.
 
