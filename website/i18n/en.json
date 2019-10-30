@@ -133,10 +133,6 @@
         "title": "ReSift vs Apollo and Relay",
         "sidebar_label": "ReSift vs Apollo and Relay"
       },
-      "guides/typescript-support": {
-        "title": "TypeScript support",
-        "sidebar_label": "TypeScript support"
-      },
       "guides/usage-with-classes": {
         "title": "Usage with classes",
         "sidebar_label": "Usage with classes"
@@ -144,6 +140,10 @@
       "guides/usage-with-redux": {
         "title": "Usage with Redux",
         "sidebar_label": "Usage with Redux"
+      },
+      "guides/usage-with-typescript": {
+        "title": "Usage with TypeScript",
+        "sidebar_label": "Usage with TypeScript"
       },
       "introduction/demo-app": {
         "title": "Demo app",

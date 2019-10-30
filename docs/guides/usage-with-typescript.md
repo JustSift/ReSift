@@ -1,8 +1,10 @@
 ---
-id: typescript-support
-title: TypeScript support
-sidebar_label: TypeScript support
+id: usage-with-typescript
+title: Usage with TypeScript
+sidebar_label: Usage with TypeScript
 ---
+
+We love TypeScript at Sift. We use it in our production apps and we care deeply about getting the developer experience of TypeScript right within ReSift.
 
 Proper usage with TypeScript requires that you type your [fetch factories](../main-concepts/whats-a-fetch.md#defining-a-fetch) and [data services](../main-concepts/what-are-data-services.md).
 

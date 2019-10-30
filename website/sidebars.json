@@ -18,9 +18,9 @@
     "Guides": [
       "guides/resift-vs-apollo-relay",
       "guides/http-proxies",
+      "guides/usage-with-typescript",
       "guides/usage-with-redux",
-      "guides/usage-with-classes",
-      "guides/typescript-support"
+      "guides/usage-with-classes"
     ],
     "API": [
       "api/about-api-docs",
