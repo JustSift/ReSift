@@ -8,7 +8,7 @@ sidebar_label: HTTP proxies
 
 HTTP proxies allow you to intercept `http` data service calls within fetches and potentially do something else.
 
-You define an HTTP proxy by calling `createHttpProxy` from ReSift.
+You can define an HTTP proxy by calling `createHttpProxy` from ReSift.
 
 A common use case of HTTP proxies is to use them for mocking an HTTP server. We use HTTP proxies to power the demos in these docs.
 
