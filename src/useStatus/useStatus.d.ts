@@ -1,5 +1,5 @@
-import { FetchActionCreator } from '../defineFetch';
+import { FetchInstance } from '../defineFetch';
 
-declare function useStatus(fetch: FetchActionCreator): number;
+declare function useStatus(fetch: FetchInstance): number;
 
 export default useStatus;

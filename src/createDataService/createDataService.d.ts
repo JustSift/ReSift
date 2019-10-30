@@ -98,3 +98,7 @@ export interface ErrorAction {
   payload: Error;
   error: true;
 }
+
+export type ServicesFrom<ServicesObject extends { [key: string]: (...args: any[]) => any }> = {
+  [P in keyof ServicesObject]: ReturnType<ServicesObject[P]>;
+};

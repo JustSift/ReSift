@@ -1,8 +1,8 @@
 import React from 'react';
-import defineFetch from '../defineFetch';
+import defineFetch, { typedFetchFactory } from '../defineFetch';
 import Guard from './Guard';
 
-const makeGetMovie = defineFetch({
+const _makeGetMovie = defineFetch({
   displayName: 'Get Movie',
   make: movieId => ({
     request: () => () => ({
@@ -11,6 +11,13 @@ const makeGetMovie = defineFetch({
     }),
   }),
 });
+
+interface Movie {
+  id: string;
+  name: string;
+}
+
+const makeGetMovie = typedFetchFactory<Movie>()(_makeGetMovie);
 
 function Example() {
   const getMovie = makeGetMovie('movie123');

@@ -4,7 +4,7 @@
  */
 export default function defineFetch<KeyArgs extends any[], FetchArgs extends any[]>(
   params: DefineFetchParams<KeyArgs, FetchArgs>,
-): FetchActionFactory<KeyArgs, FetchArgs>;
+): FetchFactory<KeyArgs, FetchArgs>;
 
 /**
  * @docs `DefineFetchParams`
@@ -48,20 +48,11 @@ export interface ShareParams {
  * @docs `FetchActionFactory`
  * the result of calling `defineFetch` is a factory that returns an action creator with meta data
  */
-export type FetchActionFactory<KeyArgs extends any[], FetchArgs extends any[]> = (
+export type FetchFactory<KeyArgs extends any[], FetchArgs extends any[], Data = any> = (
   ...args: KeyArgs
-) => FetchActionCreator<FetchArgs> & {
-  meta: {
-    fetchFactoryId: string;
-    displayName: string;
-  };
-};
+) => FetchInstance<FetchArgs, Data>;
 
-export interface FetchActionCreator<
-  FetchArgs extends any[] = any,
-  FetchResult = any,
-  MergeResult = any
-> {
+export interface FetchInstance<FetchArgs extends any[] = any, Data = any> {
   (...args: FetchArgs): FetchAction;
 
   meta: FetchActionMeta;
@@ -90,3 +81,7 @@ export interface FetchActionMeta {
 }
 
 export function isFetchAction(action: any): action is FetchAction;
+
+export function typedFetchFactory<Data>(): <KeyArgs extends any[], FetchArgs extends any[]>(
+  fetchFactory: FetchFactory<KeyArgs, FetchArgs>,
+) => FetchFactory<KeyArgs, FetchArgs, Data>;

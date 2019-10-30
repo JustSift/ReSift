@@ -170,3 +170,6 @@ export default function defineFetch({
 
   return memoizedFetchFactory;
 }
+
+// this is for typescript
+export const typedFetchFactory = () => fetchFactory => fetchFactory;

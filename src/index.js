@@ -17,6 +17,7 @@ export { default as createStoreKey } from './createStoreKey';
 export { default as createHttpService } from './createHttpService';
 export { default as dataServiceReducer } from './dataServiceReducer';
 export { default as defineFetch } from './defineFetch';
+export { typedFetchFactory } from './defineFetch';
 export { default as isError } from './isError';
 export { default as isLoading } from './isLoading';
 export { default as isNormal } from './isNormal';

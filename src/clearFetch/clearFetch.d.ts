@@ -1,4 +1,4 @@
-import { FetchActionCreator, FetchActionMeta } from '../defineFetch';
+import { FetchInstance, FetchActionMeta } from '../defineFetch';
 
 /**
  * @docs `clearFetch`
@@ -8,7 +8,7 @@ import { FetchActionCreator, FetchActionMeta } from '../defineFetch';
  *
  * > It's recommended to use [`useClearFetch`](./use-clear-fetch.md) instead of this function.
  */
-export default function clearFetch(fetch: FetchActionCreator): ClearFetchAction;
+export default function clearFetch(fetch: FetchInstance): ClearFetchAction;
 export interface ClearFetchAction {
   type: string;
   meta: FetchActionMeta;

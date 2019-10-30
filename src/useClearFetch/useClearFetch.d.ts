@@ -1,4 +1,4 @@
-import { FetchActionCreator } from '../defineFetch';
+import { FetchInstance } from '../defineFetch';
 
 /**
  * @docs `useClearFetch`
@@ -27,4 +27,4 @@ import { FetchActionCreator } from '../defineFetch';
  *
  * `useClearFetch` signature:
  */
-export default function useClearFetch(): (fetch: FetchActionCreator) => any;
+export default function useClearFetch(): (fetch: FetchInstance) => any;

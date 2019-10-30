@@ -1,5 +1,5 @@
 import React from 'react';
-import defineFetch from '../defineFetch';
+import defineFetch, { typedFetchFactory } from '../defineFetch';
 import createContextFetch from './createContextFetch';
 
 // test with no merge result
@@ -8,7 +8,7 @@ import createContextFetch from './createContextFetch';
     foo: string;
   }
 
-  const makeFetch = defineFetch({
+  const _makeFetch = defineFetch({
     displayName: 'Get Example',
     make: (id: string) => ({
       request: (x: number) => ({ http }) =>
@@ -18,6 +18,8 @@ import createContextFetch from './createContextFetch';
         }) as Promise<ExampleObject>,
     }),
   });
+
+  const makeFetch = typedFetchFactory<ExampleObject>()(_makeFetch);
 
   const fetch = makeFetch('123');
 
@@ -51,8 +53,8 @@ import createContextFetch from './createContextFetch';
     return (
       <>
         {/* No child = expected typing error */}
+        // @ts-ignore
         <ContextFetchProvider></ContextFetchProvider>
-
         {/* with child = it's all good */}
         <ContextFetchProvider>
           <div />
