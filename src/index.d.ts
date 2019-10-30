@@ -14,10 +14,14 @@ export { default as createContextFetch } from './createContextFetch';
 export { default as createDataService, ServicesFrom } from './createDataService';
 export { default as createHttpProxy } from './createHttpProxy';
 export { default as createStoreKey } from './createStoreKey';
-export { default as createHttpService } from './createHttpService';
+export { default as createHttpService, HttpParams } from './createHttpService';
 export { default as dataServiceReducer } from './dataServiceReducer';
-export { default as defineFetch } from './defineFetch';
-export { typedFetchFactory, FetchFactory, FetchInstance } from './defineFetch';
+export {
+  default as defineFetch,
+  typedFetchFactory,
+  FetchFactory,
+  FetchInstance,
+} from './defineFetch';
 export { default as isError } from './isError';
 export { default as isLoading } from './isLoading';
 export { default as isNormal } from './isNormal';
