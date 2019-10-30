@@ -1,8 +1,8 @@
 # ReSift · [![Build Status](https://travis-ci.org/JustSift/ReSift.svg?branch=master)](https://travis-ci.org/JustSift/ReSift) [![Coverage Status](https://coveralls.io/repos/github/JustSift/ReSift/badge.svg?branch=master)](https://coveralls.io/github/JustSift/ReSift?branch=master)
 
-> 👋 **Too many words? Head over to the [Quick glance](./quick-glance.md)** 👉
+> 👋 **Too many words? Head over to the [Quick glance](https://resift.org/docs/introduction/quick-glance)** 👉
 
-**ReSift is a state management library for fetches** with the goal of giving your team a capable standard for fetching, storing, and reacting to data.
+**ReSift is a React state management library for fetches** with the goal of giving your team a capable standard for fetching, storing, and reacting to data.
 
 We like to think of ReSift as the [Relay](https://relay.dev/) of REST. ReSift is in the same class of tools as [Relay](https://relay.dev/) and [the Apollo Client](https://www.apollographql.com/docs/react/). However, ReSift does _not_ require GraphQL.
 
@@ -30,8 +30,10 @@ ReSift is a capable and versatile library for data fetches. ReSift is opinionate
 **Features:**
 
 - 💾 Framework for storing and retrieving responses from data requests
-- 📬 Monitoring and updating the status of inflight requests
-- 🔌 Pluggable via custom "data services"
+- 📬 Automatic status/loading indicators
+- 🔌 Pluggable/Backend agonistic
 - 🌐 Universal — Share code amongst your apps. **Works with React Native!**
 - 🎣 Hooks API
 - 🤝 Full TypeScript support
+
+> 👋 Head over to the [Quick glance](https://resift.org/docs/introduction/quick-glance) to learn more 👉
