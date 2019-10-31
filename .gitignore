@@ -5,3 +5,4 @@ coverage
 website/build
 docs/api/**/*
 !docs/api/about-api-docs.md
+stats.json

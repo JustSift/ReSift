@@ -1,4 +1,3 @@
-import _get from 'lodash/get';
 import { combineReducers, Reducer } from 'redux';
 import actions, { ActionsState } from './actionsReducer';
 import shared, { SharedState } from './sharedReducer';

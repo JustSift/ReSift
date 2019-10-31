@@ -1,14 +1,13 @@
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import createStoreKey from '../createStoreKey';
-import _get from 'lodash/get';
 
 const makeErrorSelector = fetch => state => {
   if (!fetch) {
     return null;
   }
 
-  const isFetchInstance = _get(fetch, ['meta', 'type']) === 'FETCH_INSTANCE';
+  const isFetchInstance = fetch?.meta?.type === 'FETCH_INSTANCE';
   if (!isFetchInstance) {
     throw new Error('[useError] expected to see a fetch instance.');
   }
@@ -22,7 +21,7 @@ const makeErrorSelector = fetch => state => {
 
   const storeKey = createStoreKey(displayName, fetchFactoryId);
 
-  const value = _get(state, ['dataService', 'actions', storeKey, key]);
+  const value = state?.dataService?.actions?.[storeKey]?.[key];
 
   if (!value) {
     return null;

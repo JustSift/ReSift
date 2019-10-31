@@ -3,7 +3,6 @@ import ERROR from '../prefixes/ERROR';
 import delay from 'delay';
 import DeferredPromise from '../DeferredPromise';
 import defineFetch from '../defineFetch';
-import _noop from 'lodash/noop';
 import dataServiceReducer from '../dataServiceReducer';
 import createActionType from '../createActionType';
 import CanceledError from '../CanceledError';
@@ -232,7 +231,7 @@ describe('handleAction', () => {
     await handleAction({
       state: {},
       services: { exampleService },
-      dispatch: _noop,
+      dispatch: () => {},
       action: actionCreator('test arg'),
     });
 

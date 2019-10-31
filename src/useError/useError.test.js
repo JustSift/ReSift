@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { act, create } from 'react-test-renderer';
 import { Provider } from 'react-redux';
 import delay from 'delay';
-import _noop from 'lodash/noop';
 import useError from './useError';
 import useDispatch from '../useDispatch';
 import useStatus from '../useStatus';
@@ -295,7 +294,7 @@ test('it returns the error if there is one', async () => {
     const status = useStatus(getThing);
 
     useEffect(() => {
-      dispatch(getThing()).catch(_noop);
+      dispatch(getThing()).catch(() => {});
     }, [dispatch]);
 
     useEffect(() => {

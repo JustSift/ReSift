@@ -1,5 +1,3 @@
-import _get from 'lodash/get';
-import _isEmpty from 'lodash/isEmpty';
 import { isFetchAction } from '../defineFetch';
 import { isSuccessAction } from '../createDataService';
 import { isClearAction } from '../clearFetch';
@@ -22,21 +20,21 @@ export default function sharedReducer(state = initialState, action) {
 
     const { namespace, mergeObj } = share;
 
-    const mergeState = { ..._get(state, ['merges']) };
+    const mergeState = { ...state?.merges };
     // (eslint bug)
     // eslint-disable-next-line no-unused-vars
     for (const [targetNamespace, mergeFn] of Object.entries(mergeObj)) {
-      const merges = { ..._get(mergeState, [targetNamespace]) };
+      const merges = { ...mergeState?.[targetNamespace] };
       merges[namespace] = mergeFn;
 
       mergeState[targetNamespace] = merges;
     }
 
-    const parentsState = { ..._get(state, ['parents']) };
+    const parentsState = { ...state?.parents };
 
     // (eslint bug)
     // eslint-disable-next-line no-unused-vars
-    const parents = { ..._get(parentsState, [namespace]) };
+    const parents = { ...parentsState?.[namespace] };
     parents[`${displayName} | ${key} | ${fetchFactoryId}`] = {
       fetchFactoryId,
       key,
@@ -60,9 +58,9 @@ export default function sharedReducer(state = initialState, action) {
     if (!share) return state;
     const { namespace } = share;
 
-    const merges = _get(state, ['merges', namespace], {});
+    const merges = state?.merges?.[namespace] || {};
 
-    const nextData = { ..._get(state, ['data']) };
+    const nextData = { ...state?.data };
 
     // (eslint bug)
     // eslint-disable-next-line no-unused-vars
@@ -71,13 +69,13 @@ export default function sharedReducer(state = initialState, action) {
       // we should only apply the merge function over the current key
       if (targetNamespace === namespace) {
         nextData[targetNamespace] = {
-          ..._get(state.data, [targetNamespace]),
-          [key]: mergeFn(_get(state.data, [targetNamespace, key]), payload),
+          ...state.data?.[targetNamespace],
+          [key]: mergeFn(state.data?.[targetNamespace]?.[key], payload),
         };
         continue;
       }
 
-      const mergedData = Object.entries(_get(state, ['data', targetNamespace], {})).reduce(
+      const mergedData = Object.entries(state?.data?.[targetNamespace] || {}).reduce(
         (acc, [key, value]) => {
           acc[key] = mergeFn(value, payload);
           return acc;
@@ -103,28 +101,28 @@ export default function sharedReducer(state = initialState, action) {
 
     const { namespace, mergeObj } = share;
 
-    const mergeState = { ..._get(state, ['merges']) };
+    const mergeState = { ...state?.merges };
     // (eslint bug)
     // eslint-disable-next-line no-unused-vars
     for (const targetNamespace of Object.keys(mergeObj)) {
-      const merges = { ..._get(mergeState, [targetNamespace]) };
+      const merges = { ...mergeState?.[targetNamespace] };
       delete merges[namespace];
 
       mergeState[targetNamespace] = merges;
     }
 
-    const parentsState = { ..._get(state, ['parents']) };
+    const parentsState = { ...state?.parents };
 
-    const parentSet = { ..._get(parentsState, [namespace]) };
+    const parentSet = { ...parentsState?.[namespace] };
     const parentKey = `${displayName} | ${key} | ${fetchFactoryId}`;
     delete parentSet[parentKey];
-    if (_isEmpty(parentSet)) {
+    if (Object.keys(parentSet || {}).length <= 0) {
       delete parentsState[namespace];
     } else {
       parentsState[namespace] = parentSet;
     }
 
-    const dataState = { ..._get(state, ['data']) };
+    const dataState = { ...state?.data };
     delete dataState[namespace];
 
     return {

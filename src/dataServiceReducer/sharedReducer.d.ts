@@ -1,5 +1,3 @@
-import _get from 'lodash/get';
-import _omit from 'lodash/omit';
 export interface SharedState {
   [cacheKey: string]: {
     data: any;

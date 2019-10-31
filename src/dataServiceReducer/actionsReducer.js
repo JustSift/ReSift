@@ -1,4 +1,3 @@
-import _get from 'lodash/get';
 import createStoreKey from '../createStoreKey';
 import timestamp from '../timestamp';
 import { isFetchAction } from '../defineFetch';
@@ -26,7 +25,7 @@ export default function actionsReducer(state = {}, action) {
       [storeKey]: {
         ...state[storeKey],
         [key]: {
-          ..._get(state, [storeKey, key]),
+          ...state?.[storeKey]?.[key],
           shared: !!share,
           inflight: action.payload,
           meta,
@@ -42,7 +41,7 @@ export default function actionsReducer(state = {}, action) {
       [storeKey]: {
         ...state[storeKey],
         [key]: {
-          ..._get(state, [storeKey, key]),
+          ...state?.[storeKey]?.[key],
           inflight: undefined,
           shared: !!share,
           hadSuccess: true,
@@ -62,7 +61,7 @@ export default function actionsReducer(state = {}, action) {
       [storeKey]: {
         ...state[storeKey],
         [key]: {
-          ..._get(state, [storeKey, key]),
+          ...state?.[storeKey]?.[key],
           inflight: undefined,
           shared: !!share,
           errorData: action.payload,
@@ -77,7 +76,7 @@ export default function actionsReducer(state = {}, action) {
   // otherwise must be a clear action because of the first if statement
   return {
     ...state,
-    [storeKey]: Object.entries(_get(state, [storeKey], {}))
+    [storeKey]: Object.entries(state?.[storeKey] || {})
       .filter(([k]) => k !== key)
       .reduce((acc, [key, value]) => {
         acc[key] = value;

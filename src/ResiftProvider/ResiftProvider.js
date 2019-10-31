@@ -1,5 +1,4 @@
 import React, { useContext, useMemo } from 'react';
-import PropTypes from 'prop-types';
 import { ReactReduxContext, Provider } from 'react-redux';
 
 import { createStore as createReduxStore, combineReducers, applyMiddleware, compose } from 'redux';
@@ -38,11 +37,5 @@ function ResiftProvider({ children, dataService, suppressOutsideReduxWarning }) 
 
   return <Provider store={store}>{children}</Provider>;
 }
-
-ResiftProvider.propTypes = {
-  children: PropTypes.node,
-  dataService: PropTypes.func.isRequired,
-  suppressOutsideReduxWarning: PropTypes.bool,
-};
 
 export default ResiftProvider;

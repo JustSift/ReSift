@@ -1,4 +1,3 @@
-import _get from 'lodash/get';
 import SUCCESS from '../prefixes/SUCCESS';
 import ERROR from '../prefixes/ERROR';
 import createActionType from '../createActionType';
@@ -29,7 +28,7 @@ export async function handleAction({ state, services, dispatch, action, getState
     // `inflight` is the `payload` function of the fetch. it will be defined if there is an action
     // that is currently inflight.
     const storeKey = createStoreKey(displayName, fetchFactoryId);
-    const inflight = _get(state, ['actions', storeKey, key, 'inflight']);
+    const inflight = state?.actions?.[storeKey]?.[key]?.inflight;
 
     if (inflight) {
       // if the `conflict` key part of `defineFetch` was set to `ignore`, and there was an

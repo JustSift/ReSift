@@ -1,5 +1,4 @@
 import React from 'react';
-import _get from 'lodash/get';
 import { act, create } from 'react-test-renderer';
 import defineFetch from '../defineFetch';
 import { Provider as ReduxProvider } from 'react-redux';
@@ -52,7 +51,7 @@ test('createContextFetch hooks', async () => {
   function Component() {
     const [data] = useContextFetch();
 
-    const exampleValue = _get(data, ['exampleValue']);
+    const exampleValue = data?.exampleValue;
 
     if (exampleValue) {
       gotExampleValue.resolve(exampleValue);
@@ -154,7 +153,7 @@ test('render props/no hooks API', async () => {
             return null;
           }
 
-          const exampleValue = _get(data, ['exampleValue']);
+          const exampleValue = data?.exampleValue;
 
           if (exampleValue) {
             gotExampleValue.resolve(exampleValue);

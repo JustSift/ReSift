@@ -1,5 +1,4 @@
 import React, { useContext, createContext, useMemo } from 'react';
-import PropTypes from 'prop-types';
 import useStatus from '../useStatus';
 import useData from '../useData';
 
@@ -26,10 +25,6 @@ export default function createContextFetch(fetch) {
     return <Context.Provider value={contextValue}>{children}</Context.Provider>;
   }
 
-  ContextFetchProvider.propTypes = {
-    children: PropTypes.node,
-  };
-
   function useContextFetch() {
     const contextValue = useContext(Context);
 
@@ -45,10 +40,6 @@ export default function createContextFetch(fetch) {
   function ContextFetchConsumer({ children }) {
     return <Context.Consumer>{children}</Context.Consumer>;
   }
-
-  ContextFetchConsumer.propTypes = {
-    children: PropTypes.func.isRequired,
-  };
 
   return { ContextFetchProvider, useContextFetch, ContextFetchConsumer };
 }

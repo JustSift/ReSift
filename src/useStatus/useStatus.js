@@ -1,7 +1,5 @@
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import _get from 'lodash/get';
-import _flatten from 'lodash/flatten';
 import createStoreKey from '../createStoreKey';
 import UNKNOWN from '../UNKNOWN';
 import LOADING from '../LOADING';
@@ -11,7 +9,6 @@ import isUnknown from '../isUnknown';
 import isLoading from '../isLoading';
 import isError from '../isError';
 import isNormal from '../isNormal';
-import usePreserveReference from 'use-preserve-reference';
 
 // Combining shared statuses is different because of the `normal` case.
 //
@@ -53,7 +50,7 @@ export const makeStatusSelector = (fetch, options) => state => {
     return UNKNOWN;
   }
 
-  const isFetchInstance = _get(fetch, ['meta', 'type']) === 'FETCH_INSTANCE';
+  const isFetchInstance = fetch?.meta?.type === 'FETCH_INSTANCE';
   if (!isFetchInstance) {
     throw new Error('[useStatus] expected to see a fetch instance in get fetch.');
   }
@@ -67,7 +64,7 @@ export const makeStatusSelector = (fetch, options) => state => {
   const { fetchFactoryId, displayName, key, share } = fetch.meta;
   const storeKey = createStoreKey(displayName, fetchFactoryId);
 
-  const value = _get(state, ['dataService', 'actions', storeKey, key]);
+  const value = state?.dataService?.actions?.[storeKey]?.[key];
   const nonSharedStatus = getStatus(value);
 
   // if the fetch is _not_ shared, continue down this code path.
@@ -80,7 +77,7 @@ export const makeStatusSelector = (fetch, options) => state => {
   // otherwise if the fetch _is_ shared, then continue down this code path
   const { namespace, mergeObj } = share;
 
-  const shouldReturnIsolatedStatus = _get(options, ['isolatedStatus'], false);
+  const shouldReturnIsolatedStatus = options?.isolatedStatus || false;
 
   // if the user put in `isolatedStatus: true` in their options then we should return the status
   // derived from the `actions` sub-store
@@ -92,43 +89,55 @@ export const makeStatusSelector = (fetch, options) => state => {
   const targetNamespaces = Object.keys(mergeObj);
 
   // `parentLocations` are paths to the state in the `actions` sub-store
-  const parentLocationsFromTheSameNamespace = _flatten(
-    targetNamespaces
-      .map(targetNamespace => {
-        const parentLocations = _get(state, ['dataService', 'shared', 'parents', targetNamespace]);
-        if (!parentLocations) {
-          return null;
-        }
+  const parentLocationsFromTheSameNamespace = targetNamespaces
+    .map(targetNamespace => {
+      const parentLocations = state?.dataService?.shared?.parents?.[targetNamespace];
+      if (!parentLocations) {
+        return null;
+      }
 
-        if (targetNamespace !== namespace) {
-          return null;
-        }
+      if (targetNamespace !== namespace) {
+        return null;
+      }
 
-        const validParentLocations = Object.values(parentLocations).filter(
-          parentLocation => parentLocation.key === key,
-        );
+      const validParentLocations = Object.values(parentLocations).filter(
+        parentLocation => parentLocation.key === key,
+      );
 
-        return validParentLocations;
-      })
-      .filter(x => !!x),
-  );
+      return validParentLocations;
+    })
+    .filter(x => !!x)
+    .reduce((flatten, next) => {
+      // eslint bug
+      // eslint-disable-next-line no-unused-vars
+      for (const i of next) {
+        flatten.push(i);
+      }
+      return flatten;
+    }, []);
 
-  const parentLocationsFromDifferentNamespaces = _flatten(
-    targetNamespaces
-      .map(targetNamespace => {
-        const parentLocations = _get(state, ['dataService', 'shared', 'parents', targetNamespace]);
-        if (!parentLocations) {
-          return null;
-        }
+  const parentLocationsFromDifferentNamespaces = targetNamespaces
+    .map(targetNamespace => {
+      const parentLocations = state?.dataService?.shared?.parents?.[targetNamespace];
+      if (!parentLocations) {
+        return null;
+      }
 
-        if (targetNamespace === namespace) {
-          return null;
-        }
+      if (targetNamespace === namespace) {
+        return null;
+      }
 
-        return Object.values(parentLocations);
-      })
-      .filter(x => !!x),
-  );
+      return Object.values(parentLocations);
+    })
+    .filter(x => !!x)
+    .reduce((flatten, next) => {
+      // eslint bug
+      // eslint-disable-next-line no-unused-vars
+      for (const i of next) {
+        flatten.push(i);
+      }
+      return flatten;
+    }, []);
 
   // this takes all those paths and grabs the action sub-state.
   // this sub-state is ran through `getStatus` which returns the corresponding status for the
@@ -136,7 +145,7 @@ export const makeStatusSelector = (fetch, options) => state => {
   const sharedStatusesFromSameNamespace = parentLocationsFromTheSameNamespace
     .map(parentLocation => {
       const storeKey = createStoreKey(parentLocation.displayName, parentLocation.fetchFactoryId);
-      const parentAction = _get(state, ['dataService', 'actions', storeKey, parentLocation.key]);
+      const parentAction = state?.dataService?.actions?.[storeKey]?.[parentLocation.key];
 
       return getStatus(parentAction);
     })
@@ -145,7 +154,7 @@ export const makeStatusSelector = (fetch, options) => state => {
   const sharedStatuesFromDifferentNamespaces = parentLocationsFromDifferentNamespaces
     .map(parentLocation => {
       const storeKey = createStoreKey(parentLocation.displayName, parentLocation.fetchFactoryId);
-      const parentAction = _get(state, ['dataService', 'actions', storeKey, parentLocation.key]);
+      const parentAction = state?.dataService?.actions?.[storeKey]?.[parentLocation.key];
 
       return getStatus(parentAction);
     })
@@ -165,7 +174,10 @@ export const makeStatusSelector = (fetch, options) => state => {
 };
 
 function useStatus(fetch, options) {
-  const preservedOptions = usePreserveReference(options);
+  // TODO: need to figure-out a sustainable way to do this.
+  const isolatedStatus = options?.isolatedStatus;
+  const preservedOptions = useMemo(() => ({ isolatedStatus }), [isolatedStatus]);
+
   const statusSelector = useMemo(() => makeStatusSelector(fetch, preservedOptions), [
     fetch,
     preservedOptions,

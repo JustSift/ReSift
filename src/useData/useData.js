@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-import _get from 'lodash/get';
 import { useSelector } from 'react-redux';
 import createStoreKey from '../createStoreKey';
 
@@ -8,7 +7,7 @@ const makeDataSelector = fetch => state => {
     return null;
   }
 
-  const isFetchInstance = _get(fetch, ['meta', 'type']) === 'FETCH_INSTANCE';
+  const isFetchInstance = fetch?.meta?.type === 'FETCH_INSTANCE';
   if (!isFetchInstance) {
     throw new Error('[useData] expected to see a fetch instance.');
   }
@@ -23,7 +22,7 @@ const makeDataSelector = fetch => state => {
 
   const storeKey = createStoreKey(displayName, fetchFactoryId);
 
-  const value = _get(state, ['dataService', 'actions', storeKey, key]);
+  const value = state?.dataService?.actions?.[storeKey]?.[key];
 
   // if the fetch is _not_ shared, continue down this code path.
   // in this path, all we do is return the "non-shared" value and the "non-shared" state from the
@@ -37,7 +36,7 @@ const makeDataSelector = fetch => state => {
   const { namespace } = share;
 
   // the value comes from the `shared` sub-store instead of the `actions` sub-store
-  const sharedData = _get(state, ['dataService', 'shared', 'data', namespace, key], null);
+  const sharedData = state?.dataService?.shared?.data?.[namespace]?.[key] || null;
   return sharedData;
 };
 

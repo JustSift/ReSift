@@ -1,6 +1,5 @@
 import createActionType from '../createActionType';
 import CLEAR from '../prefixes/CLEAR';
-import _get from 'lodash/get';
 
 export function isClearAction(action) {
   if (typeof action !== 'object') return false;
@@ -13,7 +12,7 @@ export function isClearAction(action) {
 //
 // Investigate: this may be a good place to try to clear memoized fetches
 export default function clearFetch(fetch) {
-  const isActionCreatorFactory = _get(fetch, ['meta', 'type']) === 'FETCH_INSTANCE_FACTORY';
+  const isActionCreatorFactory = fetch?.meta?.type === 'FETCH_INSTANCE_FACTORY';
   if (isActionCreatorFactory) {
     throw new Error(
       '[clearFetch] you tried to pass an action creatorFactory to clearFetch. Ask rico until he write docs.',
