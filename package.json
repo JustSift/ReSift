@@ -19,6 +19,12 @@
   "bugs": {
     "url": "https://github.com/JustSift/ReSift/issues"
   },
+  "keywords": [
+    "react",
+    "relay",
+    "hooks",
+    "fetch"
+  ],
   "homepage": "https://github.com/JustSift/ReSift#readme",
   "devDependencies": {
     "@babel/cli": "^7.5.0",

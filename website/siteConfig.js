@@ -10,7 +10,7 @@
 
 const siteConfig = {
   title: 'ReSift', // Title for your website.
-  tagline: 'A state management library for fetches',
+  tagline: 'A React state management library for fetches',
   url: 'https://resift.org', // Your website URL
   baseUrl: '/', // Base URL for your project */
   // For github.io type URLs, you would set the url and baseUrl like:
