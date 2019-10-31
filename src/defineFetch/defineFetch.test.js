@@ -57,7 +57,7 @@ describe('defineFetch', () => {
 
       actionCreatorFactory(null);
     }).toThrowErrorMatchingInlineSnapshot(
-      `"[defineFetch] make arguments must be either a string or a number. Found \\"null\\" for the fetch factory \\"Get Something\\""`,
+      `"[defineFetch] make arguments must be either a string or a number. Check calls to the fetch factory \\"Get Something\\" See here https://resift.org/docs/main-concepts/whats-a-fetch#making-a-fetch-and-pulling-data-from-it"`,
     );
   });
 

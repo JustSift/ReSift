@@ -1,6 +1,6 @@
 {
   "name": "resift",
-  "version": "0.1.0-alpha.4",
+  "version": "0.1.0-alpha.5",
   "description": "A state management for data fetches in React",
   "main": "index.js",
   "scripts": {
@@ -8,7 +8,7 @@
     "clean": "rimraf node_modules && npm i",
     "build": "node ./scripts/build.js",
     "check-types": "npx tsc",
-    "publish": "jest && npm run check-types && npm run build && cd build && npm publish && cd .."
+    "publish": "npx jest && npx eslint src && npm run check-types && npm run build && cd build && npm publish && cd .."
   },
   "repository": {
     "type": "git",
