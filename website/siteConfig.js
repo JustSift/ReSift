@@ -85,6 +85,8 @@ const siteConfig = {
   repoUrl: 'https://github.com/JustSift/ReSift',
 
   docsSideNavCollapsible: true,
+
+  gaTrackingId: 'UA-151301218-1',
 };
 
 module.exports = siteConfig;
