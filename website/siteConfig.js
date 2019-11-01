@@ -71,8 +71,8 @@ const siteConfig = {
   cleanUrl: true,
 
   // Open Graph and Twitter card images.
-  ogImage: 'img/resift-org-image.jpg',
-  twitterImage: 'img/resift-org-image.jpg',
+  ogImage: 'img/resift-og-image.jpg',
+  twitterImage: 'img/resift-og-image.jpg',
 
   // Show documentation's last contributor's name.
   // enableUpdateBy: true,
