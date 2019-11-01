@@ -39,7 +39,6 @@ class Footer extends React.Component {
             <a href={this.docUrl('introduction/what-is-resift', this.props.language)}>
               What is ReSift?
             </a>
-            <a href={this.docUrl('introduction/quick-glance', this.props.language)}>Quick glance</a>
             <a href={this.docUrl('main-concepts/whats-a-fetch', this.props.language)}>
               What's a fetch?
             </a>

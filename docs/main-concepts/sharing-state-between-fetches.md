@@ -390,7 +390,7 @@ The `movieItem` and `movieList` implements merge functions that tell ReSift what
 
 ---
 
-See the ReSift Notes example app from the [Quick glance](../introduction/quick-glance.md#demo-app) for a complete example of this concept.
+See the ReSift Notes example app from the [Demo app](../introduction/demo-app.md) for a complete example of this concept.
 
 The `makeGetNoteItem` fetch and the `getNoteList` fetch both implement ReSift object syntax shares. Notice how when a note item is updated, the note list updates as well.
 

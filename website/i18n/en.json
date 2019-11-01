@@ -3,7 +3,7 @@
   "localized-strings": {
     "next": "Next",
     "previous": "Previous",
-    "tagline": "A state management library for fetches",
+    "tagline": "A React state management library for fetches",
     "docs": {
       "api/about-api-docs": {
         "title": "About API docs",
@@ -148,10 +148,6 @@
       "introduction/installation": {
         "title": "Installation",
         "sidebar_label": "Installation"
-      },
-      "introduction/quick-glance": {
-        "title": "Quick glance",
-        "sidebar_label": "Quick glance"
       },
       "introduction/what-is-resift": {
         "title": "What is ReSift?",

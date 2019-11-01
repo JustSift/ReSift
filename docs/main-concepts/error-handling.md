@@ -10,6 +10,7 @@ There is:
 
 - the `ERROR` status,
 - the `useError` hook,
+- `throw`ing the error from `useError` and using an `ErrorBoundary`
 - `try` `catch`ing `dispatch`, and
 - configuring the `onError` callback of the data service
 
@@ -38,26 +39,53 @@ function Person() {
 }
 ```
 
-> ⚠️ We recommend you create a wrapper component around `<Guard />` so that you're always show the user some default feedback.
+---
+
+⚠️ This pattern is especially helpful when combined with the `<Guard />`. We recommend you create a component built on top of `<Guard />` that uses `isError`.
 
 For example:
 
 ```js
 import React from 'react';
 import { isNormal, isLoading, isError, useStatus, Guard } from 'resift';
+import Spinner from './Spinner';
+import ErrorView from './ErrorView';
 
-function Loader({ fetch, children }) {
+// using inline styles to keep it simple for this example
+const loaderStyles = {
+  position: 'relate',
+};
+const overlayStyles = {
+  top: 0,
+  bottom: 0,
+  left: 0,
+  right: 0,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+};
+
+function Loader({ fetch, children, ...restOfProps }) {
   const status = useStatus(fetch);
 
-  const overlay = isLoading(status) ? (
-    <Spinner />
-  ) : (
-    <div className="error-view">Oh no! An error occurred.</div>
-  );
+  const overlay = (() => {
+    if (isLoading(status)) return <Spinner />;
+    if (isError(status)) return <ErrorView />;
+    return null;
+  })();
 
   return (
-    <div className="loader">
-      <div className="overlay">{overlay}</div>
+    <div className="loader" style={loaderStyles} {...restOfProps}>
+      {/* show this overlay only when there is an overlay view */}
+      <div
+        className="overlay"
+        style={{
+          ...overlayStyles,
+          display: overlay ? 'flex' : 'none',
+        }}
+      >
+        {overlay}
+      </div>
       <Guard fetch={fetch} children={children} />
     </div>
   );
@@ -67,11 +95,17 @@ function Loader({ fetch, children }) {
 Then when you go use this Loader component, it'll always have a built-in error view.
 
 ```js
+import React from 'react';
 import getPerson from './getPerson';
+import Loader from './Loader';
 
 function Person({ personId }) {
+  // when this component is loading, you'll see a <Spinner />,
+  // if this component has an error, you'll see an <ErrorView />
   return <Loader fetch={getPerson}>{person => person.name}</Loader>;
 }
+
+export default Person;
 ```
 
 ## The `useError` hook
@@ -112,6 +146,47 @@ function Person({ personId }) {
 ```
 
 > **NOTE:** Even if your fetch is [shared](./sharing-state-between-fetches.md), the error returned from `useError` will only be from the current fetch instance. In other words, errors are not shared between fetches
+
+## `throw`ing the error from `useError` and using an Error Boundary
+
+If you prefer, you can also check and throw the error from `useError` to be caught by an [Error Boundary](https://reactjs.org/docs/error-boundaries.html) somewhere else up in the tree.
+
+You can write your own [error boundary component](https://reactjs.org/docs/error-boundaries.html) or you can use a predefined error boundary from [`react-error-boundary`](https://github.com/bvaughn/react-error-boundary).
+
+```js
+import React from 'react';
+import ErrorBoundary from 'react-error-boundary';
+import { useError /* ... */ } from 'resift';
+import makeGetPerson from './makeGetPerson';
+
+function Person({ id }) {
+  const getPerson = makeGetPerson(id);
+
+  const error = useError(getPerson);
+  if (error) {
+    throw error;
+  }
+
+  return /* ... */;
+}
+
+function Parent() {
+  const handleError = () => {
+    // ...
+  };
+
+  return (
+    <ErrorBoundary onError={handleError} FallbackComponent={ErrorView}>
+      {/* the ErrorBoundary doesn't have to be the immediate parent */}
+      <div className="person-container">
+        <Person id="person123" />
+      </div>
+    </ErrorBoundary>
+  );
+}
+
+// ...
+```
 
 ## `try` `catch`ing `dispatch`
 

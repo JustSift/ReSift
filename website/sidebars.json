@@ -2,7 +2,6 @@
   "docs": {
     "Introduction": [
       "introduction/what-is-resift",
-      "introduction/quick-glance",
       "introduction/demo-app",
       "introduction/installation"
     ],

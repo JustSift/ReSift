@@ -24,12 +24,6 @@ function Index({ config: siteConfig, language = '' }) {
           <a className="link-button" href={getDoc('introduction/what-is-resift')}>
             What is ReSift?
           </a>
-          <a
-            className="link-button link-button--primary"
-            href={getDoc('introduction/quick-glance')}
-          >
-            Quick glance
-          </a>
         </div>
       </div>
     </div>
