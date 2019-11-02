@@ -1,8 +1,6 @@
 import { FetchInstance, FetchActionMeta } from '../defineFetch';
 
 /**
- * @docs `clearFetch`
- *
  * Given a fetch instance, it returns an object that can be dispatched using `useDispatch` or Redux's
  * `store.dispatch`.
  *

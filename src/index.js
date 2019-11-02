@@ -7,7 +7,6 @@ export { default as LOADING } from './LOADING';
 export { default as NORMAL } from './NORMAL';
 export { default as ResiftProvider } from './ResiftProvider';
 export { default as UNKNOWN } from './UNKNOWN';
-export { default as clearFetch } from './clearFetch';
 export { default as combineStatuses } from './combineStatuses';
 export { default as createActionType } from './createActionType';
 export { default as createContextFetch } from './createContextFetch';

@@ -1,3 +1,5 @@
+// TODO: this file should be removed in favor of putting the clearFetch
+// action creator inline in useClearFetch
 import createActionType from '../createActionType';
 import CLEAR from '../prefixes/CLEAR';
 
