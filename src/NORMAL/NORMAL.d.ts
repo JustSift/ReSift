@@ -1,7 +1,7 @@
 /**
  * @docs `NORMAL`
  *
- * The significant bit representing the `NORMAL` status.
+ * The bitmask representing the `NORMAL` status.
  *
  * [See Making sense of statuses for more info.](../main-concepts/making-sense-of-statuses.md)
  */

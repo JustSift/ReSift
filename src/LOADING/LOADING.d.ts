@@ -1,7 +1,7 @@
 /**
  * @docs `LOADING`
  *
- * The significant bit representing the `LOADING` status.
+ * The bitmask representing the `LOADING` status.
  *
  * [See Making sense of statuses for more info.](../main-concepts/making-sense-of-statuses.md)
  */

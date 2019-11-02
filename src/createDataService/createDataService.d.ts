@@ -18,7 +18,7 @@ export interface DataServiceParams {
   /**
    * Defines the shape of the data services object you can destructure in the request body of a
    * fetch factory.
-   * [See here for more info.](../main-concepts/how-to-define-a-fetch#what-are-data-service-arguments)
+   * [See here for more info.](../main-concepts/how-to-define-a-fetch#what-are-data-service-parameters)
    */
   services: { [key: string]: FetchService<any> };
   /**
@@ -34,6 +34,8 @@ export interface DataServiceParams {
  *
  * A fetch service is a function that returns data asynchronously. This data is given to ReSift for
  * storage and retrieval.
+ *
+ * See [What are data services?](../main-concepts/what-are-data-services.md#writing-a-data-service) for more info.
  *
  * See [`createHttpService`](https://github.com/JustSift/ReSift/blob/master/src/createHttpService/createHttpService.js)
  * for a reference implementation of a fetch service.

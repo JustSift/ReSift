@@ -1,7 +1,7 @@
 /**
  * @docs `ERROR`
  *
- * The significant bit representing the `ERROR` status.
+ * The bitmask representing the `ERROR` status.
  *
  * [See Making sense of statuses for more info.](../main-concepts/making-sense-of-statuses.md)
  */
