@@ -32,7 +32,7 @@ export default dataService;
 
 You can then import this where you define your fetch factories.
 
-## Settings the types of the fetch factories
+## Setting types for fetch factories
 
 In order to add the correct type to the fetch factories, you need to use the helper `typedFetchFactory`. This helper allows you to set a type for your fetch. This type will be used by the `useData` and the `Guard` components.
 
