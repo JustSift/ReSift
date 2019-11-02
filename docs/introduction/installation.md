@@ -10,7 +10,7 @@ sidebar_label: Installation
 npm i resift redux react-redux
 ```
 
-> Redux 4 and React-Redux >= 7.1 are required peer dependencies to ReSift, [However, we plan on removing these dependencies.](https://github.com/JustSift/ReSift/issues/32#issuecomment-547537720)
+> Redux 4 and React-Redux >= 7.1 are required peer dependencies to ReSift, [However, we may remove these dependencies.](https://github.com/JustSift/ReSift/issues/32#issuecomment-547537720)
 
 > ⚠️ If you're already using Redux in your project, [follow this guide here](../guides/usage-with-redux.md).
 

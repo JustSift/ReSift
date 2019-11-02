@@ -4,7 +4,7 @@ title: Demo app
 sidebar_label: Demo app
 ---
 
-The following CodeSandbox shows a demo application written in ReSift.
+The following CodeSandbox shows a demo application written in ReSift with mock endpoints that purposely take 1 second to load.
 
 We recommend you [open the Sandbox](https://codesandbox.io/s/resift-notes-xwp9r) in a new page and play around with it.
 

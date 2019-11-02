@@ -47,21 +47,24 @@ class Footer extends React.Component {
           <div>
             <h5>Community</h5>
             <a
+              href="https://stackoverflow.com/questions/tagged/resift"
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              Ask a question
+            </a>
+            <a
               href="https://github.com/JustSift/ReSift/issues/new"
               target="_blank"
               rel="noreferrer noopener"
             >
               Open an issue
             </a>
-            <a
-              href="https://stackoverflow.com/questions/tagged/resift"
-              target="_blank"
-              rel="noreferrer noopener"
-            >
-              Stack Overflow
-            </a>
             <a href="https://twitter.com/ricokahler" target="_blank" rel="noreferrer noopener">
-              Twitter
+              @ me
+            </a>
+            <a href="https://forms.gle/YyajQnLXHFb1yunHA" target="_blank" rel="noreferrer noopener">
+              Leave feedback
             </a>
           </div>
           <div>

@@ -39,7 +39,7 @@ const siteConfig = {
 
   /* Colors for website */
   colors: {
-    primaryColor: '#60269E',
+    primaryColor: '#7512FF',
     secondaryColor: '#2962FF',
   },
 
@@ -87,6 +87,8 @@ const siteConfig = {
   docsSideNavCollapsible: true,
 
   gaTrackingId: 'UA-151301218-1',
+
+  editUrl: 'https://github.com/JustSift/ReSift/edit/master/',
 };
 
 module.exports = siteConfig;
