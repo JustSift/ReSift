@@ -107,9 +107,9 @@ It's _just_ a function that returns a promise of your data.
 
 However, you may not be so lucky. Here are some questions to help you consider if you should use this library:
 
-- Does your app have to load data from different endpoints?
+- Does your app have to load data from multiple different endpoints?
 - Do you want to cache the results of these fetches?
-- Are you re-using this data across different components?
+- Are you reusing this data across different components?
 - Do you want state to stay consistent and update components when you do PUT, POST, etc?
 - Do you have a plan for reporting loading and error status?
 - Is it easy to onboard new members of your team to your data state management solution?
