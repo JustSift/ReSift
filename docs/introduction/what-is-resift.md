@@ -6,9 +6,7 @@ sidebar_label: What is ReSift?
 
 ## Introduction
 
-ReSift is a React state management library for fetches with the goal of giving your team a capable standard for fetching, storing, and reacting to data with great [DX][dx].
-
-[dx]: https://hackernoon.com/the-best-practices-for-a-great-developer-experience-dx-9036834382b0
+ReSift is a React state management library for fetches with the goal of giving your team a capable standard for fetching, storing, and reacting to data with a great developer experience.
 
 **Features:**
 
@@ -22,7 +20,7 @@ ReSift is a React state management library for fetches with the goal of giving y
 - 🎣 Hooks API
 - 🤝 Full TypeScript support
 
-We like to think of ReSift as the [Relay](https://relay.dev/) of REST. ReSift is in the same class of tools as [Relay](https://relay.dev/) and [the Apollo Client](https://www.apollographql.com/docs/react/). However, ReSift does _not_ require GraphQL.
+We like to think of ReSift as the [Relay](https://relay.dev/) of REST. ReSift is in the same class of tools as [Relay](https://relay.dev/) and [the Apollo Client](https://www.apollographql.com/docs/react/). However, **ReSift does not require GraphQL**.
 
 [See this doc for definitions and comparisons of ReSift vs Relay/Apollo](../guides/resift-vs-apollo-relay.md).
 
@@ -61,7 +59,7 @@ Then you can use this fetch factory to:
 
 ```js
 import React, { useEffect } from 'react';
-import { useDispatch, useStatus, isLoading, Guard } from 'resift';
+import { useDispatch, useStatus, useData, isLoading } from 'resift';
 import makeGetPerson from './makeGetPerson';
 
 function Person({ personId }) {
