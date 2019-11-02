@@ -10,7 +10,7 @@ sidebar_label: Usage with classes
 
 In order to use ReSift's hooks with your existing class components, we recommend using the library [`hocify`](https://github.com/ricokahler/hocify) aka higher-order-component-ify.
 
-This library lets you use hooks with function components by wrapping your hooks with an outer function component internally.
+This library lets you use hooks within class components by wrapping your hooks with a function component internally.
 
 See this example:
 
