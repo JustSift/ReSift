@@ -111,7 +111,7 @@ However, you may not be so lucky. Here are some questions to help you consider i
 - Do you want to cache the results of these fetches?
 - Are you reusing this data across different components?
 - Do you want state to stay consistent and update components when you do PUT, POST, etc?
-- Do you have a plan for reporting loading and error status?
+- Do you have a plan for reporting loading and error statuses?
 - Is it easy to onboard new members of your team to your data state management solution?
 
 ReSift is an opinionated state management solution for data fetches for REST-oriented applications.
