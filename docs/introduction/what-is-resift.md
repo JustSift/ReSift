@@ -94,7 +94,7 @@ export default Person;
 
 > In this basic example, we fetched and pulled data in the same component, but with ReSift, you don't have to!
 >
-> **With ReSift, you can dispatch a fetch in one component and pull it from another. This makes it much easier to re-use data across components and enables the concept of pre-fetching**
+> **With ReSift, you can dispatch a fetch in one component and pull it from another. This makes it much easier to reuse data across components and enables the concept of pre-fetching**
 
 ## Why ReSift?
 
