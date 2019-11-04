@@ -65,8 +65,9 @@ import makeGetPerson from './makeGetPerson';
 function Person({ personId }) {
   const dispatch = useDispatch();
 
+  //                 👇👇👇 this is using the "fetch factory" from above
   const getPerson = makeGetPerson(personId);
-  //     👆👆👆 this is a "fetch"
+  //     👆👆👆 this is a "fetch" from
 
   useEffect(() => {
     // 1) kick off the initial request
