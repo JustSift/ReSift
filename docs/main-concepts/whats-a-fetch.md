@@ -44,7 +44,7 @@ We'll go over what you can do with a fetch in the next sections. For now, the ta
 
 In ReSift, you start by defining a **fetch factory**.
 
-A fetch factory is a function that will produce fetch instances. It describes how you'll get data and how your data is related to other things in the cache ([described in an upcoming doc](./sharing-state-between-fetches.md)).
+A fetch factory is a function that will produce fetch instances. It describes how you'll get data and how your data is related to other things in the cache ([described in an upcoming doc](./making-state-consistent.md)).
 
 To define a fetch, use the function `defineFetch` from ReSift. Take a look at this next code example to get a sneak peak in to how to define a fetch.
 

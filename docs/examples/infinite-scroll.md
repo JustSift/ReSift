@@ -4,7 +4,7 @@ title: Infinite scroll
 sidebar_label: Infinite scroll
 ---
 
-The following demo is from the [Sharing state between fetches](../main-concepts/sharing-state-between-fetches.md#merges) doc. This example demonstrates how you can use `share.merge` do infinite scrolling.
+The following demo is from the [Making state consistent](../main-concepts/making-state-consistent.md#merges) doc. This example demonstrates how you can use `share.merge` do infinite scrolling.
 
 <iframe src="https://codesandbox.io/embed/resift-infinite-scroll-df5kt?fontsize=14"
   style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;"

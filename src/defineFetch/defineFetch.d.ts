@@ -67,13 +67,13 @@ export interface ShareParams {
    * If you are doing CRUD operations to the same resource on the back-end, then
    * you probably want to use the same namespace.
    *
-   * See [Sharing state between fetches](../main-concepts/sharing-state-between-fetches.md)
+   * See [Making state consistent](../main-concepts/making-state-consistent.md)
    * for more info.
    */
   namespace: string;
 
   /**
-   * [See here for more info.](../main-concepts/sharing-state-between-fetches.md#merges-across-namespaces)
+   * [See here for more info.](../main-concepts/making-state-consistent.md#merges-across-namespaces)
    */
   merge?:
     | ((previous: any, next: any) => any)

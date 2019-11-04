@@ -20,7 +20,7 @@ However, since Apollo and Relay are GraphQL only, they can leverage data schemas
 
 > This is the major trade off of ReSift: because ReSift doesn't have schema information, **ReSift _can't_ automatically normalize your data**.
 
-Instead of requiring schemas, **ReSift allows you specify how a piece of information should be updated when another piece of information changes**. See the [Sharing state between fetches](../main-concepts/sharing-state-between-fetches.md#merges-across-namespaces) doc for more info.
+Instead of requiring schemas, **ReSift allows you specify how a piece of information should be updated when another piece of information changes**. See the [Making state consistent](../main-concepts/making-state-consistent.md#merges-across-namespaces) doc for more info.
 
 We believe this is sufficient for creating data-driven applications and a great alternative to Apollo and Relay.
 

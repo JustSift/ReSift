@@ -8,7 +8,7 @@
     "Main Concepts": [
       "main-concepts/whats-a-fetch",
       "main-concepts/how-to-define-a-fetch",
-      "main-concepts/sharing-state-between-fetches",
+      "main-concepts/making-state-consistent",
       "main-concepts/making-sense-of-statuses",
       "main-concepts/what-are-data-services",
       "main-concepts/error-handling",

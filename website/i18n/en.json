@@ -169,9 +169,9 @@
         "title": "Making sense of statuses",
         "sidebar_label": "Making sense of statuses"
       },
-      "main-concepts/sharing-state-between-fetches": {
-        "title": "Sharing state between fetches",
-        "sidebar_label": "Sharing state between fetches"
+      "main-concepts/making-state-consistent": {
+        "title": "Making state consistent",
+        "sidebar_label": "Making state consistent"
       },
       "main-concepts/what-are-data-services": {
         "title": "What are data services?",

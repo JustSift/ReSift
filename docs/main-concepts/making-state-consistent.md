@@ -1,7 +1,21 @@
 ---
-id: sharing-state-between-fetches
-title: Sharing state between fetches
-sidebar_label: Sharing state between fetches
+id: making-state-consistent
+title: Making state consistent
+sidebar_label: Making state consistent
+---
+
+If you're not careful, there's an easy bug to run into that deals with stale data.
+
+This bug occurs when you update data on the server but you forget to update already existing state in your application.
+
+See the demo below:
+
+1. The "Unshared Post" has a bug in it. If you Edit and Save this post, it won't update until you Refresh the data. This is because the fetches for getting and updating the post don't affect the same spot in the cache.
+2. The "Shared Post" is implemented correctly using what we call "ReSift Shares". ReSift shares allow you to tell ReSift that the state of two fetches should be shared. **When their state is shared, their state is consistent**.
+
+<iframe src="https://codesandbox.io/embed/shared-vs-non-shared-fetches-usk9t?fontsize=14" style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;" title="Shared vs Non-Shared Fetches" allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb" sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
+></iframe>
+
 ---
 
 By default, each fetch factory has its own state that's siloed to itself.
@@ -64,15 +78,7 @@ That means:
 - When one fetch is loading, it will is will cause other fetches that share the same namespace + key to also be loading.
 - When one fetch has an error, it will cause any other related fetches to have an error.
 
----
-
-Check out the demo below:
-
-- When you edit the unshared post, it does not update immediately because ReSift does not know the get and update fetch are related. If you REFRESH the data manually, then you'll see the content update.
-- When you edit the shared post, you'll see the data change immediately, without needing to manually refresh the data.
-
-<iframe src="https://codesandbox.io/embed/shared-vs-non-shared-fetches-usk9t?fontsize=14" style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;" title="Shared vs Non-Shared Fetches" allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb" sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
-></iframe>
+[Review and edit the code in the demo above to see this in action.](https://codesandbox.io/s/shared-vs-non-shared-fetches-usk9t)
 
 ## Merges
 

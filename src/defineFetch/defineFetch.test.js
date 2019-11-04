@@ -286,7 +286,7 @@ describe('normalizeMerge', () => {
     expect(() => {
       normalizeMerge('test', namespace);
     }).toThrowErrorMatchingInlineSnapshot(
-      `"[sharedReducer] Could not match typeof merge. See here for how to define merges: https://resift.org/docs/main-concepts/sharing-state-between-fetches#merges"`,
+      `"[sharedReducer] Could not match typeof merge. See here for how to define merges: https://resift.org/docs/main-concepts/making-state-consistent#merges"`,
     );
   });
 });

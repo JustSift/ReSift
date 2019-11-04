@@ -145,7 +145,7 @@ function Person({ personId }) {
 }
 ```
 
-> **NOTE:** Even if your fetch is [shared](./sharing-state-between-fetches.md), the error returned from `useError` will only be from the current fetch instance. In other words, errors are not shared between fetches
+> **NOTE:** Even if your fetch is [shared](./making-state-consistent.md), the error returned from `useError` will only be from the current fetch instance. In other words, errors are not shared between fetches
 
 ## `throw`ing the error from `useError` and using an Error Boundary
 
