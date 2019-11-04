@@ -18,9 +18,14 @@ This is a full demo application including:
 
 It's note-taking app! Read the pre-made notes to learn more, then edit the code to get better idea of how it works.
 
-> Note: Unfortunately, this demo does not work well on a mobile device.
+> Note: Unfortunately, this demo is not optimized for a mobile device.
 
-<iframe src="https://codesandbox.io/embed/resift-notesj-xwp9r?fontsize=14" title="ReSift Notes" allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb" style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;" sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"></iframe>
+<iframe src="https://codesandbox.io/embed/resift-notes-xwp9r?fontsize=14"
+  style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;"
+  title="ReSift Notes"
+  allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
+  sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
+></iframe>
 <br />
 
 When you're done, continue the [Main Concepts](../main-concepts/whats-a-fetch.md) to learn more!
