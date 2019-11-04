@@ -6,6 +6,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, './build'),
     libraryTarget: 'umd',
+    library: 'Resift',
     filename: 'index.js',
   },
   module: {
@@ -36,5 +37,5 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.json', '.jsx', '.css', '.ts'],
   },
-  externals: ['react', 'react-dom', 'react-redux'],
+  externals: ['react', 'react-dom', 'react-redux', 'redux'],
 };

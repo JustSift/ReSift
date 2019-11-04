@@ -2,27 +2,62 @@ import shortId from 'shortid';
 import createActionType from '../createActionType';
 import FETCH from '../prefixes/FETCH';
 
+export function replace(_prev, next) {
+  return next;
+}
+
+export function normalizeMerge(merge, namespace) {
+  if (!merge) {
+    return {
+      [namespace]: replace,
+    };
+  }
+
+  if (typeof merge === 'function') {
+    return {
+      [namespace]: merge,
+    };
+  }
+
+  if (typeof merge === 'object') {
+    if (!merge[namespace]) {
+      return {
+        ...merge,
+        [namespace]: replace,
+      };
+    }
+
+    return merge;
+  }
+
+  throw new Error(
+    '[sharedReducer] Could not match typeof merge. See here for how to define merges: https://resift.org/docs/main-concepts/making-state-consistent#merges',
+  );
+}
+
 export function isFetchAction(action) {
   if (!action) return false;
   if (!action.type) return false;
   return action.type.startsWith(FETCH);
 }
 
-function memoize(actionCreatorFactory, make, conflict) {
+function memoize(displayName, actionCreatorFactory, make, conflict) {
   // TODO: may need a way to clear this memo
   const memo = {};
 
   function memoized(...keyArgs) {
-    const keyResult = make(...keyArgs);
+    const makeResult = make(...keyArgs);
 
-    if (typeof keyResult !== 'object') {
+    if (typeof makeResult !== 'object') {
       throw new Error('[defineFetch]: `make` must return an object');
     }
 
-    const { key, request } = keyResult;
+    const { request } = makeResult;
 
-    if (!Array.isArray(key)) {
-      throw new Error('[defineFetch] `key` must be an array in the object that `make` returns');
+    if (!keyArgs.every(key => typeof key === 'string' || typeof key === 'number')) {
+      throw new Error(
+        `[defineFetch] make arguments must be either a string or a number. Check calls to the fetch factory "${displayName}" See here https://resift.org/docs/main-concepts/whats-a-fetch#making-a-fetch-and-pulling-data-from-it`,
+      );
     }
     if (typeof request !== 'function') {
       throw new Error(
@@ -30,7 +65,7 @@ function memoize(actionCreatorFactory, make, conflict) {
       );
     }
 
-    const hash = `key:${[...key, conflict].join(' | ')}`;
+    const hash = `key:${[...keyArgs, conflict].join(' | ')}`;
 
     if (memo[hash]) {
       return memo[hash];
@@ -55,14 +90,23 @@ export default function defineFetch({
   if (!displayName) throw new Error('`displayName` is required in `defineFetch`');
   if (!make) throw new Error('`make` is required in `defineFetch`');
 
+  if (share) {
+    if (!share.namespace) {
+      throw new Error('`namespace` is required in `share');
+    }
+  }
+
   function fetchFactory(...keyArgs) {
     const makeResult = make(...keyArgs);
 
     const meta = {
       fetchFactoryId,
-      key: `key:${makeResult.key.join(' | ')}`,
+      key: `key:${keyArgs.join(' | ')}`,
       displayName,
-      share,
+      share: share && {
+        ...share,
+        mergeObj: normalizeMerge(share.merge, share.namespace),
+      },
       conflict,
     };
 
@@ -73,8 +117,9 @@ export default function defineFetch({
       const resolvablePayload = makeResult.request(...requestArgs);
 
       if (typeof resolvablePayload !== 'function') {
-        // TODO: add docs
-        throw new Error('[defineFetch] Expected `fetch` to return a curried function');
+        throw new Error(
+          '[defineFetch] Expected `fetch` to return a curried function. https://resift.org/docs/main-concepts/how-to-define-a-fetch#the-request-function',
+        );
       }
 
       // cancellation mechanism
@@ -84,7 +129,7 @@ export default function defineFetch({
       resolvablePayload.cancel = () => {
         canceledRef.canceled = true;
 
-        // don't know there's this false positive
+        // don't know why there's this false positive
         // https://github.com/eslint/eslint/issues/12117
         // eslint-disable-next-line no-unused-vars
         for (const subscriber of subscribers) {
@@ -115,7 +160,7 @@ export default function defineFetch({
     return fetch;
   }
 
-  const memoizedFetchFactory = memoize(fetchFactory, make, conflict);
+  const memoizedFetchFactory = memoize(displayName, fetchFactory, make, conflict);
 
   memoizedFetchFactory.meta = {
     fetchFactoryId,
@@ -125,3 +170,6 @@ export default function defineFetch({
 
   return memoizedFetchFactory;
 }
+
+// this is for typescript
+export const typedFetchFactory = () => fetchFactory => fetchFactory;

@@ -1,5 +1,4 @@
 import React from 'react';
-import _get from 'lodash/get';
 import { act, create } from 'react-test-renderer';
 import defineFetch from '../defineFetch';
 import { Provider as ReduxProvider } from 'react-redux';
@@ -31,7 +30,6 @@ test('createContextFetch hooks', async () => {
   const makeFetch = defineFetch({
     displayName: 'Get Example Fetch',
     make: id => ({
-      key: [id],
       request: x => () => ({ exampleValue: x }),
     }),
   });
@@ -53,7 +51,7 @@ test('createContextFetch hooks', async () => {
   function Component() {
     const [data] = useContextFetch();
 
-    const exampleValue = _get(data, ['exampleValue']);
+    const exampleValue = data?.exampleValue;
 
     if (exampleValue) {
       gotExampleValue.resolve(exampleValue);
@@ -92,7 +90,6 @@ test('createContextFetch hooks throws when there is no context value', async () 
   const makeFetch = defineFetch({
     displayName: 'Example',
     make: () => ({
-      key: [],
       request: () => () => {},
     }),
   });
@@ -130,7 +127,6 @@ test('render props/no hooks API', async () => {
   const makeFetch = defineFetch({
     displayName: 'Get Example Fetch',
     make: id => ({
-      key: [id],
       request: x => () => ({ exampleValue: x }),
     }),
   });
@@ -157,7 +153,7 @@ test('render props/no hooks API', async () => {
             return null;
           }
 
-          const exampleValue = _get(data, ['exampleValue']);
+          const exampleValue = data?.exampleValue;
 
           if (exampleValue) {
             gotExampleValue.resolve(exampleValue);

@@ -1,6 +1,3 @@
-import _get from 'lodash/get';
-import _omit from 'lodash/omit';
-import createShareKey from '../createShareKey';
 export interface SharedState {
   [cacheKey: string]: {
     data: any;

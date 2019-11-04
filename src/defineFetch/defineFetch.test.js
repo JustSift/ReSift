@@ -1,5 +1,5 @@
-import defineFetch, { isFetchAction } from './defineFetch';
-import timer from '../timer';
+import defineFetch, { isFetchAction, normalizeMerge, replace } from './defineFetch';
+import delay from 'delay';
 import DeferredPromise from '../DeferredPromise';
 
 jest.mock('shortid', () => () => 'test-short-id');
@@ -26,7 +26,6 @@ describe('defineFetch', () => {
     const actionCreatorFactory = defineFetch({
       displayName: 'something',
       make: id => ({
-        key: [id],
         request: () => ({ exampleService }) => exampleService(),
       }),
     });
@@ -47,18 +46,18 @@ describe('defineFetch', () => {
     }).toThrowErrorMatchingInlineSnapshot(`"[defineFetch]: \`make\` must return an object"`);
   });
 
-  test('it throws if there is no `key`', () => {
+  test("it throws if the make args aren't strings or numbers", () => {
     expect(() => {
       const actionCreatorFactory = defineFetch({
-        displayName: 'something',
+        displayName: 'Get Something',
         make: id => ({
-          noKey: [id],
+          request: () => () => {},
         }),
       });
 
-      actionCreatorFactory('test-id');
+      actionCreatorFactory(null);
     }).toThrowErrorMatchingInlineSnapshot(
-      `"[defineFetch] \`key\` must be an array in the object that \`make\` returns"`,
+      `"[defineFetch] make arguments must be either a string or a number. Check calls to the fetch factory \\"Get Something\\" See here https://resift.org/docs/main-concepts/whats-a-fetch#making-a-fetch-and-pulling-data-from-it"`,
     );
   });
 
@@ -67,7 +66,6 @@ describe('defineFetch', () => {
       const actionCreatorFactory = defineFetch({
         displayName: 'something',
         make: id => ({
-          key: [id],
           request: 'not a function',
         }),
       });
@@ -82,7 +80,6 @@ describe('defineFetch', () => {
     const makeFetch = defineFetch({
       displayName: 'Example',
       make: () => ({
-        key: [],
         request: () => 'not a function',
       }),
     });
@@ -92,7 +89,7 @@ describe('defineFetch', () => {
     expect(() => {
       fetch();
     }).toThrowErrorMatchingInlineSnapshot(
-      `"[defineFetch] Expected \`fetch\` to return a curried function"`,
+      `"[defineFetch] Expected \`fetch\` to return a curried function. https://resift.org/docs/main-concepts/how-to-define-a-fetch#the-request-function"`,
     );
   });
 
@@ -100,7 +97,6 @@ describe('defineFetch', () => {
     const actionCreatorFactory = defineFetch({
       displayName: 'example fetch',
       make: id => ({
-        key: [id],
         request: () => ({ exampleService }) => exampleService(),
       }),
     });
@@ -124,7 +120,6 @@ describe('defineFetch', () => {
     const actionCreatorFactory = defineFetch({
       displayName: 'example payload',
       make: testArg => ({
-        key: [testArg],
         request: () => ({ exampleService }) => exampleService(testArg),
       }),
     });
@@ -143,7 +138,6 @@ describe('defineFetch', () => {
     const actionCreatorFactory = defineFetch({
       displayName: 'example payload',
       make: testArg => ({
-        key: [testArg],
         request: () => ({ exampleService }) => exampleService(testArg),
       }),
     });
@@ -155,7 +149,7 @@ describe('defineFetch', () => {
 
     action.payload({
       exampleService: async testArg => {
-        await timer(100);
+        await delay(100);
         return testArg;
       },
     });
@@ -176,7 +170,6 @@ describe('defineFetch', () => {
     const makeActionCreator = defineFetch({
       displayName: 'action creator',
       make: id => ({
-        key: [id],
         request: () => () => {},
       }),
     });
@@ -204,7 +197,6 @@ describe('isFetchAction', () => {
     const actionCreatorFactory = defineFetch({
       displayName: 'test fetch',
       make: testArg => ({
-        key: [testArg],
         request: () => ({ exampleService }) => exampleService(),
       }),
     });
@@ -234,4 +226,67 @@ test('staticFetchFactoryId', () => {
       "type": "FETCH_INSTANCE_FACTORY",
     }
   `);
+});
+
+describe('normalizeMerge', () => {
+  const namespace = 'testNamespace';
+
+  test('if falsy, returns replace', () => {
+    const result = normalizeMerge(null, namespace);
+    expect(result).toMatchInlineSnapshot(`
+          Object {
+            "testNamespace": [Function],
+          }
+        `);
+    expect(result[namespace]).toBe(replace);
+  });
+
+  test('if merge is a function, returns an object with the correct namespace', () => {
+    const result = normalizeMerge(() => ({}), namespace);
+    expect(result).toMatchInlineSnapshot(`
+          Object {
+            "testNamespace": [Function],
+          }
+        `);
+    expect(result[namespace]).not.toBe(replace);
+  });
+
+  test('if merge is an object and does not contain the current namespace, returns an object with replace', () => {
+    const result = normalizeMerge(
+      {
+        otherNamespace: () => ({}),
+      },
+      namespace,
+    );
+    expect(result).toMatchInlineSnapshot(`
+      Object {
+        "otherNamespace": [Function],
+        "testNamespace": [Function],
+      }
+      `);
+    expect(result[namespace]).toBe(replace);
+  });
+
+  test('if merge is an object but does contain the current namespace, returns the object as-is', () => {
+    const mergeFn = () => ({});
+    const mergeObj = {
+      [namespace]: mergeFn,
+    };
+    const result = normalizeMerge(mergeObj, namespace);
+
+    expect(result).toMatchInlineSnapshot(`
+      Object {
+        "testNamespace": [Function],
+      }
+      `);
+    expect(result).toBe(mergeObj);
+  });
+
+  test('if nothing matches, throw', () => {
+    expect(() => {
+      normalizeMerge('test', namespace);
+    }).toThrowErrorMatchingInlineSnapshot(
+      `"[sharedReducer] Could not match typeof merge. See here for how to define merges: https://resift.org/docs/main-concepts/making-state-consistent#merges"`,
+    );
+  });
 });

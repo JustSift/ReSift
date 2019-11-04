@@ -1,6 +1,5 @@
-import _noop from 'lodash/noop';
 import DeferredPromise from '../DeferredPromise';
-import timer from '../timer';
+import delay from 'delay';
 import createHttpProxy from '../createHttpProxy';
 
 import createHttpService from '../createHttpService';
@@ -137,7 +136,7 @@ test('it makes network requests', async () => {
   });
 
   const http = httpService({
-    onCancel: _noop,
+    onCancel: () => {},
     getCanceled: () => false,
   });
 
@@ -163,7 +162,7 @@ test('it sends the correct headers', async () => {
   });
 
   const http = httpService({
-    onCancel: _noop,
+    onCancel: () => {},
     getCanceled: () => false,
   });
 
@@ -188,7 +187,7 @@ test('it adds query params', async () => {
   });
 
   const http = httpService({
-    onCancel: _noop,
+    onCancel: () => {},
     getCanceled: () => false,
   });
 
@@ -213,7 +212,7 @@ test('it throws when there is a 4xx error', async () => {
   });
 
   const http = httpService({
-    onCancel: _noop,
+    onCancel: () => {},
     getCanceled: () => false,
   });
 
@@ -239,7 +238,7 @@ test("it doesn't throw when ok is implemented", async () => {
   });
 
   const http = httpService({
-    onCancel: _noop,
+    onCancel: () => {},
     getCanceled: () => false,
   });
 
@@ -265,7 +264,7 @@ test('it sends JSON data', async () => {
   });
 
   const http = httpService({
-    onCancel: _noop,
+    onCancel: () => {},
     getCanceled: () => false,
   });
 
@@ -295,7 +294,7 @@ test('it receives JSON data', async () => {
   });
 
   const http = httpService({
-    onCancel: _noop,
+    onCancel: () => {},
     getCanceled: () => false,
   });
 
@@ -319,7 +318,7 @@ test('it gives me access to req', async () => {
   });
 
   const http = httpService({
-    onCancel: _noop,
+    onCancel: () => {},
     getCanceled: () => false,
   });
 
@@ -340,14 +339,14 @@ test('it gets the prefix from an async function', async () => {
   // given
   const httpService = createHttpService({
     getPrefix: async () => {
-      await timer(0);
+      await delay(0);
       return `http://localhost:${port}`;
     },
     getHeaders: () => ({}),
   });
 
   const http = httpService({
-    onCancel: _noop,
+    onCancel: () => {},
     getCanceled: () => false,
   });
 
@@ -398,7 +397,7 @@ Object {
   });
 
   const http = httpService({
-    onCancel: _noop,
+    onCancel: () => {},
     getCanceled: () => false,
   });
 
@@ -426,7 +425,7 @@ test('proxies with pass through', async () => {
   });
 
   const http = httpService({
-    onCancel: _noop,
+    onCancel: () => {},
     getCanceled: () => false,
   });
 

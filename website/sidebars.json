@@ -1,0 +1,56 @@
+{
+  "docs": {
+    "Introduction": [
+      "introduction/what-is-resift",
+      "introduction/demo-app",
+      "introduction/installation"
+    ],
+    "Main Concepts": [
+      "main-concepts/whats-a-fetch",
+      "main-concepts/how-to-define-a-fetch",
+      "main-concepts/making-state-consistent",
+      "main-concepts/making-sense-of-statuses",
+      "main-concepts/what-are-data-services",
+      "main-concepts/error-handling",
+      "main-concepts/custom-hooks"
+    ],
+    "Examples": [
+      "examples/resift-notes",
+      "examples/infinite-scroll",
+      "examples/custom-hooks-react-router"
+    ],
+    "Guides": [
+      "guides/resift-vs-apollo-relay",
+      "guides/http-proxies",
+      "guides/usage-with-typescript",
+      "guides/usage-with-redux",
+      "guides/usage-with-classes"
+    ],
+    "API": [
+      "api/about-api-docs",
+      "api/canceled-error",
+      "api/e-r-r-o-r",
+      "api/l-o-a-d-i-n-g",
+      "api/n-o-r-m-a-l",
+      "api/resift-provider",
+      "api/u-n-k-n-o-w-n",
+      "api/combine-statuses",
+      "api/create-action-type",
+      "api/create-data-service",
+      "api/create-http-proxy",
+      "api/create-http-service",
+      "api/create-store-key",
+      "api/data-service-reducer",
+      "api/define-fetch",
+      "api/is-error",
+      "api/is-loading",
+      "api/is-normal",
+      "api/is-unknown",
+      "api/use-clear-fetch",
+      "api/use-data",
+      "api/use-dispatch",
+      "api/use-error",
+      "api/use-status"
+    ]
+  }
+}

@@ -1,13 +1,8 @@
-import { GetFetchOptions } from '../getFetch';
-import { FetchActionCreator } from '../defineFetch';
+import { FetchInstance } from '../defineFetch';
 
-type Unwrap<T> = T extends Promise<infer U> ? U : T;
+declare function useFetch<FetchArgs extends any[], Data = any>(
+  fetch: FetchInstance<FetchArgs, Data>,
+  options?: any,
+): [Data | null, number];
 
-type PickResult<FetchResult, MergeResult> = unknown extends MergeResult
-  ? Unwrap<FetchResult>
-  : Unwrap<MergeResult>;
-
-export default function useFetch<FetchResult, MergeResult>(
-  fetch: null | FetchActionCreator<any, FetchResult, MergeResult>,
-  options?: GetFetchOptions,
-): [PickResult<FetchResult, MergeResult> | null, number];
+export default useFetch;

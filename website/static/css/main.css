@@ -1,0 +1,64 @@
+html,
+body {
+  font-family: 'Source Sans Pro', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #212121;
+}
+
+.headerTitleWithLogo {
+  font-weight: 900;
+  font-size: 25.46px;
+}
+
+.postHeaderTitle {
+  font-size: 50.92px;
+  font-weight: 900;
+}
+
+h1 {
+  font-size: 36.07px;
+  font-weight: 700;
+}
+
+p,
+li {
+  letter-spacing: 0.5px;
+  font-size: 16.97px;
+  font-weight: 400;
+}
+
+.fixedHeaderContainer {
+  background: none;
+  color: #212121;
+}
+
+@media (max-width: 1024px) {
+  .fixedHeaderContainer {
+    background: #fff;
+  }
+}
+
+.headerTitleWithLogo {
+  color: #212121;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.navigationSlider .slidingNav ul {
+  color: #212121;
+}
+
+.slidingNav a {
+  background: none !important;
+  color: #212121 !important;
+}
+
+.siteNavItemActive a {
+  font-weight: bold !important;
+}
+
+.nav-home img {
+  object-fit: contain;
+}

@@ -4,7 +4,8 @@ import DeferredPromise from './DeferredPromise';
 import {
   ResiftProvider,
   defineFetch,
-  useFetch,
+  useData,
+  useStatus,
   createDataService,
   useDispatch,
   isLoading,
@@ -13,12 +14,12 @@ import {
 
 test('basic lifecycle', async () => {
   const finishedRendering = new DeferredPromise();
-  const effectHandler = jest.fn();
+  const dataHandler = jest.fn();
+  const statusHandler = jest.fn();
 
   const makePersonFetch = defineFetch({
     displayName: 'Get Person',
     make: personId => ({
-      key: [personId],
       request: () => () => ({
         personId,
         name: 'It worked!',
@@ -29,13 +30,15 @@ test('basic lifecycle', async () => {
   function Person({ personId }) {
     const dispatch = useDispatch();
     const personFetch = makePersonFetch(personId);
-    const [person, status] = useFetch(personFetch);
+    const person = useData(personFetch);
+    const status = useStatus(personFetch);
 
     useEffect(() => {
       dispatch(personFetch());
     }, [personFetch, dispatch]);
 
-    useEffect(() => effectHandler({ person, status }));
+    useEffect(() => statusHandler(status), [status]);
+    useEffect(() => dataHandler(person), [person]);
 
     useEffect(() => {
       if (!isNormal(status)) {
@@ -72,27 +75,27 @@ test('basic lifecycle', async () => {
     await finishedRendering;
   });
 
-  expect(effectHandler).toHaveBeenCalledTimes(3);
-
+  expect(statusHandler).toHaveBeenCalledTimes(3);
   // 1) first render
   // 2) loading
   // 3) resolved/normal
-  expect(effectHandler.mock.calls.map(x => x[0])).toMatchInlineSnapshot(`
+  expect(statusHandler.mock.calls.map(x => x[0])).toMatchInlineSnapshot(`
     Array [
+      0,
+      2,
+      1,
+    ]
+  `);
+
+  expect(dataHandler).toHaveBeenCalledTimes(2);
+  // 1) no data
+  // 2) data
+  expect(dataHandler.mock.calls.map(x => x[0])).toMatchInlineSnapshot(`
+    Array [
+      null,
       Object {
-        "person": null,
-        "status": 0,
-      },
-      Object {
-        "person": undefined,
-        "status": 2,
-      },
-      Object {
-        "person": Object {
-          "name": "It worked!",
-          "personId": "person123",
-        },
-        "status": 1,
+        "name": "It worked!",
+        "personId": "person123",
       },
     ]
   `);

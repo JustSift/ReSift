@@ -1,6 +1,6 @@
 import React, { useContext, createContext, useMemo } from 'react';
-import PropTypes from 'prop-types';
-import useFetch from '../useFetch';
+import useStatus from '../useStatus';
+import useData from '../useData';
 
 function toSnakeCase(displayName) {
   const split = displayName.split(' ');
@@ -17,16 +17,13 @@ export default function createContextFetch(fetch) {
   Context.displayName = `FetchProvider${toSnakeCase(fetch.meta.displayName)}`;
 
   function ContextFetchProvider({ children }) {
-    const [value, status] = useFetch(fetch);
+    const value = useData(fetch);
+    const status = useStatus(fetch);
 
     const contextValue = useMemo(() => [value, status], [value, status]);
 
     return <Context.Provider value={contextValue}>{children}</Context.Provider>;
   }
-
-  ContextFetchProvider.propTypes = {
-    children: PropTypes.node,
-  };
 
   function useContextFetch() {
     const contextValue = useContext(Context);
@@ -43,10 +40,6 @@ export default function createContextFetch(fetch) {
   function ContextFetchConsumer({ children }) {
     return <Context.Consumer>{children}</Context.Consumer>;
   }
-
-  ContextFetchConsumer.propTypes = {
-    children: PropTypes.func.isRequired,
-  };
 
   return { ContextFetchProvider, useContextFetch, ContextFetchConsumer };
 }
