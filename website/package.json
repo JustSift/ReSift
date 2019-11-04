@@ -2,7 +2,7 @@
   "scripts": {
     "examples": "docusaurus-examples",
     "start": "docusaurus-start",
-    "build": "node ./generate-api-docs && docusaurus-build && echo \"/ /docs/introduction/what-is-resift\" >> ./build/resift/_redirects",
+    "build": "node ./generate-api-docs && node ./replaceTwitterCardType && docusaurus-build && echo \"/ /docs/introduction/what-is-resift\" >> ./build/resift/_redirects",
     "publish-gh-pages": "docusaurus-publish",
     "write-translations": "docusaurus-write-translations",
     "version": "docusaurus-version",
