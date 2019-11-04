@@ -2,6 +2,8 @@
 
 ## Introduction
 
+![ReSift Logo](./website/static/img/resift-wordmark.png)
+
 ReSift is a React state management library for fetches with the goal of giving your team a capable standard for fetching, storing, and reacting to data with a great developer experience.
 
 **Features:**
