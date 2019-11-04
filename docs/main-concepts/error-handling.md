@@ -112,7 +112,7 @@ export default Person;
 
 There's certain scenarios where you need the error payload in order to show something on the UI.
 
-You can get the error pay using `useError`.
+You can get the error payload using `useError`.
 
 ```js
 import React from 'react';

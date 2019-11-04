@@ -11,11 +11,13 @@
       "main-concepts/sharing-state-between-fetches",
       "main-concepts/making-sense-of-statuses",
       "main-concepts/what-are-data-services",
-      "main-concepts/error-handling"
+      "main-concepts/error-handling",
+      "main-concepts/custom-hooks"
     ],
     "Examples": [
       "examples/resift-notes",
-      "examples/infinite-scroll"
+      "examples/infinite-scroll",
+      "examples/custom-hooks-react-router"
     ],
     "Guides": [
       "guides/resift-vs-apollo-relay",

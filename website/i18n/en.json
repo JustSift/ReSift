@@ -109,6 +109,10 @@
         "title": "useStatus API",
         "sidebar_label": "useStatus"
       },
+      "examples/custom-hooks-react-router": {
+        "title": "Custom hooks and React Router",
+        "sidebar_label": "Custom hooks and React Router"
+      },
       "examples/infinite-scroll": {
         "title": "Infinite scroll",
         "sidebar_label": "Infinite scroll"
@@ -116,10 +120,6 @@
       "examples/resift-notes": {
         "title": "ReSift Notes",
         "sidebar_label": "ReSift Notes (CRUD)"
-      },
-      "examples/resift-rentals": {
-        "title": "ReSift Rentals",
-        "sidebar_label": "ReSift Rentals"
       },
       "guides/http-proxies": {
         "title": "HTTP proxies",
@@ -152,6 +152,10 @@
       "introduction/what-is-resift": {
         "title": "What is ReSift?",
         "sidebar_label": "What is ReSift?"
+      },
+      "main-concepts/custom-hooks": {
+        "title": "Custom hooks",
+        "sidebar_label": "Custom hooks"
       },
       "main-concepts/error-handling": {
         "title": "Error handling",
