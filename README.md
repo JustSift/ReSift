@@ -1,8 +1,8 @@
 # ReSift · [![Build Status](https://travis-ci.org/JustSift/ReSift.svg?branch=master)](https://travis-ci.org/JustSift/ReSift) [![Coverage Status](https://coveralls.io/repos/github/JustSift/ReSift/badge.svg?branch=master)](https://coveralls.io/github/JustSift/ReSift?branch=master)
 
-## Introduction
-
 ![ReSift Logo](./website/static/img/resift-wordmark.png)
+
+## Introduction
 
 ReSift is a React state management library for fetches with the goal of giving your team a capable standard for fetching, storing, and reacting to data with a great developer experience.
 
