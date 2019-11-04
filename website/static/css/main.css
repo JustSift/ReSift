@@ -58,3 +58,7 @@ li {
 .siteNavItemActive a {
   font-weight: bold !important;
 }
+
+.nav-home img {
+  object-fit: contain;
+}

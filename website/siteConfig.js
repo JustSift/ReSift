@@ -33,7 +33,7 @@ const siteConfig = {
 
   /* path to images for header/footer */
   headerIcon: 'img/favicon.ico',
-  footerIcon: 'img/favicon.ico',
+  footerIcon: 'img/resift-logo.png',
   favicon: 'img/favicon.ico',
 
   /* Colors for website */
@@ -70,8 +70,8 @@ const siteConfig = {
   cleanUrl: true,
 
   // Open Graph and Twitter card images.
-  ogImage: 'img/resift-og-image.jpg',
-  twitterImage: 'img/resift-og-image.jpg',
+  ogImage: 'img/resift-og-image.png',
+  twitterImage: 'img/resift-og-image.png',
 
   // Show documentation's last contributor's name.
   // enableUpdateBy: true,
