@@ -4,9 +4,9 @@ title: What is ReSift?
 sidebar_label: What is ReSift?
 ---
 
-## Introduction
-
 ReSift is a React state management library for fetches with the goal of giving your team a capable standard for fetching, storing, and reacting to data with a great developer experience.
+
+## Introduction
 
 **Features:**
 
