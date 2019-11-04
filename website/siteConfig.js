@@ -32,7 +32,7 @@ const siteConfig = {
   ],
 
   /* path to images for header/footer */
-  headerIcon: 'img/favicon.ico',
+  headerIcon: 'img/sift-wordmark.png',
   footerIcon: 'img/resift-logo.png',
   favicon: 'img/favicon.ico',
 
