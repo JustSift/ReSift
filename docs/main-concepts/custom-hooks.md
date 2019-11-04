@@ -60,3 +60,8 @@ export default useCurrentPerson;
   allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
   sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
 ></iframe>
+
+<br />
+> ⚠️ Custom hooks are great… but, as with any abstraction, it's easy to get carried away.
+>
+> **[Be deliberate, when you create any abstractions](https://www.sandimetz.com/blog/2016/1/20/the-wrong-abstraction) aka [avoid hasty abstractions](https://kentcdodds.com/blog/aha-programming)!**
