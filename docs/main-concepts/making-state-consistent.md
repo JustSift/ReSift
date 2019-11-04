@@ -20,7 +20,7 @@ See the demo below:
 
 By default, each fetch factory has its own state that's siloed to itself.
 
-This means fetch instances that come from different fetch factories will have different states even if they share the same key or endpoint.
+This means fetch instances that come from different fetch factories will have different states even if they share the same endpoint.
 
 **ReSift won't ever assume that two fetch factories have related data. However, you can tell ReSift that two fetch factories should share the same data by using the `share` API.**
 
