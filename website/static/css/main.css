@@ -83,7 +83,7 @@ li {
   background: #aaa !important;
 }
 
-.algolia-autocomplete * {
+.algolia-autocomplete input {
   color: black !important;
-  background-color: transparent !important;
+  background-color: #ddd !important;
 }
