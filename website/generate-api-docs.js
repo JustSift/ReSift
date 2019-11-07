@@ -20,6 +20,17 @@ async function asyncFilter(array, predicate) {
   return result.filter(x => x.keep).map(x => x.value);
 }
 
+function startsWithUppercase(str) {
+  const first = str[0];
+  if (!first) return false;
+  return first === first.toUpperCase();
+}
+
+function isAllCaps(str) {
+  if (!str) return false;
+  return str === str.toUpperCase();
+}
+
 function camelToDashed(camel) {
   return camel
     .split('')
@@ -88,14 +99,24 @@ async function main() {
     (await readFile(path.resolve(__dirname, './sidebars.json'))).toString(),
   );
 
-  const docIds = docFileNames.map(docPath => {
-    const pathSplit = docPath.split('/');
-    const fileName = pathSplit[pathSplit.length - 1];
-    const name = fileName.substring(0, fileName.length - '.d.ts'.length);
-    const id = camelToDashed(name);
+  const docIds = docFileNames
+    .map(docPath => {
+      const pathSplit = docPath.split('/');
+      const fileName = pathSplit[pathSplit.length - 1];
+      const name = fileName.substring(0, fileName.length - '.d.ts'.length);
+      const id = camelToDashed(name);
 
-    return `api/${id}`;
-  });
+      return { path: `api/${id}`, name };
+    })
+    .sort((a, b) => {
+      if (isAllCaps(a.name) && !isAllCaps(b.name)) return -1;
+      if (isAllCaps(b.name) && !isAllCaps(a.name)) return 1;
+      if (startsWithUppercase(a.name) && !startsWithUppercase(b.name)) return -1;
+      if (startsWithUppercase(b.name) && !startsWithUppercase(a.name)) return 1;
+      return a.name.localeCompare(b.name);
+    })
+    .map(x => x.path)
+    .reverse();
 
   const newSidebars = {
     ...sidebars,

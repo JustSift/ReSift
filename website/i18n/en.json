@@ -57,6 +57,10 @@
         "title": "ERROR API",
         "sidebar_label": "ERROR"
       },
+      "api/guard": {
+        "title": "Guard API",
+        "sidebar_label": "Guard"
+      },
       "api/is-error": {
         "title": "isError API",
         "sidebar_label": "isError"
