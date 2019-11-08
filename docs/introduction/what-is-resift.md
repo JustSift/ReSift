@@ -101,12 +101,6 @@ The following CodeSandbox shows a demo application written in ReSift with mock e
 
 We recommend you <a href="https://codesandbox.io/s/resift-notes-xwp9r" target="_blank" rel="noopener noreferrer">open the Sandbox</a> in a new tab and play around with it.
 
-This is a full demo application including:
-
-- all CRUD actions
-- updating data across different "namespaces"
-- carefully placed loading spinners
-
 It's note-taking app! Read the pre-made notes to learn more, then edit the code to get better idea of how it works.
 
 > Note: Unfortunately, this demo is not optimized for a mobile device.
