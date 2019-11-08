@@ -95,6 +95,32 @@ export default Person;
 >
 > **With ReSift, you can dispatch a fetch in one component and pull it from another. This makes it much easier to reuse data across components and enables the concept of pre-fetching**
 
+## Demo app
+
+The following CodeSandbox shows a demo application written in ReSift with mock endpoints that purposely take 1 second each to load.
+
+We recommend you <a href="https://codesandbox.io/s/resift-notes-xwp9r" target="_blank" rel="noopener noreferrer">open the Sandbox</a> in a new tab and play around with it.
+
+This is a full demo application including:
+
+- all CRUD actions
+- updating data across different "namespaces"
+- carefully placed loading spinners
+
+It's note-taking app! Read the pre-made notes to learn more, then edit the code to get better idea of how it works.
+
+> Note: Unfortunately, this demo is not optimized for a mobile device.
+
+<iframe src="https://codesandbox.io/embed/resift-notes-xwp9r?fontsize=14"
+  style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;"
+  title="ReSift Notes"
+  allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
+  sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
+></iframe>
+<br />
+
+When you're done, continue the [Main Concepts](../main-concepts/whats-a-fetch.md) to learn more!
+
 ## Why ReSift?
 
 What's wrong with [`window.fetch`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API)? Why use ReSift over traditional methods?
@@ -121,4 +147,4 @@ Are you confident that your solution is something your team can follow easily? D
 
 If you answered "No" to any of those questions then give ReSift a try.
 
-Check out the demo app on the next page, look through the code, read the docs, then [let us know what you think](https://forms.gle/YyajQnLXHFb1yunHA)!
+<a href="https://codesandbox.io/s/resift-notes-xwp9r" target="_blank" rel="noopener noreferrer">Try out the code for yourself</a> and then [let us know what you think](https://forms.gle/YyajQnLXHFb1yunHA)!

@@ -145,10 +145,6 @@
         "title": "Usage with TypeScript",
         "sidebar_label": "Usage with TypeScript"
       },
-      "introduction/demo-app": {
-        "title": "Demo app",
-        "sidebar_label": "Demo app"
-      },
       "introduction/installation": {
         "title": "Installation",
         "sidebar_label": "Installation"
