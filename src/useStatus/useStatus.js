@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import StateContext from '../StateContext';
+import { useContextSelector } from 'use-context-selector';
 import createStoreKey from '../createStoreKey';
 import UNKNOWN from '../UNKNOWN';
 import LOADING from '../LOADING';
@@ -55,16 +56,10 @@ export const makeStatusSelector = (fetch, options) => state => {
     throw new Error('[useStatus] expected to see a fetch instance in get fetch.');
   }
 
-  if (!state.dataService) {
-    throw new Error(
-      '[useStatus] "dataService" is a required key. Double check with the installation guide here: https://resift.org/docs/introduction/installation',
-    );
-  }
-
   const { fetchFactoryId, displayName, key, share } = fetch.meta;
   const storeKey = createStoreKey(displayName, fetchFactoryId);
 
-  const value = state?.dataService?.actions?.[storeKey]?.[key];
+  const value = state?.actions?.[storeKey]?.[key];
   const nonSharedStatus = getStatus(value);
 
   // if the fetch is _not_ shared, continue down this code path.
@@ -91,7 +86,7 @@ export const makeStatusSelector = (fetch, options) => state => {
   // `parentLocations` are paths to the state in the `actions` sub-store
   const parentLocationsFromTheSameNamespace = targetNamespaces
     .map(targetNamespace => {
-      const parentLocations = state?.dataService?.shared?.parents?.[targetNamespace];
+      const parentLocations = state?.shared?.parents?.[targetNamespace];
       if (!parentLocations) {
         return null;
       }
@@ -118,7 +113,7 @@ export const makeStatusSelector = (fetch, options) => state => {
 
   const parentLocationsFromDifferentNamespaces = targetNamespaces
     .map(targetNamespace => {
-      const parentLocations = state?.dataService?.shared?.parents?.[targetNamespace];
+      const parentLocations = state?.shared?.parents?.[targetNamespace];
       if (!parentLocations) {
         return null;
       }
@@ -145,7 +140,7 @@ export const makeStatusSelector = (fetch, options) => state => {
   const sharedStatusesFromSameNamespace = parentLocationsFromTheSameNamespace
     .map(parentLocation => {
       const storeKey = createStoreKey(parentLocation.displayName, parentLocation.fetchFactoryId);
-      const parentAction = state?.dataService?.actions?.[storeKey]?.[parentLocation.key];
+      const parentAction = state?.actions?.[storeKey]?.[parentLocation.key];
 
       return getStatus(parentAction);
     })
@@ -154,7 +149,7 @@ export const makeStatusSelector = (fetch, options) => state => {
   const sharedStatuesFromDifferentNamespaces = parentLocationsFromDifferentNamespaces
     .map(parentLocation => {
       const storeKey = createStoreKey(parentLocation.displayName, parentLocation.fetchFactoryId);
-      const parentAction = state?.dataService?.actions?.[storeKey]?.[parentLocation.key];
+      const parentAction = state?.actions?.[storeKey]?.[parentLocation.key];
 
       return getStatus(parentAction);
     })
@@ -182,7 +177,8 @@ function useStatus(fetch, options) {
     fetch,
     preservedOptions,
   ]);
-  return useSelector(statusSelector);
+  const status = useContextSelector(StateContext, statusSelector);
+  return status;
 }
 
 export default useStatus;

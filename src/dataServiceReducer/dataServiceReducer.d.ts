@@ -1,9 +1,3 @@
-import { combineReducers, Reducer } from 'redux';
-import actions, { ActionsState } from './actionsReducer';
-import shared, { SharedState } from './sharedReducer';
-
-export type DataServiceState = { shared: SharedState; actions: ActionsState };
-
 /**
  * @docs `dataServiceReducer`
  *
@@ -12,6 +6,6 @@ export type DataServiceState = { shared: SharedState; actions: ActionsState };
  *
  * [See Usage with Redux for more info.](../guides/usage-with-redux.md)
  */
-declare const dataServiceReducer: Reducer<DataServiceState>;
+declare const dataServiceReducer: any;
 
 export default dataServiceReducer;

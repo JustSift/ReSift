@@ -1,17 +1,15 @@
 import { useContext, useCallback } from 'react';
-import { ReactReduxContext } from 'react-redux';
+import DispatchContext from '../DispatchContext';
 import CLEAR from '../prefixes/CLEAR';
 
 export default function useDispatch() {
-  const contextValue = useContext(ReactReduxContext);
-  if (!contextValue) {
+  const dispatch = useContext(DispatchContext);
+  if (!dispatch) {
     throw new Error(
       '[useDispatch] Could not find the respective context. In order to `useDispatch` you must add the respective provider. https://resift.org/docs/introduction/installation#adding-the-resiftprovider',
     );
   }
-  const { store } = contextValue;
-
-  if (process.env.NODE_ENV === 'production') return store.dispatch;
+  if (process.env.NODE_ENV === 'production') return dispatch;
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
   return useCallback(
@@ -33,8 +31,8 @@ export default function useDispatch() {
         );
       }
 
-      return store.dispatch(action);
+      return dispatch(action);
     },
-    [store],
+    [dispatch],
   );
 }

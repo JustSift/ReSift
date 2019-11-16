@@ -1,41 +1,62 @@
-import React, { useContext, useMemo } from 'react';
-import { ReactReduxContext, Provider } from 'react-redux';
-
-import { createStore as createReduxStore, combineReducers, applyMiddleware, compose } from 'redux';
+import React, { useMemo, useReducer, useEffect, useCallback } from 'react';
+import usePull from 'use-pull';
+import StateContext from '../StateContext';
+import DispatchContext from '../DispatchContext';
+import SubscriptionContext from '../SubscriptionContext';
 import dataServiceReducer from '../dataServiceReducer';
 
-/**
- * used to create the store if the store isn't passed down from redux context
- */
-function createStore(dataService) {
-  const reducer = combineReducers({ dataService: dataServiceReducer });
-  const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-  const enhancers = composeEnhancers(applyMiddleware(dataService));
-  const store = createReduxStore(reducer, enhancers);
-
-  return store;
-}
-
-function ResiftProvider({ children, dataService, suppressOutsideReduxWarning }) {
-  const sawReduxContext = !!useContext(ReactReduxContext);
-
-  if (process.env.NODE_ENV !== 'production') {
-    if (sawReduxContext && !suppressOutsideReduxWarning) {
-      console.warn(
-        "[ResiftProvider] Saw an outside Redux context in this tree. If you're using Redux in your application, you don't need to wrap your app in the ResiftProvider. See https://resift.org/docs/guides/usage-with-redux",
-      );
-    }
-  }
-
+function ResiftProvider({ children, dataService }) {
   if (!dataService) {
     throw new Error('[ResiftProvider] `dataService` missing from props.');
   }
 
-  const store = useMemo(() => {
-    return createStore(dataService);
-  }, [dataService]);
+  const [state, rawDispatch] = useReducer(dataServiceReducer, {});
+  const getState = usePull(state);
 
-  return <Provider store={store}>{children}</Provider>;
+  const dispatch = useCallback(
+    async action => {
+      rawDispatch(action);
+      const state = getState();
+      await dataService(state, rawDispatch, action);
+    },
+    [getState, dataService],
+  );
+
+  const { notify, subscribe } = useMemo(() => {
+    const subscriptions = new Set();
+
+    const notify = state => {
+      // eslint-bug
+      // eslint-disable-next-line no-unused-vars
+      for (const subscription of subscriptions) {
+        subscription(state);
+      }
+    };
+
+    const subscribe = subscription => {
+      subscriptions.add(subscription);
+
+      const unsubscribe = () => {
+        subscriptions.delete(subscription);
+      };
+
+      return unsubscribe;
+    };
+
+    return { subscribe, notify };
+  }, []);
+
+  useEffect(() => {
+    notify(state);
+  }, [state, notify]);
+
+  return (
+    <DispatchContext.Provider value={dispatch}>
+      <SubscriptionContext.Provider value={subscribe}>
+        <StateContext.Provider value={state}>{children}</StateContext.Provider>
+      </SubscriptionContext.Provider>
+    </DispatchContext.Provider>
+  );
 }
 
 export default ResiftProvider;

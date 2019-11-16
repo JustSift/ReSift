@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import StateContext from '../StateContext';
+import { useContextSelector } from 'use-context-selector';
 import createStoreKey from '../createStoreKey';
 
 const makeErrorSelector = fetch => state => {
@@ -36,7 +37,8 @@ const makeErrorSelector = fetch => state => {
 
 function useError(fetch) {
   const errorSelector = useMemo(() => makeErrorSelector(fetch), [fetch]);
-  return useSelector(errorSelector);
+  const error = useContextSelector(StateContext, errorSelector);
+  return error;
 }
 
 export default useError;

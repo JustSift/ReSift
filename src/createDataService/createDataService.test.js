@@ -3,6 +3,7 @@ import ERROR from '../prefixes/ERROR';
 import delay from 'delay';
 import DeferredPromise from '../DeferredPromise';
 import defineFetch from '../defineFetch';
+import _noop from 'lodash/noop';
 import dataServiceReducer from '../dataServiceReducer';
 import createActionType from '../createActionType';
 import CanceledError from '../CanceledError';
@@ -29,49 +30,19 @@ describe('middleware', () => {
     }).toThrowErrorMatchingInlineSnapshot(`"\`onError\` callback required"`);
   });
 
-  test('it returns a middleware that will call the next action if the action is not a fetch', () => {
+  test('it returns a middleware that will early return if not a fetch action', () => {
     // given
     const mockErrorHandler = jest.fn();
     const middleware = createDataService({ services: {}, onError: mockErrorHandler });
 
-    const mockStore = {};
-    const mockNext = jest.fn();
+    const mockDispatch = jest.fn();
     const mockAction = { type: 'MOCK_TYPE' };
 
     // when
-    middleware(mockStore)(mockNext)(mockAction);
+    middleware({}, mockDispatch, mockAction);
 
     // then
-    expect(mockNext).toHaveBeenCalledTimes(1);
-    expect(mockNext).toHaveBeenCalledWith(mockAction);
-    expect(mockErrorHandler).not.toHaveBeenCalled();
-  });
-
-  test('it synchronously calls next action after running it through `handleAction`', async () => {
-    // given
-    const mockErrorHandler = jest.fn();
-    const middleware = createDataService({ services: {}, onError: mockErrorHandler });
-
-    const mockStore = {
-      getState: () => ({}),
-    };
-    const mockNext = jest.fn();
-
-    const fetchFactory = defineFetch({
-      displayName: 'example fetch',
-      make: () => ({
-        request: () => () => {},
-      }),
-    });
-
-    const mockAction = fetchFactory();
-
-    // when
-    await middleware(mockStore)(mockNext)(mockAction);
-
-    // then
-    expect(mockNext).toHaveBeenCalledTimes(1);
-    expect(mockNext).toHaveBeenCalledWith(mockAction);
+    expect(mockDispatch).not.toHaveBeenCalled();
     expect(mockErrorHandler).not.toHaveBeenCalled();
   });
 
@@ -82,16 +53,11 @@ describe('middleware', () => {
       services: { testService: ({ onCancel }) => () => delay(0) },
       onError: mockErrorHandler,
     });
-    const mockNext = jest.fn();
+    const mockDispatch = jest.fn(action => {
+      dispatchCalled.resolve(action);
+    });
 
     const dispatchCalled = new DeferredPromise();
-
-    const mockStore = {
-      getState: () => ({}),
-      dispatch: action => {
-        dispatchCalled.resolve(action);
-      },
-    };
 
     const makeFetch = defineFetch({
       displayName: 'example fetch',
@@ -117,7 +83,7 @@ describe('middleware', () => {
     `);
 
     // when
-    middleware(mockStore)(mockNext)(action);
+    middleware({}, mockDispatch, action);
 
     // then
     const successAction = await dispatchCalled;
@@ -140,16 +106,11 @@ describe('middleware', () => {
     // given
     const mockErrorHandler = jest.fn();
     const middleware = createDataService({ services: {}, onError: mockErrorHandler });
-    const mockNext = jest.fn();
+    const mockDispatch = jest.fn(action => {
+      dispatchCalled.resolve(action);
+    });
 
     const dispatchCalled = new DeferredPromise();
-
-    const mockStore = {
-      getState: () => ({}),
-      dispatch: action => {
-        dispatchCalled.resolve(action);
-      },
-    };
 
     const testError = new Error('test error');
 
@@ -167,7 +128,7 @@ describe('middleware', () => {
 
     // when
     try {
-      await middleware(mockStore)(mockNext)(action);
+      await middleware({}, mockDispatch, action);
     } catch (e) {
       expect(e).toMatchInlineSnapshot(`[Error: test error]`);
     }
@@ -231,37 +192,11 @@ describe('handleAction', () => {
     await handleAction({
       state: {},
       services: { exampleService },
-      dispatch: () => {},
+      dispatch: _noop,
       action: actionCreator('test arg'),
     });
 
     await exampleServiceCalled;
-  });
-
-  test('it injects the dispatch service', () => {
-    // given
-    const mockDispatch = jest.fn();
-
-    const makeActionCreator = defineFetch({
-      displayName: 'test dispatch service',
-      make: () => ({
-        request: () => ({ dispatch }) => {
-          dispatch({ type: 'TEST_TYPE' });
-          return null;
-        },
-      }),
-    });
-    const actionCreator = makeActionCreator();
-
-    // when
-    handleAction({
-      state: {},
-      services: {},
-      dispatch: mockDispatch,
-      action: actionCreator(),
-    });
-
-    expect(mockDispatch).toHaveBeenCalled();
   });
 
   test('conflict ignore', async () => {

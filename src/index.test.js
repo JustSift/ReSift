@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { create, act } from 'react-test-renderer';
 import DeferredPromise from './DeferredPromise';
 import {
@@ -8,7 +8,6 @@ import {
   useStatus,
   createDataService,
   useDispatch,
-  isLoading,
   isNormal,
 } from './index';
 
@@ -17,7 +16,7 @@ test('basic lifecycle', async () => {
   const dataHandler = jest.fn();
   const statusHandler = jest.fn();
 
-  const makePersonFetch = defineFetch({
+  const makeGetPerson = defineFetch({
     displayName: 'Get Person',
     make: personId => ({
       request: () => () => ({
@@ -27,18 +26,22 @@ test('basic lifecycle', async () => {
     }),
   });
 
+  function PersonContent({ fetch }) {
+    const person = useData(fetch);
+    useEffect(() => dataHandler(person), [person]);
+    return <div>{person.name}</div>;
+  }
+
   function Person({ personId }) {
     const dispatch = useDispatch();
-    const personFetch = makePersonFetch(personId);
-    const person = useData(personFetch);
-    const status = useStatus(personFetch);
+    const getPerson = makeGetPerson(personId);
+    const status = useStatus(getPerson);
 
     useEffect(() => {
-      dispatch(personFetch());
-    }, [personFetch, dispatch]);
+      dispatch(getPerson());
+    }, [getPerson, dispatch]);
 
     useEffect(() => statusHandler(status), [status]);
-    useEffect(() => dataHandler(person), [person]);
 
     useEffect(() => {
       if (!isNormal(status)) {
@@ -50,8 +53,9 @@ test('basic lifecycle', async () => {
 
     return (
       <div>
-        {person && person.name}
-        {isLoading(status) && <div>Loading…</div>}
+        <Suspense fallback="Loading…">
+          <PersonContent fetch={getPerson} />
+        </Suspense>
       </div>
     );
   }
@@ -87,12 +91,11 @@ test('basic lifecycle', async () => {
     ]
   `);
 
-  expect(dataHandler).toHaveBeenCalledTimes(2);
+  expect(dataHandler).toHaveBeenCalledTimes(1);
   // 1) no data
   // 2) data
   expect(dataHandler.mock.calls.map(x => x[0])).toMatchInlineSnapshot(`
     Array [
-      null,
       Object {
         "name": "It worked!",
         "personId": "person123",

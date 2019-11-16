@@ -1,5 +1,7 @@
-import { useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import { useMemo, useContext } from 'react';
+import StateContext from '../StateContext';
+import SubscriptionContext from '../SubscriptionContext';
+import { useContextSelector } from 'use-context-selector';
 import createStoreKey from '../createStoreKey';
 
 const makeDataSelector = fetch => state => {
@@ -12,17 +14,11 @@ const makeDataSelector = fetch => state => {
     throw new Error('[useData] expected to see a fetch instance.');
   }
 
-  if (!state.dataService) {
-    throw new Error(
-      '[useData] "dataService" is a required key. Double check with the installation guide here: https://resift.org/docs/introduction/installation',
-    );
-  }
-
   const { fetchFactoryId, displayName, key, share } = fetch.meta;
 
   const storeKey = createStoreKey(displayName, fetchFactoryId);
 
-  const value = state?.dataService?.actions?.[storeKey]?.[key];
+  const value = state?.actions?.[storeKey]?.[key];
 
   // if the fetch is _not_ shared, continue down this code path.
   // in this path, all we do is return the "non-shared" value and the "non-shared" state from the
@@ -36,13 +32,28 @@ const makeDataSelector = fetch => state => {
   const { namespace } = share;
 
   // the value comes from the `shared` sub-store instead of the `actions` sub-store
-  const sharedData = state?.dataService?.shared?.data?.[namespace]?.[key] || null;
+  const sharedData = state?.shared?.data?.[namespace]?.[key] || null;
   return sharedData;
 };
 
 function useData(fetch) {
   const dataSelector = useMemo(() => makeDataSelector(fetch), [fetch]);
-  return useSelector(dataSelector);
+  const data = useContextSelector(StateContext, dataSelector);
+  const subscribe = useContext(SubscriptionContext);
+
+  if (!data) {
+    throw new Promise(resolve => {
+      const unsubscribe = subscribe(state => {
+        const data = dataSelector(state);
+        if (data) {
+          resolve();
+          unsubscribe();
+        }
+      });
+    });
+  }
+
+  return data;
 }
 
 export default useData;

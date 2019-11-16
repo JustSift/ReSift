@@ -3,7 +3,6 @@ import ERROR from '../prefixes/ERROR';
 import createActionType from '../createActionType';
 import createStoreKey from '../createStoreKey';
 import { isFetchAction } from '../defineFetch';
-import CanceledError from '../CanceledError';
 
 export function isSuccessAction(action) {
   if (typeof action !== 'object') return false;
@@ -20,7 +19,7 @@ export function isErrorAction(action) {
 const requestsToCancel = new WeakSet();
 
 // function exists simply to encapsulate async/awaits
-export async function handleAction({ state, services, dispatch, action, getState }) {
+export async function handleAction({ state, services, dispatch, action }) {
   const { payload, meta } = action;
   const { displayName, fetchFactoryId, key, conflict } = meta;
 
@@ -41,20 +40,6 @@ export async function handleAction({ state, services, dispatch, action, getState
       requestsToCancel.add(inflight);
     }
 
-    const dispatchService = action => {
-      if (payload.getCanceled()) {
-        throw new CanceledError();
-      }
-      return dispatch(action);
-    };
-
-    const getStateService = () => {
-      if (payload.getCanceled()) {
-        throw new CanceledError();
-      }
-      return getState();
-    };
-
     // goes through all the services and applies the cancellation mechanism
     const servicesWithCancel = Object.entries(services).reduce(
       (services, [serviceKey, service]) => {
@@ -64,11 +49,7 @@ export async function handleAction({ state, services, dispatch, action, getState
         });
         return services;
       },
-      // start with the `dispatch` service and `getState` service (resift provides these by default)
-      {
-        dispatch: dispatchService,
-        getState: getStateService,
-      },
+      {},
     );
 
     // this try-catch set is only to ignore canceled errors
@@ -112,25 +93,22 @@ export default function createDataService({ services, onError }) {
   if (!services) throw new Error('`services` key required');
   if (!onError) throw new Error('`onError` callback required');
 
-  return store => next => action => {
+  return (state, dispatch, action) => {
     if (!isFetchAction(action)) {
-      return next(action);
+      return;
     }
 
     const actionPromise = handleAction({
-      state: store.getState().dataService,
+      state,
       services,
-      dispatch: store.dispatch,
+      dispatch,
       action,
-      getState: store.getState,
     }).catch(e => {
       onError(e);
       // when awaiting dispatch...
       //    👇 this is the error that will propagate to the awaiter
       throw e;
     });
-
-    next(action);
 
     return actionPromise;
   };

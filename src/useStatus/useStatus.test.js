@@ -841,7 +841,7 @@ describe('useStatus', () => {
       const status = makeStatusSelector(getMovieItem456)({
         dataService: afterMovieItem123Success,
       });
-      expect(status).toMatchInlineSnapshot(`2`);
+      expect(status).toMatchInlineSnapshot(`0`);
       expect(isNormal(status)).toBe(false);
     })();
 
@@ -849,7 +849,7 @@ describe('useStatus', () => {
       const status = makeStatusSelector(getMovieItem456)({
         dataService: afterMovieItem456Success,
       });
-      expect(status).toMatchInlineSnapshot(`1`);
+      expect(status).toMatchInlineSnapshot(`0`);
       expect(isNormal(status)).toBe(true);
     })();
   });
@@ -1028,7 +1028,7 @@ describe('useStatus', () => {
 
     const status = makeStatusSelector(getNoteList)({ dataService: state });
 
-    expect(status).toMatchInlineSnapshot(`3`);
+    expect(status).toMatchInlineSnapshot(`0`);
     expect(isNormal(status)).toBe(true);
     expect(isLoading(status)).toBe(true);
     expect(isUnknown(status)).toBe(false);

@@ -20,19 +20,21 @@ function execute(command) {
       if (err) {
         reject(err);
       } else {
-        resolve();
+        resolve(stdout);
       }
     });
   });
 }
 
-async function createPackageJson() {
+async function createPackageJson(experimental) {
   const packageBuffer = await readFile(path.resolve(root, './package.json'));
   const packageJson = JSON.parse(packageBuffer.toString());
 
+  const hash = await execute(`md5 -q ${path.resolve(__dirname, '../build/index.js')}`);
+
   const minimalPackage = {
     author: packageJson.author,
-    version: packageJson.version,
+    version: experimental ? `0.0.0-experimental-${hash.trim().slice(0, 9)}` : packageJson.version,
     description: packageJson.description,
     keywords: packageJson.keywords,
     repository: packageJson.repository,
@@ -67,7 +69,9 @@ async function build() {
   await execute('npx webpack -p');
 
   console.log('Writing package.json…');
-  await createPackageJson();
+
+  const experimental = args.includes('--experimental');
+  await createPackageJson(experimental);
 
   console.log('Done building!');
 }
