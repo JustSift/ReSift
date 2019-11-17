@@ -3,6 +3,7 @@ import delay from 'delay';
 import createHttpProxy from '../createHttpProxy';
 
 import createHttpService from '../createHttpService';
+import XMLHttpRequest from 'xhr2';
 
 let server;
 const port = 8090;
@@ -21,6 +22,7 @@ beforeEach(() => {
 });
 
 beforeAll(() => {
+  window.XMLHttpRequest = XMLHttpRequest;
   // why not test with real superagent?
   const express = require('express');
   const app = express();
@@ -226,7 +228,7 @@ test('it throws when there is a 4xx error', async () => {
     });
   } catch (e) {
     // then
-    expect(e).toMatchInlineSnapshot(`[Error: Bad Request]`);
+    expect(e).toMatchInlineSnapshot(`[Error: [createHttpService] Non-OK HTTP Response]`);
   }
 });
 
@@ -371,23 +373,23 @@ test('proxies as a mock handler', async () => {
 
   const exampleProxy = createHttpProxy({ path: '/proxy-test' }, handlerParams => {
     expect(handlerParams).toMatchInlineSnapshot(`
-Object {
-  "getCanceled": [Function],
-  "headers": Object {},
-  "http": [Function],
-  "match": Object {
-    "isExact": true,
-    "params": Object {},
-    "path": "/proxy-test",
-    "url": "/proxy-test",
-  },
-  "onCancel": [Function],
-  "requestParams": Object {
-    "method": "GET",
-    "route": "/proxy-test",
-  },
-}
-`);
+      Object {
+        "getCanceled": [Function],
+        "headers": Object {},
+        "http": [Function],
+        "match": Object {
+          "isExact": true,
+          "params": Object {},
+          "path": "/proxy-test",
+          "url": "/proxy-test",
+        },
+        "onCancel": [Function],
+        "requestParams": Object {
+          "method": "GET",
+          "route": "/proxy-test",
+        },
+      }
+    `);
 
     return exampleObject;
   });

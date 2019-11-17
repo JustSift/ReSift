@@ -14,7 +14,7 @@ import isUnknown from '../isUnknown';
 
 import { makeStatusSelector, getStatus, combineSharedStatuses } from './useStatus';
 
-jest.mock('shortid', () => () => 'test-short-id');
+jest.mock('nanoid', () => () => 'test-short-id');
 jest.mock('../timestamp', () => () => 'test-timestamp');
 
 describe('getStatus', () => {

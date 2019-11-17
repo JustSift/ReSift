@@ -5,7 +5,7 @@ import SUCCESS from '../prefixes/SUCCESS';
 import createActionType from '../createActionType';
 import clearFetch from '../clearFetch';
 
-jest.mock('shortid', () => () => 'test-short-id');
+jest.mock('nanoid', () => () => 'test-short-id');
 
 test('returns the previous state if the action is not a success action', () => {
   // given

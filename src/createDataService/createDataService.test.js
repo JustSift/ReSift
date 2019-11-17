@@ -14,7 +14,7 @@ import createDataService, {
   isErrorAction,
 } from './createDataService';
 
-jest.mock('shortid', () => () => 'test-short-id');
+jest.mock('nanoid', () => () => 'test-short-id');
 jest.mock('../timestamp', () => () => 'test-timestamp');
 
 describe('middleware', () => {

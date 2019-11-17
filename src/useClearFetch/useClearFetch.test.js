@@ -2,7 +2,7 @@ import useClearFetch from './useClearFetch';
 import useDispatch from '../useDispatch';
 import defineFetch from '../defineFetch';
 
-jest.mock('shortid', () => () => 'test-short-id');
+jest.mock('nanoid', () => () => 'test-short-id');
 
 const mockDispatch = jest.fn();
 function mockGet() {

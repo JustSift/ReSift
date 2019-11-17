@@ -1,4 +1,3 @@
-import request from 'superagent';
 import CanceledError from '../CanceledError';
 import matchPath from '../createHttpProxy/matchPath';
 
@@ -15,48 +14,133 @@ async function getPrefix(_prefix, _getPrefix) {
   return '';
 }
 
+function safeParseJson(maybeJson) {
+  try {
+    return JSON.parse(maybeJson);
+  } catch {
+    return null;
+  }
+}
+
+// copied from:
+// https://github.com/visionmedia/superagent/blob/483f8166f42a78c47c8116f3cfca7a7bd308d66c/src/client.js#L243
+function parseHeader(str) {
+  const lines = str.split(/\r?\n/);
+  const fields = {};
+  let index;
+  let line;
+  let field;
+  let val;
+
+  for (let i = 0, len = lines.length; i < len; ++i) {
+    line = lines[i];
+    index = line.indexOf(':');
+    if (index === -1) {
+      // could be empty line, just skip it
+      continue;
+    }
+
+    field = line
+      .slice(0, index)
+      .toLowerCase()
+      .trim();
+    val = line.trim().slice(index + 1);
+    fields[field] = val;
+  }
+
+  return fields;
+}
+
 async function http(
-  { method, query, route, ok, req: reqHandler, data },
+  {
+    method,
+    query,
+    route,
+    ok = xhr => xhr.status >= 200 && xhr.status < 300,
+    req: reqHandler,
+    data,
+  },
   { headers, onCancel, prefix },
 ) {
   /** @type {'get' | 'post' | 'put' | 'delete' | 'patch'} */
   const normalizedMethod = method.toLowerCase();
-  const path = `${prefix}${route}`;
+  const queryString = Object.entries(query || {})
+    .map(([key, value]) => {
+      if (Array.isArray(value)) {
+        return value.map(v => ({ key, value: v }));
+      }
+      return [{ key, value }];
+    })
+    .reduce((flattened, next) => {
+      // eslint-disable-next-line no-unused-vars
+      for (const tuple of next) {
+        flattened.push(tuple);
+      }
+      return flattened;
+    }, [])
+    .map(({ key, value }) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+    .join('&');
 
-  const req = request[normalizedMethod](path).accept('application/json');
+  const path = `${prefix}${route}${queryString && `?${queryString}`}`;
 
-  const headerEntries = Object.entries(headers);
+  const xhr = new XMLHttpRequest();
+  xhr.open(normalizedMethod, path, true);
 
-  // don't know there's this false positive
+  xhr.setRequestHeader('Accept', 'application/json');
+  const headerEntries = Object.entries(headers || {});
   // https://github.com/eslint/eslint/issues/12117
   // eslint-disable-next-line no-unused-vars
   for (const [headerKey, headerValue] of headerEntries) {
-    req.set(headerKey, headerValue);
-  }
-
-  onCancel(() => {
-    req.abort();
-  });
-
-  if (query) {
-    req.query(query);
-  }
-
-  if (ok) {
-    req.ok(ok);
-  }
-
-  if (reqHandler) {
-    reqHandler(req);
+    xhr.setRequestHeader(headerKey, headerValue);
   }
 
   if (data) {
-    req.send(data);
+    xhr.setRequestHeader('Content-Type', 'application/json')
   }
 
-  const payload = await req;
+  onCancel(() => {
+    xhr.abort();
+  });
 
-  return payload.body;
+  if (reqHandler) {
+    reqHandler(xhr);
+  }
+
+  xhr.send(data ? JSON.stringify(data) : undefined);
+
+  const payload = await new Promise((resolve, reject) => {
+    xhr.addEventListener('loadend', () => {
+      if (xhr.status === 0) {
+        reject(new CanceledError());
+      }
+
+      const isOk = ok(xhr);
+      if (isOk) {
+        try {
+          try {
+            resolve(JSON.parse(xhr.responseText));
+          } catch {
+            resolve(null);
+          }
+        } catch {
+          reject(new Error('[createHttpService] Failed to parse JSON from responseText'));
+        }
+      } else {
+        const error = new Error('[createHttpService] Non-OK HTTP Response');
+        error.status = xhr.status;
+        const headers = parseHeader(xhr.getAllResponseHeaders());
+        error.response = {
+          text: xhr.responseText,
+          body: safeParseJson(xhr.responseText),
+          header: headers,
+          type: headers['content-type'],
+        };
+        reject(error);
+      }
+    });
+  });
+
+  return payload;
 }
 
 export default function createHttpService({

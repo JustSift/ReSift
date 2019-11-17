@@ -61,7 +61,7 @@ Here are some example mock endpoints from the [ReSift Notes example](../examples
 
 ```js
 import { createHttpProxy } from 'resift';
-import shortId from 'shortid';
+import nanoid from 'nanoid';
 import delay from 'delay';
 import moment from 'moment';
 import { stripIndent } from 'common-tags';
@@ -92,7 +92,7 @@ export const notes = createHttpProxy({ path: '/notes', exact: true }, async ({ r
   if (method === 'POST') {
     const newNote = {
       ...data,
-      id: shortId(),
+      id: nanoid(),
     };
     noteData.push(newNote);
 

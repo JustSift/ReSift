@@ -7,7 +7,7 @@ import { isSuccessAction, isErrorAction } from '../createDataService';
 import clearFetch, { isClearAction } from '../clearFetch';
 
 jest.mock('../timestamp', () => () => 'test-timestamp');
-jest.mock('shortid', () => () => 'test-shortid');
+jest.mock('nanoid', () => () => 'test-nanoid');
 
 test("it returns the previous state if the action isn't a fetch, success, or error, action", () => {
   const mockAction = { type: 'not a match' };
@@ -33,13 +33,13 @@ test('when given a fetch action, it adds an inflight payload to the store', () =
 
   expect(newState).toMatchInlineSnapshot(`
     Object {
-      "example fetch | test-shortid": Object {
+      "example fetch | test-nanoid": Object {
         "key:test arg": Object {
           "inflight": [Function],
           "meta": Object {
             "conflict": "cancel",
             "displayName": "example fetch",
-            "fetchFactoryId": "test-shortid",
+            "fetchFactoryId": "test-nanoid",
             "key": "key:test arg",
             "share": undefined,
           },
@@ -77,7 +77,7 @@ test('when given a success action, it adds a success payload and replaces the in
   // then
   expect(newState).toMatchInlineSnapshot(`
     Object {
-      "example action | test-shortid": Object {
+      "example action | test-nanoid": Object {
         "key:test arg": Object {
           "data": Object {
             "mock": "data",
@@ -89,7 +89,7 @@ test('when given a success action, it adds a success payload and replaces the in
           "meta": Object {
             "conflict": "cancel",
             "displayName": "example action",
-            "fetchFactoryId": "test-shortid",
+            "fetchFactoryId": "test-nanoid",
             "key": "key:test arg",
             "share": undefined,
           },
@@ -130,7 +130,7 @@ test('when given a clear action, it removes the sub-store', () => {
 
   expect(state).toMatchInlineSnapshot(`
     Object {
-      "example action | test-shortid": Object {
+      "example action | test-nanoid": Object {
         "key:one": Object {
           "data": Object {
             "mock": "one",
@@ -142,7 +142,7 @@ test('when given a clear action, it removes the sub-store', () => {
           "meta": Object {
             "conflict": "cancel",
             "displayName": "example action",
-            "fetchFactoryId": "test-shortid",
+            "fetchFactoryId": "test-nanoid",
             "key": "key:one",
             "share": undefined,
             "type": "FETCH_INSTANCE",
@@ -161,7 +161,7 @@ test('when given a clear action, it removes the sub-store', () => {
           "meta": Object {
             "conflict": "cancel",
             "displayName": "example action",
-            "fetchFactoryId": "test-shortid",
+            "fetchFactoryId": "test-nanoid",
             "key": "key:two",
             "share": undefined,
             "type": "FETCH_INSTANCE",
@@ -182,7 +182,7 @@ test('when given a clear action, it removes the sub-store', () => {
   // then
   expect(clearState).toMatchInlineSnapshot(`
     Object {
-      "example action | test-shortid": Object {
+      "example action | test-nanoid": Object {
         "key:two": Object {
           "data": Object {
             "mock": "two",
@@ -194,7 +194,7 @@ test('when given a clear action, it removes the sub-store', () => {
           "meta": Object {
             "conflict": "cancel",
             "displayName": "example action",
-            "fetchFactoryId": "test-shortid",
+            "fetchFactoryId": "test-nanoid",
             "key": "key:two",
             "share": undefined,
             "type": "FETCH_INSTANCE",
@@ -233,7 +233,7 @@ test('when given an error action, it adds an error payload and replaces the infl
   // then
   expect(newState).toMatchInlineSnapshot(`
     Object {
-      "example action | test-shortid": Object {
+      "example action | test-nanoid": Object {
         "key:test arg": Object {
           "error": true,
           "errorData": [Error: test error],
@@ -241,7 +241,7 @@ test('when given an error action, it adds an error payload and replaces the infl
           "meta": Object {
             "conflict": "cancel",
             "displayName": "example action",
-            "fetchFactoryId": "test-shortid",
+            "fetchFactoryId": "test-nanoid",
             "key": "key:test arg",
             "share": undefined,
           },

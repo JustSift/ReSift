@@ -2,7 +2,7 @@ import defineFetch, { isFetchAction, normalizeMerge, replace } from './defineFet
 import delay from 'delay';
 import DeferredPromise from '../DeferredPromise';
 
-jest.mock('shortid', () => () => 'test-short-id');
+jest.mock('nanoid', () => () => 'test-short-id');
 
 describe('defineFetch', () => {
   test('it throws if there is no displayName', () => {

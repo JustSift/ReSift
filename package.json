@@ -65,13 +65,13 @@
     "typescript": "^3.7.2",
     "webpack": "^4.35.2",
     "webpack-bundle-analyzer": "^3.6.0",
-    "webpack-cli": "^3.3.5"
+    "webpack-cli": "^3.3.5",
+    "xhr2": "^0.2.0"
   },
   "dependencies": {
     "@types/superagent": "^4.1.2",
     "delay": "^4.3.0",
-    "shortid": "^2.2.14",
-    "superagent": "^5.1.0",
+    "nanoid": "^2.1.7",
     "use-context-selector": "^1.0.1",
     "use-pull": "^0.1.0"
   },

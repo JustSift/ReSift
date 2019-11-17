@@ -1,4 +1,4 @@
-import shortId from 'shortid';
+import nanoId from 'nanoid';
 import createActionType from '../createActionType';
 import FETCH from '../prefixes/FETCH';
 
@@ -85,7 +85,7 @@ export default function defineFetch({
   make,
   staticFetchFactoryId,
 }) {
-  const fetchFactoryId = staticFetchFactoryId || shortId();
+  const fetchFactoryId = staticFetchFactoryId || nanoId();
 
   if (!displayName) throw new Error('`displayName` is required in `defineFetch`');
   if (!make) throw new Error('`make` is required in `defineFetch`');

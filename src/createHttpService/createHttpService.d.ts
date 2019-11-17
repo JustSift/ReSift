@@ -1,4 +1,3 @@
-import request from 'superagent';
 import { FetchServiceParams } from '../createDataService';
 import { HttpProxy } from '../createHttpProxy';
 
@@ -52,12 +51,12 @@ export interface HttpParams {
    * error or not. The callback to the `ok` function gets a response and returns `true` if the
    * response should be interpreted as success."
    */
-  ok?: (response: request.Response) => boolean;
+  ok?: (response: any) => boolean;
   /**
    * You can add custom behavior to the superagent `req` using this callback.
    * it is added before the `req.send` method is called
    */
-  req?: (request: request.SuperAgentRequest) => void;
+  req?: (request: any) => void;
 }
 
 /**

@@ -2,7 +2,7 @@ import defineFetch from '../defineFetch';
 import clearFetch, { isClearAction } from './clearFetch';
 import CLEAR from '../prefixes/CLEAR';
 
-jest.mock('shortid', () => () => 'test-shortid');
+jest.mock('nanoid', () => () => 'test-nanoid');
 
 test('it creates a clear fetch action from a fetch with a dynamic key', () => {
   const makePersonFetch = defineFetch({
@@ -21,12 +21,12 @@ Object {
   "meta": Object {
     "conflict": "cancel",
     "displayName": "person fetch",
-    "fetchFactoryId": "test-shortid",
+    "fetchFactoryId": "test-nanoid",
     "key": "key:person123",
     "share": undefined,
     "type": "FETCH_INSTANCE",
   },
-  "type": "@@RESIFT/CLEAR | person fetch | test-shortid",
+  "type": "@@RESIFT/CLEAR | person fetch | test-nanoid",
 }
 `);
 });
@@ -48,12 +48,12 @@ Object {
   "meta": Object {
     "conflict": "cancel",
     "displayName": "test fetch",
-    "fetchFactoryId": "test-shortid",
+    "fetchFactoryId": "test-nanoid",
     "key": "key:",
     "share": undefined,
     "type": "FETCH_INSTANCE",
   },
-  "type": "@@RESIFT/CLEAR | test fetch | test-shortid",
+  "type": "@@RESIFT/CLEAR | test fetch | test-nanoid",
 }
 `);
 });
