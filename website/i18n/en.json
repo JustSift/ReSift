@@ -57,6 +57,10 @@
         "title": "ERROR API",
         "sidebar_label": "ERROR"
       },
+      "api/guard": {
+        "title": "Guard API",
+        "sidebar_label": "Guard"
+      },
       "api/is-error": {
         "title": "isError API",
         "sidebar_label": "isError"
@@ -140,10 +144,6 @@
       "guides/usage-with-typescript": {
         "title": "Usage with TypeScript",
         "sidebar_label": "Usage with TypeScript"
-      },
-      "introduction/demo-app": {
-        "title": "Demo app",
-        "sidebar_label": "Demo app"
       },
       "introduction/installation": {
         "title": "Installation",

@@ -86,6 +86,11 @@ const siteConfig = {
   gaTrackingId: 'UA-151301218-1',
 
   editUrl: 'https://github.com/JustSift/ReSift/edit/master/',
+
+  algolia: {
+    apiKey: '297d04bc0f2dc29afd608b216d968b67',
+    indexName: 'resift',
+  },
 };
 
 module.exports = siteConfig;

@@ -50,6 +50,8 @@ li {
   color: #212121;
 }
 
+/* sometimes, everything is just important, nbd */
+
 .slidingNav a {
   background: none !important;
   color: #212121 !important;
@@ -61,4 +63,27 @@ li {
 
 .nav-home img {
   object-fit: contain;
+}
+
+.algolia-autocomplete {
+  color: black !important;
+  background-color: #ddd !important;
+  border-radius: 999999px;
+}
+
+.algolia-autocomplete *::placeholder {
+  color: #333 !important;
+}
+
+.navSearchWrapper::before {
+  border-color: #aaa !important;
+}
+
+.navSearchWrapper::after {
+  background: #aaa !important;
+}
+
+.algolia-autocomplete input {
+  color: black !important;
+  background-color: #ddd !important;
 }
