@@ -6,7 +6,7 @@ sidebar_label: ReSift Rentals
 
 Welcome to the ReSift tutorial! (_Updated for [v0.1.0](https://github.com/JustSift/ReSift/releases/tag/v0.1.0)_)
 
-This tutorial introduces basic ReSift concepts through building an app called _ReSift Rentals_. This app lets users to browse movies and update movie information. Click here to see the [completed ReSift Rentals app](https://35w4y.csb.app/). It has the following functionalities:
+This tutorial introduces basic ReSift concepts through building an app called _ReSift Rentals_. This app lets users to browse movies and update movie information. Click here to see the <a href="https://35w4y.csb.app/" target="_blank" rel="noopener noreferrer">completed ReSift Rentals app</a>. It has the following functionalities:
 
 - It fetches movie genre data and presents each genre’s name and the thumbnails of the movies in them.
 - It optimizes performance by only fetching the data _when needed/in batches_.
@@ -17,13 +17,13 @@ This tutorial introduces basic ReSift concepts through building an app called _R
 
 ## Before We Start the Tutorial
 
-In making of this tutorial, we assume that you have basic understanding of React and React Hooks. To gain this knowledge, we recommend following the [React tutorial](https://reactjs.org/tutorial/tutorial.html) and [this post that explains React Hooks](https://www.robinwieruch.de/react-hooks).
+In making of this tutorial, we assume that you have basic understanding of React and React Hooks. To gain this knowledge, we recommend following the <a href="https://reactjs.org/tutorial/tutorial.html" target="_blank" rel="noopener noreferrer">React tutorial</a> and <a href="https://www.robinwieruch.de/react-hooks" target="_blank" rel="noopener noreferrer">this post that explains React Hooks</a>.
 
 A few functionalities in the app were implemented with the help of third party libraries, we have included them as project dependencies in `package.json` and we’ll introduce them when they are being used, you do not need prior knowledge about them or worrying about installing them.
 
 This tutorial is divided into 7 sections, the following list is a quick glance of each section and the main concepts they introduced. This tutorial is relatively long, intending to build the foundation of your ReSift skills. You can follow through the whole tutorial or jump to the sections pertaining to what you want to use ReSift for. Every section has their own starter code and finished code. The starter code has the needed components and styling already provided so you can focus on learning using ReSift for data fetches.
 
-**[Setup & Overview](#setup-overview)**</br>
+**[Setup and Overview](#setup-and-overview)**</br>
 Provides a starting point for following the tutorial.
 
 **[Section 1: Making Your First Fetch – Fetch Genres and Display Loading Indicator](#section-1-making-your-first-fetch-fetch-genres-and-display-loading-indicator)**</br>
@@ -34,24 +34,24 @@ Main ReSift APIs introduced: `createHttpService`, `createDataService`, `ResiftPr
 Main concepts: Generate unique genre fetch instances via the same fetch factory</br>
 Main ReSift APIs introduced: `defineFetch` , `useData`, `useStatus`, `useDispatch`, `Guard`, `isLoading`
 
-**[Section 3: Batch Loading & Pagination](#section-3-batch-loading-pagination)**</br>
+**[Section 3: Pagination and Loading in Pages](#section-3-pagination-and-loading-in-pages)**</br>
 Main concepts: Fetch data in batches and merge data in the current fetch with the data from the previous fetches</br>
 Main ReSift APIs introduced: `share`, `merge`, `namespace`
 
 **[Section 4: Display Movie Info in a Movie Drawer](#section-4-display-movie-info-in-a-movie-drawer)**</br>
 Main concepts: Generate unique movie fetch instances via one fetch factory by passing in http request param</br>
-Main ReSift API introduced: `defineFetch`
+Main ReSift API introduced: `defineFetch`, `isNormal`, `isLoading`
 
-**[Section 5: Fetch Movie Data when Hovering over Movie Thumbnail](#section-5-fetch-movie-data-when-hovering-over-movie-thumbnail)**</br>
+**[Section 5: Pre-fetching Movie Data on Thumbnail Hover](#section-5-pre-fetching-movie-data-on-thumbnail-hover)**</br>
 Main concepts: Dispatch fetch when events fired</br>
-Main ReSift API introduced: `useDispatch`
+Main ReSift API introduced: `useDispatch`, `useData`
 
 **[Section 6: Edit Movie](#section-6-edit-movie)**</br>
-Main concepts: Creating a fetch factory to update movie info and keeping that info in sync</br>
-Main ReSift API introduced: `share`
+Main concepts: Creating a fetch factory to update movie info and keeping that info in sync, within the same and across different namespaces</br>
+Main ReSift API introduced: `share`, `namespace`, `merge`, `useStatus`, `isolatedStatus`
 
-**[Section 7: Create a Mock API using the ReSift HTTP Proxy](#section-7-create-a-mock-api-using-the-resift-http-proxy)**</br>
-Main concepts: Set up mock api endpoints</br>
+**[Section 7: Create a mock API using the ReSift HTTP Proxy](#section-7-create-a-mock-api-using-the-resift-http-proxy)**</br>
+Main concepts: Set up mock API endpoints</br>
 Main ReSift API introduced: `createHttpProxy`
 
 **If you run into any hurdle during this tutorial, please don't be hesitant to [open an issue on Github](https://github.com/justsift/resift/issues).**
@@ -59,15 +59,15 @@ Main ReSift API introduced: `createHttpProxy`
 
 ![dive in](https://media.giphy.com/media/1lxkgpEvs7pmlddf9D/giphy.gif)
 
-## Setup & Overview
+## Setup and Overview
 
-This project was bootstrapped with [create-react-app](https://create-react-app.dev/).
+This project was bootstrapped with <a href="https://create-react-app.dev/" target="_blank" rel="noopener noreferrer">create-react-app</a>.
 
-**You can follow along by forking [the codesandbox project](https://codesandbox.io/s/resift-rentals-tutorial-section1-starter-csicp) we have set up for you.**
+**You can follow along by forking <a href="https://codesandbox.io/s/resift-rentals-tutorial-section1-starter-csicp" target="_blank" rel="noopener noreferrer">the Codesandbox project</a> we have set up for you.** Note that to see the error messages in Codesandbox, you need to open up the actual browser console.
 
 This is what you'll see now:
 
-![](https://paper-attachments.dropbox.com/s_E201718DD88493055F02F9925295135B6353424DF01927749BEC4071F9BBE8D3_1569864556191_initial+start.png)
+![app screenshot](https://paper-attachments.dropbox.com/s_E201718DD88493055F02F9925295135B6353424DF01927749BEC4071F9BBE8D3_1569864556191_initial+start.png)
 
 Right now there’s nothing but a header. We’ll be writing in the `/src` folder during this tutorial. Let’s inspect our starter code in there:
 
@@ -75,12 +75,12 @@ Right now there’s nothing but a header. We’ll be writing in the `/src` folde
 
 - `src/index.js` is the entry point for our react code.
 - `src/App.js` is the base file for component imports.
-- `src/mockApi` holds our [mockApi](#mockapi) that provides data fetching endpoints.
+- `src/mockApi` holds our [mock API](#mock-api) that provides data fetching endpoints.
 - `src/components` holds our [components](#components).
 
-### MockApi
+### mock API
 
-We have created a mock API to serve as the HTTP proxy of our app, it's at `/src/mockApi`. The data this mockApi grabs was scrapped from IMDB’s first 50 pages of movies sorted by most recent. It's not necessary to understand how to set up the mockApi to continue with the tutorial. But if you’re interested, you can head over to the [last section](#section-7-create-a-mock-api-using-the-resift-http-proxy) of this tutorial where we walked through its mechanism.
+We have created a mock API to serve as the HTTP proxy of our app, it's at `/src/mockApi`. The data this mock API grabs was scrapped from IMDB’s first 50 pages of movies sorted by most recent. It's not necessary to understand how to set up the mock API to continue with the tutorial. But if you’re interested, you can head over to the [last section](#section-7-create-a-mock-api-using-the-resift-http-proxy) of this tutorial where we walked through its mechanism.
 
 To get started with the tutorial, all you need to know is that there are three endpoints with this API:
 
@@ -90,27 +90,27 @@ To get started with the tutorial, all you need to know is that there are three e
    genres: Genre[];
 
    Genre: {
-    id: string,
-    name: string,
+    id: string, // e.g. "movie123"
+    name: string, // e.g. "Frozen II"
    }
    ```
 
-2. `/genre/:id/movies`: returns an object with an array of movies and a pagination meta object in this data shape:
+2. `/genres/:id/movies`: returns an object with an array of movies and a pagination meta object in this data shape:
 
    ```js
    movies: {
     results: Movie[],
     paginationMeta: {
-      pageSize: number
-      currentPageNumber: number,
-      totalNumberOfPages: number,
+      pageSize: number // e.g. 15
+      currentPageNumber: number, // e.g. 2
+      totalNumberOfPages: number, // e.g. 10
     },
    };
 
    Movie: {
-    id: string,
-    name: string,
-    imageUrl: string
+    id: string, // e.g. "movie123"
+    name: string, // e.g. "Frozen II"
+    imageUrl: string // e.g. "https://www.imdb.com/title/tt4520988/mediaviewer/rm2289995265"
    }
    ```
 
@@ -118,25 +118,25 @@ To get started with the tutorial, all you need to know is that there are three e
 
    ```js
    movie: {
-     id: number,
-     name: string,
-     imageUrl: string,
-     posterUrl: string,
-     synopsis: string,
-     genres: string[],
-     actors: string[],
-     mpaaRating: string,
-     trailerUrl: string,
-     tomatoScore: number,
-     theaterReleaseDate: string,
-     runtime: string,
+     id: number, // e.g. "movie123"
+     name: string, // e.g. "Frozen II"
+     imageUrl: string, // e.g. "https://www.imdb.com/title/tt4520988/mediaviewer/rm2289995265"
+     posterUrl: string, // e.g. "https://www.imdb.com/title/tt4520988/mediaviewer/rm1974176257"
+     synopsis: string, // e.g. "Anna, Elsa, Kristoff, Olaf and Sven leave Arendelle to travel to an ancient, autumn-bound forest of an enchanted land. They set out to find the origin of Elsa's powers in order to save their kingdom."
+     genres: string[], // e.g. ["animation", "adventure", "comedy"]
+     actors: string[], // e.g. ["Kristen Bell", "Idina Menzel", "Josh Gad"]
+     mpaaRating: string, // e.g. "PG"
+     trailerUrl: string, // e.g. "https://www.imdb.com/video/vi2143993625?playlistId=tt4520988&ref_=tt_ov_vi"
+     tomatoScore: number, // e.g. 77
+     theaterReleaseDate: string, // e.g. "November 22"
+     runtime: string, // e.g. "1 hr. 43 min."
    }
    ```
 
 #### Endpoint considerations:
 
-- The `/genre` endpoint is for displaying the names of each genre on the homepage, so we only need to return the id and name of the each genre.
-- In `/genre/:id/movies` is for displaying thumbnails of the movies of each genre on the homepage. Therefore, we need to return the movie data that contains movie id, name, and poster image url. We also need the pagination meta so we can fetch movies in batches.
+- The `/genres` endpoint is for displaying the names of each genre on the homepage, so we only need to return the id and name of the each genre.
+- In `/genres/:id/movies` is for displaying thumbnails of the movies of each genre on the homepage. Therefore, we need to return a list of movies — each movie containing the movie id, name, and poster image URL. We also need the pagination meta so we can fetch movies in batches.
 - In `/movies/:id`, we return the entire movie object for displaying detailed information in a movie drawer.
 
 ### Components
@@ -154,9 +154,10 @@ The finished app consists of the following presentational components:
 
 ### Styles
 
-We use [classNames](https://github.com/JedWatson/classnames), a utility library to join JSX classes. So instead of doing `classNames={[someClassName, someOtherClassName].join(' ')`, we can just do `classNames(someClassName, someOtherClassName)`.
+We use <a href="https://github.com/JedWatson/classnames" target="_blank" rel="noopener noreferrer">classNames</a>, a utility library to join JSX classes. So instead of doing `classNames={[someClassName, someOtherClassName].join(' ')`, we can just do `classNames(someClassName, someOtherClassName)`.
 
-We use [JSS](https://cssinjs.org/?v=v10.0.0), a library that allows writing CSS code directly in JavaScript files. We also use components from [Material-UI](https://material-ui.com/), a library constructed using JSS under the hood, for react UI components, such as [Buttons](https://material-ui.com/components/buttons/).
+We use <a href="https://material-ui.com/" target="_blank" rel="noopener noreferrer">Material UI</a> for both pre-made components and styling. If you're unfamiliar, Material UI is the most popular React component library with over <a href="https://github.com/mui-org/material-ui" target="_blank" rel="noopener noreferrer">50k stars on GitHub</a>. We chose to use this library for the tutorial to focus less on components and styles and more on ReSift.
+Our usage of Material-UI is straightforward, however we would like to briefly go over their styling solution, which is built on top of <a href="https://cssinjs.org/?v=v10.0.0" target="_blank" rel="noopener noreferrer">JSS</a> — a <a href="https://medium.com/dailyjs/what-is-actually-css-in-js-f2f529a2757" target="_blank" rel="noopener noreferrer">CSS in JS library</a>.
 
 Let’s look at some basic usage of JSS that’ll help you understand how styles are being applied in this codebase.
 
@@ -177,7 +178,7 @@ const useStyles = makeStyles(theme => ({
     padding: 16,
     backgroundColor: 'rebeccapurple',
   },
-  // Property values need to be in quotations, except for px values.
+  // Property values need to be in quotes, except for px values.
   header: {
     color: 'white',
     fontWeight: 'bold',
@@ -258,11 +259,11 @@ Now we can add in the endpoints we created in the http proxy for use in this cod
 ```js
 // dataService.js
 import { createHttpService, createDataService } from 'resift';
-import { genres, movies, movie } from 'mockApi'; // Imports the endpoints from our mockApi
+import { genres, movies, movie } from 'mockApi'; // Imports the endpoints from our mock API
 
 const http = createHttpService({
   prefix: '/api',
-  proxies: [genres, movies, movie], // Add the mockApi endpoints as proxies
+  proxies: [genres, movies, movie], // Add the mock API endpoints as proxies
 });
 
 const dataService = createDataService({
@@ -311,12 +312,17 @@ Step 2: [Create the Fetch Instance](#step-2-create-the-fetch-instance)</br>
 Step 3: [Use the Fetch](#step-3-use-the-fetch)</br>
 Step 4: [Dispatch the Fetch](#step-4-dispatch-the-fetch)
 
-You can think of this process as making an online order:
+You can think of this process as stocking goods and retrieve goods with tokens.
 
-1. Creating a fetch factory is like adding what you want in a cart.
-2. Creating the fetch instance is like submitting your order.
-3. Using the fetch is like sending your order to the fulfillment facility, for which the fulfillment facility will respond with the goods you ordered, and send you your fulfillment status.
-4. And dispatching the fetch is the fulfillment facility sending things out to you based on your order.
+1. Creating a fetch factory is like setting up a factory with some stockings, while defining the tokens for each kind of stocking.
+2. Creating the fetch instance is like giving the factory an identifier for a token, the fetch factory then takes it and give you the matching token that you can use to continue making your request for stockings.
+
+Then, There are different assistants in the factory who can help you get the stockings with your token. Based on what you want, you can grab the corresponding assistants. For example,
+
+3. Using the fetch include two assistants, `useData` send you the stocking based on your token, and `useStatus` will give you the status of retrieving that stocking.
+4. Dispatching the fetch is another assistant, it's like a messenger that sends your stocking request for you.
+
+There are other non-essential assistants you can pass this fetch token to, e.g. `<Guard fetch={getMovie} />` and `useError(getMovie)`.
 
 ![GIF for fulfilling order](https://media.giphy.com/media/5JMQL3hcBcWc0/giphy.gif)
 
@@ -356,7 +362,7 @@ To define the fetch, there are a few params.
 - The second one is a `make` function, which defines how to make the fetch. In this function, we need to:
   1. Grab the service we're using, in this case `http`, note that there’s no http import in the top level because it comes from our [dataService file](#add-a-data-service-file).
   2. Specify the method http method, in this case `GET`.
-  3. Supply the endpoint for this api call, in this case `/genres` from our [mockApi](#mockapi)
+  3. Supply the endpoint for this api call, in this case `/genres` from our [mock API](#mock-api)
 
 #### Step 2: Create the Fetch Instance
 
@@ -448,7 +454,7 @@ The reason is because the genres will always be null on the first render because
 
 #### Step 4: Dispatch the Fetch
 
-Data dispatch should happen in one of the two occasions: 1) when a page first loads/when the component mounts; 2) when there's an event kicks in defined by the event handler. Our case is the former, we need the genres data when we load the page. For this we'll use React's [useEffect hook](https://reactjs.org/docs/hooks-effect.html). Let's add the imports and the effect:
+Data dispatch should happen in one of the two occasions: 1) when a page first loads/when the component mounts; 2) when there's an event kicks in defined by the event handler. Our case is the former, we need the genres data when we load the page. For this we'll use React's <a href="https://reactjs.org/docs/hooks-effect.html" target="_blank" rel="noopener noreferrer">useEffect hook</a>. Let's add the imports and the effect:
 
 ```js
 // App.js
@@ -597,16 +603,15 @@ Refresh the page and you shall see the loading spinner before the genres data ki
 
 ### Conclude
 
-Now you’ve gone through some basic fetch concepts, let's review the online order analogy we made earlier to help form a sticky mental modal.
+Now you’ve gone through some basic fetch concepts, let's review the stocking & token analogy we made earlier to help form a sticky mental modal.
 
-- _Creating a fetch factory is like adding what you want in a cart._</br>
-  You're defining what your order/fetch looks like.
-- _Creating the fetch instance is like submitting your order._</br>
-  You've made up your mind and confirmed your order/fetch.
-- _Using the fetch is like sending your order to the fulfillment facility, for which the fulfillment facility will respond with the goods you ordered, and send you your fulfillment status._</br>
-  You send off your order/fetch, and then the fulfillment facility/server respond with the goods/data you requested, and notify you the status of sending over the goods/data.
-- _Dispatching the fetch is the fulfillment facility sending things out to you based on your order._</br>
-  The server sending out the data requested.
+You give the factory a token identifier, the factory return you with a token. Then you take that token to different ReSift assistants (`useData`, `useStatus`, `useDispatch`, etc.) to get the stockings you want.
+
+_(token identifier) -> fetch factory -> token: fetch instance -> Resift assistants process the token_
+
+For example:
+
+`makeGetMovie(id) -> getMovie -> useData(getMovie)`
 
 You can review the finished code at this point on [Codesandbox](https://codesandbox.io/s/resift-rentals-tutorial-section1-finished-kmxjo). And let’s move on to displaying movie thumbnails in each genre.
 
@@ -625,7 +630,7 @@ The starter code is the finished code from section 1, you can fork it on [Codesa
 
 Let’s first define our fetch, we’ll call it `makeGetMovies.js` and put it in the `/fetches` folder:
 
-We'll use the `/genre/:id/movies` endpoint from our [mockApi](#mockapi).
+We'll use the `/genre/:id/movies` endpoint from our [mock API](#mock-api).
 
 ```js
 // /fetch/makeGetMovies.js
@@ -814,7 +819,7 @@ export default Genre;
 
 You can further examine the finished code on [Codesandbox](https://codesandbox.io/s/resift-rentals-tutorial-section-2-sr6ks).
 
-## Section 3: Batch Loading & Pagination
+## Section 3: Pagination and Loading in Pages
 
 At this point of the app, we have fetched genres and the movies under each genre. When you scroll through the movies, you can see that some genres contain a lot of of them. On the initial load though, there are only certain amount of movies being displayed, therefore from a performance perspective, it's not ideal to fetch all the movies data all at once. It would be nice to fetch just enough number of movies to show the user and fetch more when needed.
 
@@ -1086,7 +1091,7 @@ If you've following along the previous sections, you probably already guessed ou
 
 ### 1. Define the Fetch Factory
 
-For this fetch, we'll use the `/movies/:id` endpoint from our [mockApi](#mockapi). Since the movie fetch will be different based on `:id` as opposed to a [singleton fetch](#step-2-create-the-fetch-instance), we'll first create a `makeGetMovie` fetch factory, then create fetch instance in the `MovieThumbnail` component.
+For this fetch, we'll use the `/movies/:id` endpoint from our [mock API](#mock-api). Since the movie fetch will be different based on `:id` as opposed to a [singleton fetch](#step-2-create-the-fetch-instance), we'll first create a `makeGetMovie` fetch factory, then create fetch instance in the `MovieThumbnail` component.
 
 Let's go ahead and create the `makeGetMovie.js` file in the `fetches` folder:
 
@@ -1454,7 +1459,7 @@ This section showcased the usage of ReSift modules with react router, while the 
 
 You can examine the finished code on [Codesandbox](https://codesandbox.io/s/resift-rentals-tutorial-section-4-vgi28).
 
-## Section 5: Fetch Movie Data when Hovering over Movie Thumbnail
+## Section 5: Pre-fetching Movie Data on Thumbnail Hover
 
 To provide more responsive user experiences, it's nice to predict what data the user wants next and get that data ready before the user even asks for it. One of the nice-to-haves is fetching the movie data when the user hover over the thumbnail. This can be achieved by dispatching the movie fetch on hover. The associated event for it is `onMouseEnter`.
 
@@ -1825,21 +1830,21 @@ Hooray! Now you have gone through all the steps and built the complete app you s
 
 If you're interested in learning about mocking and API, go ahead and move on to the next section. If not, you can skip section 7 and jump to [Where to Go from Here](#where-to-go-from-here).
 
-## Section 7: Create a Mock API using the ReSift HTTP Proxy
+## Section 7: Create a mock API using the ReSift HTTP Proxy
 
-This section is intended for people who are interested in creating a mock api, which is useful when the actual backend is not built but an agreed-upon shape of the api has been defined. You don’t have to wait till the backend is built to start testing out the fetches on the front end. You can create a mock api with ReSift’s HTTP proxy.
+This section is intended for people who are interested in creating a mock API, which is useful when the actual backend is not built but an agreed-upon shape of the api has been defined. You don’t have to wait till the backend is built to start testing out the fetches on the front end. You can create a mock API with ReSift’s HTTP proxy.
 
 ### Examine the Starter Files
 
 You can fork the starter code from [Codesandbox](https://codesandbox.io/s/resift-rentals-tutorial-starter-create-http-proxy-532lx).
 
-Our goal for this mock api is to have three endpoints: `/genres`, `/genres/:id/movies`, and `/movies/:id`. You can refer to [this section](#mockapi), where we talked about the return shapes of these endpoints and our considerations.
+Our goal for this mock API is to have three endpoints: `/genres`, `/genres/:id/movies`, and `/movies/:id`. You can refer to [this section](#mock-api), where we talked about the return shapes of these endpoints and our considerations.
 
 We'll be making our http proxy in the `/src/mockApi` folder. Note that the `/mockApi` folder needs to live in the `/src` in order to work with `create-react-app`.
 
 This folder currently contains the following files:
 
-- An `index.js` file with helper already imported, awaiting us to build our mockApi in.
+- An `index.js` file with helper already imported, awaiting us to build our mock API in.
 - A `movies.json` file that contains the movies data we scrapped from [Rotten Tomatoes](https://www.rottentomatoes.com).
 - A `genreLookup.js` file that transforms the data in `movies.json` file into a genre lookup/dictionary that has id and certain information of each genre:
 
@@ -1905,7 +1910,7 @@ The ReSift module we need for creating http proxy is `createHttpProxy`. Let's im
 import { createHttpProxy } from 'resift';
 ```
 
-The shapes of the endpoints are listed [here](#mockapi). Let's keep building the http proxy shell using `createHttpProxy`.
+The shapes of the endpoints are listed [here](#mock-api). Let's keep building the http proxy shell using `createHttpProxy`.
 
 ```js
 // src/mockApi/index.js
@@ -2091,7 +2096,7 @@ export const movie = createHttpProxy('/movies/:id', async ({ requestParams, matc
 
 ### Conclude
 
-That's is for creating the mockApi for our _ReSift Rentals_ app.
+That's is for creating the mock API for our _ReSift Rentals_ app.
 
 You can find the complete finished code for this section on [CodeSandbox](https://codesandbox.io/s/resift-rentals-tutorial-create-http-proxy-s4jci).
 
