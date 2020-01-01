@@ -197,7 +197,7 @@ function AppBar() {
 export default AppBar;
 ```
 
-Now you have all the knowledge you need to use material-ui and JSS for this project. Basically, we’d define styles in an object called ‘useStyles’ on the top level, and then use the defined classes directly by accessing them via their key, e.g. `className={classes.root}`.
+Now you have all the knowledge you need to use material-ui and JSS for this project. Basically, we define styles in an object and access them using ‘useStyles’. Then we use the defined classes directly by accessing them via their key, e.g. `className={classes.root}`.
 
 ### ReSift Imports
 
