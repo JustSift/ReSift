@@ -9,24 +9,24 @@ Welcome to the ReSift tutorial! (_Updated for [v0.1.0](https://github.com/JustSi
 This tutorial introduces basic ReSift concepts through building an app called _ReSift Rentals_. This app lets users to browse movies and update movie information. Click here to see the <a href="https://35w4y.csb.app/" target="_blank" rel="noopener noreferrer">completed ReSift Rentals app</a>. It has the following functionalities:
 
 - It fetches movie genre data and presents each genre’s name and the thumbnails of the movies in them.
-- It optimizes performance by only fetching the data _when needed/in batches_.
+- It optimizes performance by fetching data _when needed, in pages_.
   - In the initial load, it fetches 10 movies for each genre to show their movie thumbnails. It’ll fetch the next batch of 10 movies when the user clicks to load more.
-  - When fetching a genre, it only fetches the movie data needed for the movie thumbnails (id, name, and imageUrl). When the user hovers over or clicks on the thumbnail, it’ll fetch the rest of the movie data, such as synopsis, preview url, and actors list, etc.
-- It provides consistency when the movie information is updated—when a user saves their edited movie information, that information gets updated cross the app, allowing the information in the edit movie form, movie drawer, and movies homepage to change accordingly.
-- It responds to users’ actions instantly by indicating to them the data loading status.
+  - When fetching the movies in a genre, it only fetches the movie data needed for the movie thumbnails (id, name, and imageUrl). We can load the rest of the movie data (synopsis, trailer url, actors list, etc) later using hovering as a heuristic for when to pre-fetch this data. That way the perceived load time for movie details is shorter!
+- It provides consistency when movie information is updated—when a user saves their edited movie information, that information gets updated across the app, allowing the information in the edit movie form, movie drawer, and movies homepage to always be in sync.
+- It responds to users’ actions instantly by showing them loading spinners.
 
 ## Before We Start the Tutorial
 
 In making of this tutorial, we assume that you have basic understanding of React and React Hooks. To gain this knowledge, we recommend following the <a href="https://reactjs.org/tutorial/tutorial.html" target="_blank" rel="noopener noreferrer">React tutorial</a> and <a href="https://www.robinwieruch.de/react-hooks" target="_blank" rel="noopener noreferrer">this post that explains React Hooks</a>.
 
-A few functionalities in the app were implemented with the help of third party libraries, we have included them as project dependencies in `package.json` and we’ll introduce them when they are being used, you do not need prior knowledge about them or worrying about installing them.
+A few functionalities in the app were implemented with the help of third-party libraries, we have included them as dependencies in `package.json` and we’ll introduce them when they are being used. You do not need prior knowledge about them or worrying about installing them.
 
-This tutorial is divided into 7 sections, the following list is a quick glance of each section and the main concepts they introduced. This tutorial is relatively long, intending to build the foundation of your ReSift skills. You can follow through the whole tutorial or jump to the sections pertaining to what you want to use ReSift for. Every section has their own starter code and finished code. The starter code has the needed components and styling already provided so you can focus on learning using ReSift for data fetches.
+This tutorial is divided into 7 sections, the following list is a quick glance of each section and the main concepts they introduce. This tutorial is relatively long, intended to build the foundation of your ReSift skills. You can follow through the whole tutorial or jump to the sections pertaining to what you want to use ReSift for. Every section has its own starter code and finished code. The starter code has the components and styling provided so you can focus on learning ReSift for data fetches.
 
 **[Setup and Overview](#setup-and-overview)**</br>
 Provides a starting point for following the tutorial.
 
-**[Section 1: Making Your First Fetch – Fetch Genres and Display Loading Indicator](#section-1-making-your-first-fetch-fetch-genres-and-display-loading-indicator)**</br>
+**[Section 1: Making Your First Fetch – Fetch Genres and Display Loading Indicators](#section-1-making-your-first-fetch-fetch-genres-and-display-loading-indicator)**</br>
 Main concepts: Add ReSift to your project, Singleton data fetch, dispatch data, and indicate loading status</br>
 Main ReSift APIs introduced: `createHttpService`, `createDataService`, `ResiftProvider`, `defineFetch` , `useData`, `useStatus`, `useDispatch`, `Guard`, `isLoading`
 
@@ -54,7 +54,7 @@ Main ReSift API introduced: `share`, `namespace`, `merge`, `useStatus`, `isolate
 Main concepts: Set up mock API endpoints</br>
 Main ReSift API introduced: `createHttpProxy`
 
-**If you run into any hurdle during this tutorial, please don't be hesitant to [open an issue on Github](https://github.com/justsift/resift/issues).**
+**If you run into any hurdle during this tutorial, please don't hesitate to [open an issue on Github](https://github.com/justsift/resift/issues).**
 **Now let's dive in!**
 
 ![dive in](https://media.giphy.com/media/1lxkgpEvs7pmlddf9D/giphy.gif)
@@ -78,9 +78,9 @@ Right now there’s nothing but a header. We’ll be writing in the `/src` folde
 - `src/mockApi` holds our [mock API](#mock-api) that provides data fetching endpoints.
 - `src/components` holds our [components](#components).
 
-### mock API
+### Mock API
 
-We have created a mock API to serve as the HTTP proxy of our app, it's at `/src/mockApi`. The data this mock API grabs was scrapped from IMDB’s first 50 pages of movies sorted by most recent. It's not necessary to understand how to set up the mock API to continue with the tutorial. But if you’re interested, you can head over to the [last section](#section-7-create-a-mock-api-using-the-resift-http-proxy) of this tutorial where we walked through its mechanism.
+We have created a mock API to serve as the HTTP proxy of our app, it's at `/src/mockApi`. The data this mock API grabs was scrapped from Rotten Tomatos. It's not necessary to understand how the mock API works to continue with the tutorial. However, if you’re interested, you can head over to the [last section](#section-7-create-a-mock-api-using-the-resift-http-proxy) of this tutorial where we walked through its mechanism.
 
 To get started with the tutorial, all you need to know is that there are three endpoints with this API:
 
@@ -141,11 +141,11 @@ To get started with the tutorial, all you need to know is that there are three e
 
 ### Components
 
-The finished app consists of the following presentational components:
+The finished app consists of the following components:
 
 - An `App` component as the base for component imports.
 - An `AppBar` component at the top of the app viewport.
-- Multiple `Genre` components, each displays the genre's name and the thumbnails of the movies in this genre.
+- A `Genre` component — displays each genre's name and the thumbnails of the movies in this genre.
 - Multiple `MovieThumbnail` components, each displays the movie's name and horizontal poster.
 - Multiple `MovieDrawer` components, each displays the detailed information of the selected movie.
 - Multiple `MovieForm` components, each displays a form that allows you to edit the movie information.
@@ -198,7 +198,7 @@ function AppBar() {
 export default AppBar;
 ```
 
-Now you have all the knowledge you need to use material-ui and JSS for this project. Basically, we’d define styles in an object called ‘useStyles’ on the top level, and then use the defined classes directly by accessing them via their key, e.g. `className={classes.root}`.
+Now you have all the knowledge you need to use material-ui and JSS for this project. Basically, we define styles in an object and access them using ‘useStyles’. Then we use the defined classes directly by accessing them via their key, e.g. `className={classes.root}`.
 
 ### ReSift Imports
 
@@ -222,14 +222,18 @@ You can fork the starter code from [codesandbox](https://codesandbox.io/s/resift
 
 ### 1. Installing ReSift
 
-Note that this code has already have resift installed because it’s needed for creating the HTTP proxy.
+Note that this code has already have ReSift installed because it’s needed for creating the HTTP proxy.
 
-To install ReSift from scratch, all you need to do is run: `npm install --save resift redux react-redux`, this command will install ReSift as well as ReSift’s peer dependencies: `redux` and `react-redux`, although you are not required to have knowledge on redux or react-redux in order to use ReSift.
+To install ReSift from scratch, all you need to do is run: `npm install --save resift redux react-redux`
+
+> **Note:** This command will install ReSift as well as ReSift’s peer dependencies: `redux` and `react-redux`.
+>
+> You _don't need to know_ Redux in order to use ReSift, and [these dependencies are in consideration for removal](https://github.com/JustSift/ReSift/issues/32#issuecomment-547537720).
 
 ### 2. Adding ReSift to Your Components
 
 In order to use ReSift in your components, you need two steps:</br>
-Step 1: [Add a dataService file](#add-a-dataservice-file)</br>
+Step 1: [Add a data service file](#add-a-dataservice-file)</br>
 Step 2: [Wrap the app in `ResiftProvider`](#wrap-the-app-in-resiftprovider)
 
 #### Add a Data Service File:
@@ -253,8 +257,8 @@ const dataService = createDataService({
 export default dataService;
 ```
 
-This file specifies the data service that the codebase will be using. In our case, we are using http.
-Now we can add in the endpoints we created in the http proxy for use in this codebase:
+This file specifies the data service that the codebase will be using. In our case, we are using the HTTP service.
+Now we can add in the mock endpoints we created in the `mockApi` folder:
 
 ```js
 // dataService.js
@@ -280,7 +284,7 @@ Note that if you’re using a real backend instead of an HTTP proxy, then you do
 
 #### Wrap the App in `ResiftProvider`
 
-**Everything** in the app that needs to use ReSift needs to be wrapped in a ReSiftProvider. Since our whole app will be using ReSift, it'll be best to add the `ResiftProvider` in our index file.
+**Everything** in the app that needs to use ReSift needs to be wrapped in a ReSift provider. Since our whole app will be using ReSift, it'll be best to add the `ResiftProvider` in our index file.
 Let's go into the `index.js` file and import the ReSift modules we need:
 
 ```js
@@ -290,7 +294,7 @@ import { ResiftProvider } from 'resift';
 import dataService from './dataService';
 ```
 
-And then let's wrap our App component in ReSiftProvider by replacing `<div>` with `<ResiftProvider>` and pass in our data service as the value for the prop `dataService`.
+And then let's wrap our App component in ReSift provider by replacing `<div>` with `<ResiftProvider>` and pass in our data service as the value for the prop `dataService`.
 
 ```js
 // index.js
@@ -360,9 +364,9 @@ To define the fetch, there are a few params.
 - The first one is `displayName`, which just need to be a human readable name that helps us debug in the [redux dev tools](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd?hl=en) if you have that installed.
   ![redux dev tools](assets/section_1_redux_dev_console.png)
 - The second one is a `make` function, which defines how to make the fetch. In this function, we need to:
-  1. Grab the service we're using, in this case `http`, note that there’s no http import in the top level because it comes from our [dataService file](#add-a-data-service-file).
-  2. Specify the method http method, in this case `GET`.
-  3. Supply the endpoint for this api call, in this case `/genres` from our [mock API](#mock-api)
+  1. Grab the service we're using, in this case `http`, note that there’s no `http` import in the top level because it comes from our [dataService file](#add-a-data-service-file).
+  2. Specify the HTTP method, in this case `GET`.
+  3. Supply the endpoint for this API call, in this case `/genres` from our [mock API](#mock-api)
 
 #### Step 2: Create the Fetch Instance
 
@@ -372,7 +376,11 @@ Fetch instances are created by calling the fetch factory, therefore, to get a ge
 const getGenres = makeGetGenres();
 ```
 
-Wow just one line of code. We only have one kind of instance of the genresFetch because our fetch param is empty meaning that the genresFetch instance does not change based on the fetch param. And we call this a **singleton fetch**. Since it's just one line of code, we can combine it into the fetch factory file.
+`getGenres` is a type of fetch that should only ever have one "instance". This means that the list of genres the fetch factory gets is the same list of genres throughout the app.
+
+You'll notice that when we create the fetch instance, we don't pass any arguments to the `makeGetGenres` fetch factory either. This is because there is no need for an ID to differentiate this list of genres from another list of genres (because there is only one list of genres).
+
+We call this type of fetch a **singleton fetch**, and since the fetch instance will always be the same, we combine it into the fetch factory file.
 
 So let’s rename the `makeGetGenres.js` file into `getGenres.js` and then add the line in. The complete file looks like this:
 
@@ -408,7 +416,7 @@ In `src/App.js`, import the module and the genres fetch we just defined:
 // Import fetches
 import { useData } from 'resift';
 import getGenres from 'fetches/getGenres';
-// Import presentational component for Genre
+// Import component for Genre
 import Genre from 'components/Genre';
 ```
 
@@ -433,7 +441,7 @@ function App() {
 
 Refresh the page, you'll receive a type error: `Cannot read property 'map' of null`. It's indicating to us that `genres` is null.
 So genres is the data we asked for, but it will be null when the server has not responded with the data yet.
-This is where `Guard` comes in. This component makes sure that the guarded component will render if the data is returned.
+This is where `Guard` comes in. This component makes sure that the guarded elements will render only if there is data returned.
 `Guard` uses [render prop pattern](https://reactjs.org/docs/render-props.html), to use it, give it the prop of the `fetch` it should use.
 
 ```js
@@ -441,7 +449,7 @@ This is where `Guard` comes in. This component makes sure that the guarded compo
 import { Guard } from 'resift';
 ```
 
-And wrap the map function in `Guard`
+Now wrap the map function in `Guard`
 
 ```js
 <Guard fetch={getGenres}>
@@ -450,11 +458,20 @@ And wrap the map function in `Guard`
 ```
 
 If you refresh the page now, we'll the error is gone, but the genres data is still not showing up on the page. Why is that?
-The reason is because the genres will always be null on the first render because we have not dispatched the fetch. This is when `useDispatch` comes in.
+The reason is because we have not dispatched the fetch yet. The genres will be `null` until the data has been fetched.
+
+This is when `useDispatch` comes in.
 
 #### Step 4: Dispatch the Fetch
 
-Data dispatch should happen in one of the two occasions: 1) when a page first loads/when the component mounts; 2) when there's an event kicks in defined by the event handler. Our case is the former, we need the genres data when we load the page. For this we'll use React's <a href="https://reactjs.org/docs/hooks-effect.html" target="_blank" rel="noopener noreferrer">useEffect hook</a>. Let's add the imports and the effect:
+Data dispatch should happen in one of the two occasions:
+
+1. when the component mounts
+2. when there's an event kicks in defined by the event handler.
+
+Our case is the former, we need the genres data when we load the page. For this we'll use React's <a href="https://reactjs.org/docs/hooks-effect.html" target="_blank" rel="noopener noreferrer">useEffect hook</a>.
+
+Let's add the imports and the effect:
 
 ```js
 // App.js
@@ -518,13 +535,17 @@ function App() {
 export default App;
 ```
 
-Refresh the page now and you'll see the genres data load after a second. Wait, that's not a great user experience having to wait for the data to come without know what's happening. We should indicate to our user that the data is loading.
+Refresh the page now and you'll see the genres data load after a second 🎉
+
+…However, having to wait for the data to come without knowing what's happening isn't a great user experience . We should indicate to our users that the data is loading.
 
 ![Waiting GIF](https://media.giphy.com/media/9SIXFu7bIUYHhFc19G/giphy.gif)
 
 #### Show Fetch Status
 
-We want to show a loading spinner when we're fetching the data. To achieve this, we'll use the `useStatus` and a helper function to check is the status is 'loading' called `isLoading`. And we'll grab the Material UI spinner called `CircularProgress`. Let's get them imported.
+We want to show a loading spinner when we fetch data. To achieve this, we'll grab the status via `useStatus` and feed that status into the helper function `isLoading`. We'l also grab the Material UI spinner called `CircularProgress`.
+
+Let's get them imported.
 
 ```js
 import { useStatus, isLoading } from 'resift';
@@ -535,8 +556,8 @@ Now we can add the spinner in while loading
 
 ```js
 function App() {
-  ...
-  const status = useStatus(getGenres)
+  // ...
+  const status = useStatus(getGenres);
 
   return (
     <>
@@ -617,10 +638,10 @@ You can review the finished code at this point on [Codesandbox](https://codesand
 
 ## Section 2: Display Movies in Each Genre
 
-Here's what we are trying to achieve in this section:
+Here's what we will achieve in this section:
 ![Finished screen for this section](assets/section_2_finished.gif)
 
-We'll see the thumbnails of the movies in each genre, and a loading spinner in each genre to indicate when our app is fetching the movies data.
+We'll see the thumbnails of the movies in each genre, and a loading spinner in each genre to indicate when our app is fetching movie data.
 
 ### Starter Code
 
