@@ -19,7 +19,7 @@ This tutorial introduces basic ReSift concepts through building an app called _R
 
 In making of this tutorial, we assume that you have basic understanding of React and React Hooks. To gain this knowledge, we recommend following the [React tutorial](https://reactjs.org/tutorial/tutorial.html) and [this post that explains React Hooks](https://www.robinwieruch.de/react-hooks).
 
-A few functionalities in the app were implemented with the help of third party libraries, we have included them as project dependencies in `package.json` and we’ll introduce them when they are being used, you do not need prior knowledge about them or worrying about installing them.
+A few functionalities in the app were implemented with the help of third-party libraries, we have included them as dependencies in `package.json` and we’ll introduce them when they are being used. You do not need prior knowledge about them or worrying about installing them.
 
 This tutorial is divided into 7 sections, the following list is a quick glance of each section and the main concepts they introduced. This tutorial is relatively long, intending to build the foundation of your ReSift skills. You can follow through the whole tutorial or jump to the sections pertaining to what you want to use ReSift for. Every section has their own starter code and finished code. The starter code has the needed components and styling already provided so you can focus on learning using ReSift for data fetches.
 
