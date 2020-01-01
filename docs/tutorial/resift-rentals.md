@@ -10,7 +10,7 @@ This tutorial introduces basic ReSift concepts through building an app called _R
 
 - It fetches movie genre data and presents each genre’s name and the thumbnails of the movies in them.
 - It optimizes performance by fetching data _when needed, in pages_.
-  - In the initial load, it fetches 10 movies for each genre to show their movie thumbnails. It’ll fetch the next batch of 10 movies when the user clicks to load more.
+  - In the initial load, it fetches 10 movies for each genre to show their movie thumbnails. It’ll fetch the next page of 10 movies when the user clicks to load more.
   - When fetching the movies in a genre, it only fetches the movie data needed for the movie thumbnails (id, name, and imageUrl). We can load the rest of the movie data (synopsis, trailer url, actors list, etc) later using hovering as a heuristic for when to pre-fetch this data. That way the perceived load time for movie details is shorter!
 - It provides consistency when movie information is updated—when a user saves their edited movie information, that information gets updated across the app, allowing the information in the edit movie form, movie drawer, and movies homepage to always be in sync.
 - It responds to users’ actions instantly by showing them loading spinners.
@@ -35,7 +35,7 @@ Main concepts: Generate unique genre fetch instances via the same fetch factory<
 Main ReSift APIs introduced: `defineFetch` , `useData`, `useStatus`, `useDispatch`, `Guard`, `isLoading`
 
 **[Section 3: Pagination and Loading in Pages](#section-3-pagination-and-loading-in-pages)**</br>
-Main concepts: Fetch data in batches and merge data in the current fetch with the data from the previous fetches</br>
+Main concepts: Fetch data in pages and merge data in the current fetch with the data from the previous fetches</br>
 Main ReSift APIs introduced: `share`, `merge`, `namespace`
 
 **[Section 4: Display Movie Info in a Movie Drawer](#section-4-display-movie-info-in-a-movie-drawer)**</br>
@@ -136,7 +136,7 @@ To get started with the tutorial, all you need to know is that there are three e
 #### Endpoint considerations:
 
 - The `/genres` endpoint is for displaying the names of each genre on the homepage, so we only need to return the id and name of the each genre.
-- In `/genres/:id/movies` is for displaying thumbnails of the movies of each genre on the homepage. Therefore, we need to return a list of movies — each movie containing the movie id, name, and poster image URL. We also need the pagination meta so we can fetch movies in batches.
+- In `/genres/:id/movies` is for displaying thumbnails of the movies of each genre on the homepage. Therefore, we need to return a list of movies — each movie containing the movie id, name, and poster image URL. We also need the pagination meta so we can fetch movies in pages.
 - In `/movies/:id`, we return the entire movie object for displaying detailed information in a movie drawer.
 
 ### Components
@@ -326,7 +326,7 @@ Then, There are different assistants in the factory who can help you get the sto
 3. Using the fetch include two assistants, `useData` send you the stocking based on your token, and `useStatus` will give you the status of retrieving that stocking.
 4. Dispatching the fetch is another assistant, it's like a messenger that sends your stocking request for you.
 
-There are other non-essential assistants you can pass this fetch token to, e.g. `<Guard fetch={getMovie} />` and `useError(getMovie)`.
+There are other non-essential assistants you can pass this fetch token too, e.g. `<Guard fetch={getMovie} />` and `useError(getMovie)`.
 
 ![GIF for fulfilling order](https://media.giphy.com/media/5JMQL3hcBcWc0/giphy.gif)
 
@@ -850,7 +850,7 @@ At the end of the section we shall see:
 
 ![Finished screen of section 3](assets/section_3_finished.gif)
 
-The app fetches 10 movies at a time and when you click the button to load more, it then fires off the fetch for the next batch of 10 movies.
+The app fetches 10 movies at a time and when you click the button to load more, it then fires off the fetch for the next page of 10 movies.
 
 ### Starter Code
 
@@ -938,7 +938,7 @@ Refresh the page now and you'll see only 10 movies are being fetched in each gen
 
 ### 2. Trigger Re-Fetch When Clicking on the Load More Button
 
-Now we need to trigger the next batch of fetch to happen. In section 1, we talked about two occasions when we dispatch data fetching, one when component mounts, the other one when an event triggers. This time, we would like to have the button click event to trigger the re-fetch.
+Now we need to trigger the fetch for the next page to happen. In section 1, we talked about two occasions when we dispatch data fetching, one when component mounts, the other one when an event triggers. This time, we would like to have the button click event to trigger the re-fetch.
 
 We'll use the material-ui button component. And we'll add a condition that 1) if the list is loading, display loading spinner; 2) if the list is done loading and there are more items in the list, display 'more' button; 3) if the list is done loading and there are no more items in the list, display the 'end' button.
 
@@ -1096,7 +1096,7 @@ Refresh the app now and you shall the 'more' button works as expected.
 
 ### Conclude
 
-Instead of fetching everything at once and causing the initial load to take a long time, the ReSift `share` and `merge` apis presents a great way for batch data fetches and only fetch when needed, allowing each load to be fast. You can checkout the finished code for this section on [Codesandbox](https://codesandbox.io/s/resift-rentals-tutorial-section-3-8fhj8).
+Instead of fetching everything at once and causing the initial load to take a long time, the ReSift `share` and `merge` apis presents a great way for fetching data when needed, allowing each load to be fast. You can checkout the finished code for this section on [Codesandbox](https://codesandbox.io/s/resift-rentals-tutorial-section-3-8fhj8).
 
 ## Section 4: Display Movie Info in a Movie Drawer
 
@@ -1722,7 +1722,7 @@ Now go ahead and pick a movie to edit its title. You'll notice the 'cancel' butt
 
 Is it because our fetch is not firing? Now pull up the edit form in the same movie drawer again by clicking on the 'edit' button. You'll see that the movie title you typed previously was successfully updated in the form.
 
-Why is this happening? Remember in [section 3](#3-merge-fetch-states) when we're doing batch loading, we encountered an issue where the new batch would replace the existing batch as opposed to adding on to the existing batch? We solved it by using the ReSift `share` api. We need the same thing here.
+Why is this happening? Remember in [section 3](#3-merge-fetch-states) when we load our data in different pages, we encountered an issue where the new page would replace the items on existing pages as opposed to adding on to the existing pages? We solved it by using the ReSift `share` api. We need the same thing here.
 
 ![sharing gif](https://media.giphy.com/media/1AePFqtvzhZZJr2dB8/giphy.gif)
 
@@ -1773,7 +1773,7 @@ const handleSave = async () => {
 
 ### 5. Update Shared State Cross Different Namespaces
 
-One caveat you probably have noticed is that, if you update the movie name, the movie name in the movie thumbnail on the homepage did not get updated. Can we add the `namespace: 'movie'` to the `makeGetMovies` fetch factory also? It would have been nice, but notice that `makeGetMovies` already has a namespace defined to allow batch loading to function correctly.
+One caveat you probably have noticed is that, if you update the movie name, the movie name in the movie thumbnail on the homepage did not get updated. Can we add the `namespace: 'movie'` to the `makeGetMovies` fetch factory also? It would have been nice, but notice that `makeGetMovies` already has a namespace defined to allow loading data in pages to function correctly.
 
 Is there a way to keep shared pieces of stated updated cross different namespaces?
 
