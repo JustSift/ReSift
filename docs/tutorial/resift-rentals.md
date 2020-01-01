@@ -11,7 +11,7 @@ This tutorial introduces basic ReSift concepts through building an app called _R
 - It fetches movie genre data and presents each genre’s name and the thumbnails of the movies in them.
 - It optimizes performance by only fetching the data _when needed/in batches_.
   - In the initial load, it fetches 10 movies for each genre to show their movie thumbnails. It’ll fetch the next batch of 10 movies when the user clicks to load more.
-  - When fetching a genre, it only fetches the movie data needed for the movie thumbnails (id, name, and imageUrl). When the user hovers over or clicks on the thumbnail, it’ll fetch the rest of the movie data, such as synopsis, preview url, and actors list, etc.
+  - When fetching the movies in a genre, it only fetches the movie data needed for the movie thumbnails (id, name, and imageUrl). We can load the rest of the movie data (synopsis, trailer url, actors list, etc) later using hovering as a heuristic for when to pre-fetch this data. That way the perceived load time for movie details is shorter!
 - It provides consistency when the movie information is updated—when a user saves their edited movie information, that information gets updated cross the app, allowing the information in the edit movie form, movie drawer, and movies homepage to change accordingly.
 - It responds to users’ actions instantly by indicating to them the data loading status.
 
