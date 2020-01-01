@@ -6,7 +6,7 @@ sidebar_label: ReSift Rentals
 
 Welcome to the ReSift tutorial! (_Updated for [v0.1.0](https://github.com/JustSift/ReSift/releases/tag/v0.1.0)_)
 
-This tutorial introduces basic ReSift concepts through building an app called _ReSift Rentals_. This app lets users to browse movies and update movie information. Click here to see the [completed ReSift Rentals app](https://35w4y.csb.app/). It has the following functionalities:
+This tutorial introduces basic ReSift concepts through building an app called _ReSift Rentals_. This app lets users browse movies and update movie information. Click here to see the [completed ReSift Rentals app](https://35w4y.csb.app/). It has the following functionalities:
 
 - It fetches movie genre data and presents each genre’s name and the thumbnails of the movies in them.
 - It optimizes performance by only fetching the data _when needed/in batches_.
