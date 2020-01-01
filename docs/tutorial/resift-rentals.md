@@ -21,7 +21,7 @@ In making of this tutorial, we assume that you have basic understanding of React
 
 A few functionalities in the app were implemented with the help of third-party libraries, we have included them as dependencies in `package.json` and we’ll introduce them when they are being used. You do not need prior knowledge about them or worrying about installing them.
 
-This tutorial is divided into 7 sections, the following list is a quick glance of each section and the main concepts they introduced. This tutorial is relatively long, intending to build the foundation of your ReSift skills. You can follow through the whole tutorial or jump to the sections pertaining to what you want to use ReSift for. Every section has their own starter code and finished code. The starter code has the needed components and styling already provided so you can focus on learning using ReSift for data fetches.
+This tutorial is divided into 7 sections, the following list is a quick glance of each section and the main concepts they introduce. This tutorial is relatively long, intended to build the foundation of your ReSift skills. You can follow through the whole tutorial or jump to the sections pertaining to what you want to use ReSift for. Every section has its own starter code and finished code. The starter code has the components and styling provided so you can focus on learning ReSift for data fetches.
 
 **[Setup & Overview](#setup-overview)**</br>
 Provides a starting point for following the tutorial.
