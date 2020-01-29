@@ -42,7 +42,7 @@
     "babel-eslint": "^10.0.2",
     "babel-loader": "^8.0.6",
     "common-tags": "^1.8.0",
-    "coveralls": "^3.0.6",
+    "coveralls": "^3.0.9",
     "eslint": "^6.2.2",
     "eslint-config-react-app": "^5.0.1",
     "eslint-plugin-flowtype": "^3.13.0",
