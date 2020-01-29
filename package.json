@@ -71,7 +71,7 @@
   "dependencies": {
     "@types/superagent": "^4.1.4",
     "delay": "^4.3.0",
-    "shortid": "^2.2.14",
+    "shortid": "^2.2.15",
     "superagent": "^5.2.1"
   },
   "peerDependencies": {
