@@ -39,7 +39,7 @@
     "@typescript-eslint/eslint-plugin": "^1.13.0",
     "@typescript-eslint/parser": "^1.13.0",
     "acorn": "^6.3.0",
-    "babel-eslint": "^10.0.2",
+    "babel-eslint": "^10.0.3",
     "babel-loader": "^8.0.6",
     "common-tags": "^1.8.0",
     "coveralls": "^3.0.6",
