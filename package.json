@@ -66,7 +66,7 @@
     "typescript": "^3.5.3",
     "webpack": "^4.35.2",
     "webpack-bundle-analyzer": "^3.6.0",
-    "webpack-cli": "^3.3.5"
+    "webpack-cli": "^3.3.10"
   },
   "dependencies": {
     "@types/superagent": "^4.1.4",
