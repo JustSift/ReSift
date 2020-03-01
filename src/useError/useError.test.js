@@ -106,9 +106,7 @@ test('it throws if a fetch factory was passed into use error instead of a fetch'
 
   const error = await gotError;
 
-  expect(error).toMatchInlineSnapshot(
-    `[Error: An error occured while selecting the store state: [useError] expected to see a fetch instance..]`,
-  );
+  expect(error).toMatchInlineSnapshot(`[Error: [useError] expected to see a fetch instance.]`);
 });
 
 test('it throws if the state is the wrong shape', async () => {
@@ -166,7 +164,7 @@ test('it throws if the state is the wrong shape', async () => {
   const error = await gotError;
 
   expect(error).toMatchInlineSnapshot(
-    `[Error: An error occured while selecting the store state: [useError] "dataService" is a required key. Double check with the installation guide here: https://resift.org/docs/introduction/installation.]`,
+    `[Error: [useError] "dataService" is a required key. Double check with the installation guide here: https://resift.org/docs/introduction/installation]`,
   );
 });
 
