@@ -69,7 +69,7 @@
     "webpack-cli": "^3.3.10"
   },
   "dependencies": {
-    "@types/superagent": "^4.1.4",
+    "@types/superagent": "^4.1.7",
     "delay": "^4.3.0",
     "shortid": "^2.2.15",
     "superagent": "^5.2.1"
