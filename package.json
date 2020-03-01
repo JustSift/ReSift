@@ -4,7 +4,7 @@
   "description": "A state management for data fetches in React",
   "main": "index.js",
   "scripts": {
-    "test": "npx eslint src && jest --coverage --coverageReporters=text-lcov | coveralls",
+    "test": "jest",
     "clean": "rimraf node_modules && npm i",
     "lint": "eslint src",
     "build": "node ./scripts/build.js",
