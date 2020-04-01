@@ -44,7 +44,7 @@ const http = createHttpService({
 
 const dataService = createDataService({
   services: { http },
-  onError: e => {
+  onError: (e) => {
     // see https://resift.org/docs/main-concepts/error-handling for more info
     // on how to handle errors in resift.
     throw e;

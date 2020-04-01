@@ -231,7 +231,7 @@ describe('useStatus', () => {
 
     const makeExampleFetch = defineFetch({
       displayName: 'example fetch',
-      make: testArg => ({
+      make: (testArg) => ({
         request: () => ({ exampleService }) => exampleService(testArg),
       }),
     });
@@ -534,11 +534,11 @@ describe('useStatus', () => {
           movieList: (prevMovie, nextList) => {
             if (!prevMovie) return null;
 
-            return nextList.find(movie => movie.id === prevMovie.id);
+            return nextList.find((movie) => movie.id === prevMovie.id);
           },
         },
       },
-      make: id => ({
+      make: (id) => ({
         request: () => () => {},
       }),
     });
@@ -550,7 +550,7 @@ describe('useStatus', () => {
           movieItem: (prevList, nextItem) => {
             if (!prevList) return null;
 
-            const index = prevList.findIndex(movie => movie.id === nextItem.id);
+            const index = prevList.findIndex((movie) => movie.id === nextItem.id);
 
             return [
               ...prevList.slice(0, index),
@@ -864,14 +864,14 @@ describe('useStatus', () => {
           noteItem: (prevNoteList, nextNoteItem) => {
             if (!prevNoteList) return null;
 
-            const index = prevNoteList.findIndex(note => note.id === nextNoteItem.id);
+            const index = prevNoteList.findIndex((note) => note.id === nextNoteItem.id);
 
             if (index === -1) {
               return prevNoteList;
             }
 
             if (nextNoteItem.deleted) {
-              return prevNoteList.filter(note => note.id !== nextNoteItem.id);
+              return prevNoteList.filter((note) => note.id !== nextNoteItem.id);
             }
 
             return [
@@ -900,8 +900,8 @@ describe('useStatus', () => {
       staticFectFactoryId: 'delete-note',
       displayName: 'Delete Note Item',
       share: { namespace: 'noteItem' },
-      make: noteId => ({
-        request: updatedNote => async ({ http }) => {
+      make: (noteId) => ({
+        request: (updatedNote) => async ({ http }) => {
           // server doesn't return anything...
           await http({
             method: 'DELETE',
@@ -952,14 +952,14 @@ describe('useStatus', () => {
           noteItem: (prevNoteList, nextNoteItem) => {
             if (!prevNoteList) return null;
 
-            const index = prevNoteList.findIndex(note => note.id === nextNoteItem.id);
+            const index = prevNoteList.findIndex((note) => note.id === nextNoteItem.id);
 
             if (index === -1) {
               return prevNoteList;
             }
 
             if (nextNoteItem.deleted) {
-              return prevNoteList.filter(note => note.id !== nextNoteItem.id);
+              return prevNoteList.filter((note) => note.id !== nextNoteItem.id);
             }
 
             return [
@@ -988,7 +988,7 @@ describe('useStatus', () => {
       staticFetchFactoryId: 'get-note',
       displayName: 'Get Note Item',
       share: { namespace: 'noteItem' },
-      make: noteId => ({
+      make: (noteId) => ({
         request: () => ({ http }) =>
           http({
             method: 'GET',

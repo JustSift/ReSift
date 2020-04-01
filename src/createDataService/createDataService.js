@@ -41,7 +41,7 @@ export async function handleAction({ state, services, dispatch, action, getState
       requestsToCancel.add(inflight);
     }
 
-    const dispatchService = action => {
+    const dispatchService = (action) => {
       if (payload.getCanceled()) {
         throw new CanceledError();
       }
@@ -112,7 +112,7 @@ export default function createDataService({ services, onError }) {
   if (!services) throw new Error('`services` key required');
   if (!onError) throw new Error('`onError` callback required');
 
-  return store => next => action => {
+  return (store) => (next) => (action) => {
     if (!isFetchAction(action)) {
       return next(action);
     }
@@ -123,7 +123,7 @@ export default function createDataService({ services, onError }) {
       dispatch: store.dispatch,
       action,
       getState: store.getState,
-    }).catch(e => {
+    }).catch((e) => {
       onError(e);
       // when awaiting dispatch...
       //    👇 this is the error that will propagate to the awaiter

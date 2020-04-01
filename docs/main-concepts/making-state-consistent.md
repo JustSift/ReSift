@@ -42,7 +42,7 @@ const makeGetPerson = defineFetch({
   share: { namespace: 'person' },
   // 👆👆👆
 
-  make: personId => ({
+  make: (personId) => ({
     request: () => ({ http }) =>
       http({
         method: 'GET',
@@ -59,8 +59,8 @@ const makeUpdatePerson = defineFetch({
   share: { namespace: 'person' },
   // 👆👆👆
 
-  make: personId => ({
-    request: updatedPerson => ({ http }) =>
+  make: (personId) => ({
+    request: (updatedPerson) => ({ http }) =>
       http({
         method: 'PUT',
         route: `/people/${personId}`,
@@ -142,7 +142,7 @@ const makeGetPeople = defineFetch({
     },
   },
   make: () => ({
-    request: page => ({ http }) =>
+    request: (page) => ({ http }) =>
       http({
         method: 'GET',
         route: '/people',
@@ -214,7 +214,7 @@ function InfiniteList() {
     <List ref={rootRef}>
       <Guard fetch={getPeople}>
         {({ results: people }) =>
-          people.map(person => (
+          people.map((person) => (
             <ListItem key={person.id}>
               <ListItemText>{person.name}</ListItemText>
             </ListItem>
@@ -293,7 +293,7 @@ const makeGetMovieItem = defineFetch({
 
         // replace the `prevMovieItem` with a movie in the `nextMovieList` where
         // the IDs match.
-        return nextMovieList.find(movie => movie.id === prevMovieItem.id);
+        return nextMovieList.find((movie) => movie.id === prevMovieItem.id);
       },
 
       // when data from the `movieItem` namespaces comes back, this merge
@@ -303,7 +303,7 @@ const makeGetMovieItem = defineFetch({
       movieItem: (prevMovie, nextMovie) => nextMovie,
     },
   },
-  make: movieId => ({
+  make: (movieId) => ({
     request: () => ({ http }) =>
       http({
         method: 'GET',
@@ -329,13 +329,13 @@ const makeUpdateMovieItem = defineFetch({
       // these merges are copied and pasted from above.
       movieList: (prevMovieItem, nextMovieList) => {
         if (!prevMovieItem) return null;
-        return nextMovieList.find(movie => movie.id === prevMovieItem.id);
+        return nextMovieList.find((movie) => movie.id === prevMovieItem.id);
       },
       movieItem: (prevMovie, nextMovie) => nextMovie,
     },
   },
-  make: movieId => ({
-    request: updatedMovie => ({ http }) =>
+  make: (movieId) => ({
+    request: (updatedMovie) => ({ http }) =>
       http({
         method: 'PUT',
         route: `/movies/${movieId}`,
@@ -363,7 +363,7 @@ const makeGetMovieList = defineFetch({
         if (!prevMovieList) return null;
 
         // if there was an update to the movie, find it in the list
-        const index = prevMovieList.findIndex(movie => movie.id === nextMovieItem.id);
+        const index = prevMovieList.findIndex((movie) => movie.id === nextMovieItem.id);
 
         // if we couldn't find it, just add it to the end
         if (index === -1) {

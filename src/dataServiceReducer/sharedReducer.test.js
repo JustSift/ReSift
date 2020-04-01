@@ -24,7 +24,7 @@ test('returns the previous state if the action is not shared', () => {
   // given
   const actionCreatorFactory = defineFetch({
     displayName: 'test action',
-    make: testArg => ({
+    make: (testArg) => ({
       request: () => () => {},
     }),
   });
@@ -56,7 +56,7 @@ test('shared merges bidirectional case', () => {
         movieItem: (previousList, movie) => {
           if (!previousList) return null;
 
-          const index = previousList.findIndex(i => i.id === movie.id);
+          const index = previousList.findIndex((i) => i.id === movie.id);
           if (index === -1) return previousList;
 
           return [
@@ -83,11 +83,11 @@ test('shared merges bidirectional case', () => {
       merge: {
         movieList: (previousMovie, nextList) => {
           if (!previousMovie) return null;
-          return nextList.find(i => i.id === previousMovie.id);
+          return nextList.find((i) => i.id === previousMovie.id);
         },
       },
     },
-    make: movieId => ({
+    make: (movieId) => ({
       request: () => ({ http }) =>
         http({
           method: 'GET',
@@ -264,7 +264,7 @@ test('shared merges one way case', () => {
         movieItem: (previousList, movie) => {
           if (!previousList) return null;
 
-          const index = previousList.findIndex(i => i.id === movie.id);
+          const index = previousList.findIndex((i) => i.id === movie.id);
           if (index === -1) return previousList;
 
           return [
@@ -290,7 +290,7 @@ test('shared merges one way case', () => {
       namespace: 'movieItem',
       // NOTE: there are no custom merges here
     },
-    make: movieId => ({
+    make: (movieId) => ({
       request: () => ({ http }) =>
         http({
           method: 'GET',
@@ -464,7 +464,7 @@ test('clear fetch', () => {
         movieItem: (previousList, movie) => {
           if (!previousList) return null;
 
-          const index = previousList.findIndex(i => i.id === movie.id);
+          const index = previousList.findIndex((i) => i.id === movie.id);
           if (index === -1) return previousList;
 
           return [
@@ -491,11 +491,11 @@ test('clear fetch', () => {
       merge: {
         movieList: (previousMovie, nextList) => {
           if (!previousMovie) return null;
-          return nextList.find(i => i.id === previousMovie.id);
+          return nextList.find((i) => i.id === previousMovie.id);
         },
       },
     },
-    make: movieId => ({
+    make: (movieId) => ({
       request: () => ({ http }) =>
         http({
           method: 'GET',

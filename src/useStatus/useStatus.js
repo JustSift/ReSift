@@ -20,13 +20,13 @@ import isNormal from '../isNormal';
 // (vs all). This is because the shared fetches share the same internal store so if one fetch has
 // the data, it's sufficient for all of them.
 export function combineSharedStatuses(...statuses) {
-  if (statuses.every(status => isUnknown(status))) {
+  if (statuses.every((status) => isUnknown(status))) {
     return UNKNOWN;
   }
 
   const loading = isLoading(...statuses) ? LOADING : UNKNOWN;
 
-  const normal = statuses.some(status => isNormal(status)) ? NORMAL : UNKNOWN;
+  const normal = statuses.some((status) => isNormal(status)) ? NORMAL : UNKNOWN;
 
   const error = isError(...statuses) ? ERROR : UNKNOWN;
 
@@ -45,7 +45,7 @@ export function getStatus(actionState) {
   return inflightStatus | errorStatus | normalStatus;
 }
 
-export const makeStatusSelector = (fetch, options) => state => {
+export const makeStatusSelector = (fetch, options) => (state) => {
   if (!fetch) {
     return UNKNOWN;
   }
@@ -90,7 +90,7 @@ export const makeStatusSelector = (fetch, options) => state => {
 
   // `parentLocations` are paths to the state in the `actions` sub-store
   const parentLocationsFromTheSameNamespace = targetNamespaces
-    .map(targetNamespace => {
+    .map((targetNamespace) => {
       const parentLocations = state?.dataService?.shared?.parents?.[targetNamespace];
       if (!parentLocations) {
         return null;
@@ -101,12 +101,12 @@ export const makeStatusSelector = (fetch, options) => state => {
       }
 
       const validParentLocations = Object.values(parentLocations).filter(
-        parentLocation => parentLocation.key === key,
+        (parentLocation) => parentLocation.key === key,
       );
 
       return validParentLocations;
     })
-    .filter(x => !!x)
+    .filter((x) => !!x)
     .reduce((flatten, next) => {
       // eslint bug
       // eslint-disable-next-line no-unused-vars
@@ -117,7 +117,7 @@ export const makeStatusSelector = (fetch, options) => state => {
     }, []);
 
   const parentLocationsFromDifferentNamespaces = targetNamespaces
-    .map(targetNamespace => {
+    .map((targetNamespace) => {
       const parentLocations = state?.dataService?.shared?.parents?.[targetNamespace];
       if (!parentLocations) {
         return null;
@@ -129,7 +129,7 @@ export const makeStatusSelector = (fetch, options) => state => {
 
       return Object.values(parentLocations);
     })
-    .filter(x => !!x)
+    .filter((x) => !!x)
     .reduce((flatten, next) => {
       // eslint bug
       // eslint-disable-next-line no-unused-vars
@@ -143,24 +143,24 @@ export const makeStatusSelector = (fetch, options) => state => {
   // this sub-state is ran through `getStatus` which returns the corresponding status for the
   // sub-state.
   const sharedStatusesFromSameNamespace = parentLocationsFromTheSameNamespace
-    .map(parentLocation => {
+    .map((parentLocation) => {
       const storeKey = createStoreKey(parentLocation.displayName, parentLocation.fetchFactoryId);
       const parentAction = state?.dataService?.actions?.[storeKey]?.[parentLocation.key];
 
       return getStatus(parentAction);
     })
-    .filter(x => x !== null);
+    .filter((x) => x !== null);
 
   const sharedStatuesFromDifferentNamespaces = parentLocationsFromDifferentNamespaces
-    .map(parentLocation => {
+    .map((parentLocation) => {
       const storeKey = createStoreKey(parentLocation.displayName, parentLocation.fetchFactoryId);
       const parentAction = state?.dataService?.actions?.[storeKey]?.[parentLocation.key];
 
       return getStatus(parentAction);
     })
-    .filter(x => x !== null);
+    .filter((x) => x !== null);
 
-  const otherNamespaceLoading = sharedStatuesFromDifferentNamespaces.some(status =>
+  const otherNamespaceLoading = sharedStatuesFromDifferentNamespaces.some((status) =>
     isLoading(status),
   )
     ? LOADING

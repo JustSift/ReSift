@@ -20,7 +20,7 @@ test('it returns null if the fetch is falsy', async () => {
   const done = new DeferredPromise();
   const dataService = createDataService({
     services: {},
-    onError: e => {
+    onError: (e) => {
       throw e;
     },
   });
@@ -53,7 +53,7 @@ test('it throws if a fetch factory was passed into use error instead of a fetch'
 
   const dataService = createDataService({
     services: {},
-    onError: e => {
+    onError: (e) => {
       throw e;
     },
   });
@@ -169,7 +169,7 @@ test('unshared: it grabs data from the store', async () => {
 
   const makeGetMovie = defineFetch({
     displayName: 'Get Movie',
-    make: movieId => ({
+    make: (movieId) => ({
       request: () => () => ({ id: movieId, name: 'test movie' }),
     }),
   });
@@ -179,7 +179,7 @@ test('unshared: it grabs data from the store', async () => {
 
   const dataService = createDataService({
     services: {},
-    onError: e => {
+    onError: (e) => {
       throw e;
     },
   });
@@ -223,7 +223,7 @@ test('shared: it grabs data from the store', async () => {
   const makeGetMovie = defineFetch({
     displayName: 'Get Movie',
     share: { namespace: 'movie' },
-    make: movieId => ({
+    make: (movieId) => ({
       request: () => () => ({ id: movieId, name: 'test movie' }),
     }),
   });
@@ -233,7 +233,7 @@ test('shared: it grabs data from the store', async () => {
 
   const dataService = createDataService({
     services: {},
-    onError: e => {
+    onError: (e) => {
       throw e;
     },
   });

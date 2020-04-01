@@ -17,7 +17,7 @@ import isLoading from '../isLoading';
 test('it does not render if the status does not contain NORMAL', async () => {
   const makeGetMovie = defineFetch({
     displayName: 'Get Movie',
-    make: movieId => ({
+    make: (movieId) => ({
       request: () => async () => {
         await delay(100);
         return {
@@ -31,7 +31,7 @@ test('it does not render if the status does not contain NORMAL', async () => {
   const getMovie = makeGetMovie('movie123');
   const dataService = createDataService({
     services: {},
-    onError: e => {
+    onError: (e) => {
       throw e;
     },
   });

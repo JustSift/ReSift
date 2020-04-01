@@ -19,7 +19,7 @@ test('basic lifecycle', async () => {
 
   const makePersonFetch = defineFetch({
     displayName: 'Get Person',
-    make: personId => ({
+    make: (personId) => ({
       request: () => () => ({
         personId,
         name: 'It worked!',
@@ -79,7 +79,7 @@ test('basic lifecycle', async () => {
   // 1) first render
   // 2) loading
   // 3) resolved/normal
-  expect(statusHandler.mock.calls.map(x => x[0])).toMatchInlineSnapshot(`
+  expect(statusHandler.mock.calls.map((x) => x[0])).toMatchInlineSnapshot(`
     Array [
       0,
       2,
@@ -90,7 +90,7 @@ test('basic lifecycle', async () => {
   expect(dataHandler).toHaveBeenCalledTimes(2);
   // 1) no data
   // 2) data
-  expect(dataHandler.mock.calls.map(x => x[0])).toMatchInlineSnapshot(`
+  expect(dataHandler.mock.calls.map((x) => x[0])).toMatchInlineSnapshot(`
     Array [
       null,
       Object {

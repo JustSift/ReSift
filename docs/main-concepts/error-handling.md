@@ -102,7 +102,7 @@ import Loader from './Loader';
 function Person({ personId }) {
   // when this component is loading, you'll see a <Spinner />,
   // if this component has an error, you'll see an <ErrorView />
-  return <Loader fetch={getPerson}>{person => person.name}</Loader>;
+  return <Loader fetch={getPerson}>{(person) => person.name}</Loader>;
 }
 
 export default Person;
@@ -206,7 +206,7 @@ function PersonForm({ personId }) {
 
   const updatePerson = makeUpdatePerson(personId);
 
-  const handleSave = async e => {
+  const handleSave = async (e) => {
     // helper function that gets the value of the person from a form
     const person = getPersonFromEvent(e);
 
@@ -243,7 +243,7 @@ const dataService = createDataService({
   services: {
     // ...
   },
-  onError: e => {
+  onError: (e) => {
     // if the error is an unauthorized error, redirect to the login page
     if (_get(e, ['status']) === 401) {
       window.location.assign('https://login.yourcompany.com');
@@ -267,7 +267,7 @@ export default dataService;
 ```js
 const dataService = createDataService({
   // ...
-  onError: e => {
+  onError: (e) => {
     throw e;
   },
 });

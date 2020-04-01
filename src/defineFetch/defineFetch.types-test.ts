@@ -11,7 +11,7 @@ interface Bar {
 const fetchFactory = defineFetch({
   displayName: 'example fetch',
   make: (foo: string, bar: number) => ({
-    request: (thing: Bar) => ({  }: /* services go here */ any) => exampleResult,
+    request: (thing: Bar) => ({}: /* services go here */ any) => exampleResult,
   }),
 });
 

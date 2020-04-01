@@ -20,7 +20,7 @@ test("it returns the previous state if the action isn't a fetch, success, or err
 test('when given a fetch action, it adds an inflight payload to the store', () => {
   const makeFetch = defineFetch({
     displayName: 'example fetch',
-    make: testArg => ({
+    make: (testArg) => ({
       request: () => ({ exampleService }) => exampleService(testArg),
     }),
   });
@@ -55,7 +55,7 @@ test('when given a success action, it adds a success payload and replaces the in
   // given
   const makeActionCreator = defineFetch({
     displayName: 'example action',
-    make: testArg => ({
+    make: (testArg) => ({
       request: () => ({ exampleService }) => exampleService(testArg),
     }),
   });
@@ -105,7 +105,7 @@ test('when given a clear action, it removes the sub-store', () => {
   // given
   const makeFetch = defineFetch({
     displayName: 'example action',
-    make: testArg => ({
+    make: (testArg) => ({
       request: () => ({ exampleService }) => exampleService(testArg),
     }),
   });
@@ -211,7 +211,7 @@ test('when given an error action, it adds an error payload and replaces the infl
   // given
   const makeActionCreator = defineFetch({
     displayName: 'example action',
-    make: testArg => ({
+    make: (testArg) => ({
       request: () => ({ exampleService }) => exampleService(testArg),
     }),
   });

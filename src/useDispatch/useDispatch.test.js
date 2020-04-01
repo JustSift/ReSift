@@ -55,7 +55,7 @@ test('it throws if there is no provider', async () => {
   );
 });
 
-test('it dispatches actions to the redux store', done => {
+test('it dispatches actions to the redux store', (done) => {
   const store = createStore((state, action) => {
     if (action.type === 'TEST_ACTION') {
       return {

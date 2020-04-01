@@ -9,12 +9,12 @@ function mockGet() {
   return mockDispatch;
 }
 jest.mock('../useDispatch', () => () => mockGet());
-jest.mock('react', () => ({ useCallback: cb => cb }));
+jest.mock('react', () => ({ useCallback: (cb) => cb }));
 
 test('it returns a function that calls dispatch', () => {
   const makePersonFetch = defineFetch({
     displayName: 'fetch person',
-    make: personId => ({
+    make: (personId) => ({
       request: () => ({ exampleService }) => exampleService(),
     }),
   });

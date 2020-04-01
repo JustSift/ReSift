@@ -19,7 +19,7 @@ const http = createHttpService();
 const dataService = createDataService({
   //           👇 what you name this matters (see below)
   services: { http },
-  onError: e => {
+  onError: (e) => {
     throw e;
   },
 });
@@ -34,7 +34,7 @@ import { defineFetch } from 'resift';
 
 const makeGetPerson = defineFetch({
   displayName: 'Get Person',
-  make: personId => ({
+  make: (personId) => ({
     //                 👇 we can "import" this with
     //                    this name because we passed
     //                    in `http` into the `services` above

@@ -25,7 +25,7 @@ describe('defineFetch', () => {
   test('it should return a actionCreatorFactory function', () => {
     const actionCreatorFactory = defineFetch({
       displayName: 'something',
-      make: id => ({
+      make: (id) => ({
         request: () => ({ exampleService }) => exampleService(),
       }),
     });
@@ -39,7 +39,7 @@ describe('defineFetch', () => {
     expect(() => {
       const actionCreatorFactory = defineFetch({
         displayName: 'something',
-        make: _ => 'not an object',
+        make: (_) => 'not an object',
       });
 
       actionCreatorFactory('test-id');
@@ -50,7 +50,7 @@ describe('defineFetch', () => {
     expect(() => {
       const actionCreatorFactory = defineFetch({
         displayName: 'Get Something',
-        make: id => ({
+        make: (id) => ({
           request: () => () => {},
         }),
       });
@@ -65,7 +65,7 @@ describe('defineFetch', () => {
     expect(() => {
       const actionCreatorFactory = defineFetch({
         displayName: 'something',
-        make: id => ({
+        make: (id) => ({
           request: 'not a function',
         }),
       });
@@ -96,7 +96,7 @@ describe('defineFetch', () => {
   test('the action creator factory returns an action creator with meta', () => {
     const actionCreatorFactory = defineFetch({
       displayName: 'example fetch',
-      make: id => ({
+      make: (id) => ({
         request: () => ({ exampleService }) => exampleService(),
       }),
     });
@@ -119,7 +119,7 @@ describe('defineFetch', () => {
   test('the payload function should include the cancellation mechanism', () => {
     const actionCreatorFactory = defineFetch({
       displayName: 'example payload',
-      make: testArg => ({
+      make: (testArg) => ({
         request: () => ({ exampleService }) => exampleService(testArg),
       }),
     });
@@ -137,7 +137,7 @@ describe('defineFetch', () => {
     // given
     const actionCreatorFactory = defineFetch({
       displayName: 'example payload',
-      make: testArg => ({
+      make: (testArg) => ({
         request: () => ({ exampleService }) => exampleService(testArg),
       }),
     });
@@ -148,7 +148,7 @@ describe('defineFetch', () => {
     expect(action.payload.getCanceled()).toBe(false);
 
     action.payload({
-      exampleService: async testArg => {
+      exampleService: async (testArg) => {
         await delay(100);
         return testArg;
       },
@@ -169,7 +169,7 @@ describe('defineFetch', () => {
   test('it memoizes the action creator factory', () => {
     const makeActionCreator = defineFetch({
       displayName: 'action creator',
-      make: id => ({
+      make: (id) => ({
         request: () => () => {},
       }),
     });
@@ -196,7 +196,7 @@ describe('isFetchAction', () => {
   test('positive path', () => {
     const actionCreatorFactory = defineFetch({
       displayName: 'test fetch',
-      make: testArg => ({
+      make: (testArg) => ({
         request: () => ({ exampleService }) => exampleService(),
       }),
     });

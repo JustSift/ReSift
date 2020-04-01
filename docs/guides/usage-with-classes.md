@@ -41,7 +41,7 @@ class MyExistingComponent extends Component {
             <Spinner />
           </div>
         )}
-        <Guard fetch={getPerson}>{person => <h1>{person.name}</h1>}</Guard>
+        <Guard fetch={getPerson}>{(person) => <h1>{person.name}</h1>}</Guard>
       </div>
     );
   }

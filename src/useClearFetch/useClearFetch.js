@@ -6,7 +6,7 @@ export default function useClearFetch() {
   const dispatch = useDispatch();
 
   return useCallback(
-    fetch => {
+    (fetch) => {
       dispatch(clearFetch(fetch));
     },
     [dispatch],

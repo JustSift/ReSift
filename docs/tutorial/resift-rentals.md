@@ -170,7 +170,7 @@ import { makeStyles } from '@material-ui/core/styles';
 // {makeStyles} allows you to make a block to add css styles, it can take in `theme` as argument,
 // which would allow you to access some pre-defined material-ui styles.
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   // The convention is to name the makeStyles block `useStyles`. In useStyles,
   // we would normally define a root class first, then define other classes afterwards.
   root: {
@@ -250,7 +250,7 @@ const http = createHttpService({
 
 const dataService = createDataService({
   services: { http },
-  onError: e => {
+  onError: (e) => {
     throw e;
   },
 });
@@ -274,7 +274,7 @@ const http = createHttpService({
 
 const dataService = createDataService({
   services: { http },
-  onError: e => {
+  onError: (e) => {
     throw e;
   },
 });
@@ -432,7 +432,7 @@ function App() {
   return (
     <>
       <AppBar />
-      {genres.map(genre => (
+      {genres.map((genre) => (
         <Genre key={genre.id} genre={genre} className={classes.genre} />
       ))}
       {/* `map` is like a for loop, loops through each genre in the genres array */}
@@ -456,7 +456,9 @@ Now wrap the map function in `Guard`
 
 ```js
 <Guard fetch={getGenres}>
-  {genres => genres.map(genre => <Genre key={genre.id} genre={genre} className={classes.genre} />)}
+  {(genres) =>
+    genres.map((genre) => <Genre key={genre.id} genre={genre} className={classes.genre} />)
+  }
 </Guard>
 ```
 
@@ -506,7 +508,7 @@ import getGenres from 'fetches/getGenres';
 // Styles
 import { makeStyles } from '@material-ui/core/styles';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {},
   genre: {
     margin: '24px 0',
@@ -529,7 +531,7 @@ function App() {
     <div className={classes.root}>
       <AppBar />
       <Guard fetch={getGenres}>
-        {genres => genres.map(genre => <Genre key={genre.id} genre={genre} />)}
+        {(genres) => genres.map((genre) => <Genre key={genre.id} genre={genre} />)}
       </Guard>
     </div>
   );
@@ -585,7 +587,7 @@ import getGenres from 'fetches/getGenres';
 import { makeStyles } from '@material-ui/core/styles';
 import { CircularProgress } from '@material-ui/core';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {},
   genre: {
     margin: '24px 0',
@@ -610,8 +612,8 @@ function App() {
       <AppBar />
       {isLoading(status) && <CircularProgress className={classes.spinner} />}
       <Guard fetch={getGenres}>
-        {genres =>
-          genres.map(genre => <Genre key={genre.id} genre={genre} className={classes.genre} />)
+        {(genres) =>
+          genres.map((genre) => <Genre key={genre.id} genre={genre} className={classes.genre} />)
         }
       </Guard>
     </div>
@@ -660,7 +662,7 @@ import { defineFetch } from 'resift';
 
 const makeGetMovies = defineFetch({
   displayName: 'Get Movies',
-  make: genreId => ({
+  make: (genreId) => ({
     request: () => ({ http }) =>
       http({
         method: 'GET',
@@ -764,7 +766,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import { CircularProgress } from '@material-ui/core';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     height: 160,
     padding: 16,
@@ -819,8 +821,8 @@ function Genre({ className, genre }) {
       {isLoading(status) && <CircularProgress className={classes.spinner} />}
       <div className={classes.movies}>
         <Guard fetch={getMovies}>
-          {movies =>
-            movies.results.map(movie => (
+          {(movies) =>
+            movies.results.map((movie) => (
               <MovieThumbnail key={movie.id} className={classes.movie} movie={movie} />
             ))
           }
@@ -865,7 +867,7 @@ import { defineFetch } from 'resift';
 
 const makeGetMovies = defineFetch({
   displayName: 'Get Movies',
-  make: genreId => ({
+  make: (genreId) => ({
     request: () => ({ http }) =>
       http({
         method: 'GET',
@@ -1075,8 +1077,8 @@ const makeGetMovies = defineFetch({
       },
     },
   },
-  make: genreId => ({
-    request: page => ({ http }) =>
+  make: (genreId) => ({
+    request: (page) => ({ http }) =>
       http({
         method: 'GET',
         route: `/genres/${genreId}/movies`,
@@ -1121,7 +1123,7 @@ import { defineFetch } from 'resift';
 
 const makeGetMovie = defineFetch({
   displayName: 'Get Movie',
-  make: movieId => ({
+  make: (movieId) => ({
     request: () => ({ http }) =>
       http({
         method: 'GET',
@@ -1363,7 +1365,7 @@ import makeGetMovie from 'fetches/makeGetMovie';
 import { makeStyles } from '@material-ui/core/styles';
 import { Drawer, CircularProgress } from '@material-ui/core';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     padding: 20,
     position: 'relative',
@@ -1437,7 +1439,7 @@ function MovieDrawer() {
       <div className={classes.drawer}>
         {isLoading(status) && <CircularProgress className={classes.spinner} />}
         <Guard fetch={getMovie}>
-          {movie => (
+          {(movie) => (
             <>
               <div>
                 <Link className={classes.linkBack} to="/">
@@ -1572,9 +1574,9 @@ import { defineFetch } from 'resift';
 
 const makeUpdateMovie = defineFetch({
   displayName: 'Update Movie',
-  make: movieId => ({
+  make: (movieId) => ({
     // updatedMovie needs to be passed in as data to the PUT call.
-    request: updatedMovie => ({ http }) =>
+    request: (updatedMovie) => ({ http }) =>
       http({
         method: 'PUT',
         route: `/movies/${movieId}`,
@@ -2054,7 +2056,7 @@ import movieLookup from './movieLookup';
 import _get from 'lodash/get'; // array helper
 import paginate from './helpers/paginate';
 
-const genreList = Object.values(genreLookup).map(genre => ({
+const genreList = Object.values(genreLookup).map((genre) => ({
   id: genre.id,
   name: genre.name,
 }));

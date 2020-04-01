@@ -35,7 +35,7 @@ beforeAll(() => {
     res.sendStatus(200);
   });
 
-  app.get('/never-ending', req => {
+  app.get('/never-ending', (req) => {
     mockHandler(req);
   });
 
@@ -100,7 +100,7 @@ test('it allows requests to be canceled', async () => {
   const httpFinishedHandler = jest.fn();
 
   const http = httpService({
-    onCancel: callback => {
+    onCancel: (callback) => {
       expect(typeof callback).toBe('function');
       cancelCallback = callback;
       onCancelCallbackCalled.resolve();
@@ -114,7 +114,7 @@ test('it allows requests to be canceled', async () => {
     route: '/never-ending',
   })
     .then(httpFinishedHandler)
-    .catch(err => {
+    .catch((err) => {
       catchHandler.resolve(err);
     });
 
@@ -249,7 +249,7 @@ test("it doesn't throw when ok is implemented", async () => {
     method: 'GET',
     route: '/bad-request',
     // this makes the 400 response OK
-    ok: response => response.status === 400,
+    ok: (response) => response.status === 400,
   });
 
   // then
@@ -369,7 +369,7 @@ test('proxies as a mock handler', async () => {
   // given
   const exampleObject = { example: 'object' };
 
-  const exampleProxy = createHttpProxy({ path: '/proxy-test' }, handlerParams => {
+  const exampleProxy = createHttpProxy({ path: '/proxy-test' }, (handlerParams) => {
     expect(handlerParams).toMatchInlineSnapshot(`
 Object {
   "getCanceled": [Function],

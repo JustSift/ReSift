@@ -73,14 +73,14 @@ function generateApiDoc(filename, contents) {
 
     const children = getChildren(node);
 
-    return flatten(children.map(child => findApiBlocks(child, node)));
+    return flatten(children.map((child) => findApiBlocks(child, node)));
   }
 
   function getTextFromJsDocComment(comment) {
     return comment
       .split('\n')
-      .filter(line => !line.toLowerCase().includes('@docs'))
-      .map(line => {
+      .filter((line) => !line.toLowerCase().includes('@docs'))
+      .map((line) => {
         const startLineMatch = /^\s*\/\*\*(.*)/.exec(line);
         if (startLineMatch) return startLineMatch[1];
 
@@ -92,7 +92,7 @@ function generateApiDoc(filename, contents) {
 
         return '';
       })
-      .map(x => x.trim())
+      .map((x) => x.trim())
       .join('\n')
       .trim()
       .replace(/@omitRequired/g, '')
@@ -133,7 +133,7 @@ function generateApiDoc(filename, contents) {
       if (node.kind === ts.SyntaxKind.PropertySignature) return [node];
       if (node.kind === ts.SyntaxKind.MethodSignature) return [node];
 
-      return flatten(getChildren(node).map(child => findProperties(child)));
+      return flatten(getChildren(node).map((child) => findProperties(child)));
     }
 
     const propertyNodes = findProperties(node);
@@ -207,7 +207,9 @@ function generateApiDoc(filename, contents) {
 
       const type = formatType(findType(node).trim());
 
-      const required = !getChildren(node).find(child => child.kind === ts.SyntaxKind.QuestionToken);
+      const required = !getChildren(node).find(
+        (child) => child.kind === ts.SyntaxKind.QuestionToken,
+      );
 
       return { name, description, type, required };
     }
@@ -219,7 +221,7 @@ function generateApiDoc(filename, contents) {
     const omitRequired = getText(node).includes('@omitRequired');
 
     return table([
-      ['Name', 'Description', 'Type', omitRequired ? null : 'Required'].filter(x => x !== null),
+      ['Name', 'Description', 'Type', omitRequired ? null : 'Required'].filter((x) => x !== null),
       ...propertyNodes
         .map(parseProperty)
         .map(({ name, description, type, required }) =>
@@ -228,7 +230,7 @@ function generateApiDoc(filename, contents) {
             newLineToBr(description),
             `<code>${newLineToBr(type.replace(/\|/g, '&#124;'))}</code>`,
             omitRequired ? null : newLineToBr(required ? 'yes' : 'no'),
-          ].filter(x => x !== null),
+          ].filter((x) => x !== null),
         ),
     ]);
   }
@@ -252,9 +254,9 @@ function generateApiDoc(filename, contents) {
     return formatCode(text);
   }
 
-  const apiBlocks = flatten(getChildren(rootNode).map(child => findApiBlocks(child, rootNode)));
+  const apiBlocks = flatten(getChildren(rootNode).map((child) => findApiBlocks(child, rootNode)));
 
-  const markdownBlocks = apiBlocks.map(apiBlock => {
+  const markdownBlocks = apiBlocks.map((apiBlock) => {
     const { title, body } = getMarkdownFromJsDoc(apiBlock);
 
     if (apiBlock.kind === ts.SyntaxKind.InterfaceDeclaration) {

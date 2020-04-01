@@ -7,7 +7,7 @@ jest.mock('shortid', () => () => 'test-shortid');
 test('it creates a clear fetch action from a fetch with a dynamic key', () => {
   const makePersonFetch = defineFetch({
     displayName: 'person fetch',
-    make: personId => ({
+    make: (personId) => ({
       request: () => ({ exampleService }) => exampleService(personId),
     }),
   });
@@ -61,7 +61,7 @@ Object {
 test('it throws if you try to use a dynamic key like a static key', () => {
   const personFetch = defineFetch({
     displayName: 'person fetch',
-    make: personId => ({
+    make: (personId) => ({
       request: () => ({ exampleService }) => exampleService(personId),
     }),
   });
