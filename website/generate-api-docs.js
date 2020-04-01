@@ -11,13 +11,13 @@ const generateApiDoc = require('./generate-api-doc');
 
 async function asyncFilter(array, predicate) {
   const result = await Promise.all(
-    array.map(async value => ({
+    array.map(async (value) => ({
       value,
       keep: await predicate(value),
     })),
   );
 
-  return result.filter(x => x.keep).map(x => x.value);
+  return result.filter((x) => x.keep).map((x) => x.value);
 }
 
 function startsWithUppercase(str) {
@@ -51,7 +51,7 @@ async function main() {
 
     const fileNames = flatten(
       await Promise.all(
-        currentFiles.map(async file => {
+        currentFiles.map(async (file) => {
           const path = `${dir}/${file}`;
           const result = await stat(path);
 
@@ -63,15 +63,15 @@ async function main() {
         }),
       ),
     )
-      .filter(file => file.endsWith('.d.ts'))
-      .filter(file => !file.endsWith('index.d.ts'));
+      .filter((file) => file.endsWith('.d.ts'))
+      .filter((file) => !file.endsWith('index.d.ts'));
 
     return fileNames;
   }
 
   const fileNames = await findAllTypingsFiles(path.resolve(__dirname, '../src'));
 
-  const docFileNames = await asyncFilter(fileNames, async fileName => {
+  const docFileNames = await asyncFilter(fileNames, async (fileName) => {
     const contents = await readFile(fileName);
     const text = contents.toString();
     return text.includes('@docs');
@@ -100,7 +100,7 @@ async function main() {
   );
 
   const docIds = docFileNames
-    .map(docPath => {
+    .map((docPath) => {
       const pathSplit = docPath.split('/');
       const fileName = pathSplit[pathSplit.length - 1];
       const name = fileName.substring(0, fileName.length - '.d.ts'.length);
@@ -115,7 +115,7 @@ async function main() {
       if (startsWithUppercase(b.name) && !startsWithUppercase(a.name)) return 1;
       return a.name.localeCompare(b.name);
     })
-    .map(x => x.path)
+    .map((x) => x.path)
     .reverse();
 
   const newSidebars = {
@@ -133,7 +133,7 @@ main()
   .then(() => {
     process.exit(0);
   })
-  .catch(e => {
+  .catch((e) => {
     console.error(e);
     process.exit(1);
   });

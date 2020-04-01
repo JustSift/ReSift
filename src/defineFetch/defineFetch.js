@@ -54,7 +54,7 @@ function memoize(displayName, actionCreatorFactory, make, conflict) {
 
     const { request } = makeResult;
 
-    if (!keyArgs.every(key => typeof key === 'string' || typeof key === 'number')) {
+    if (!keyArgs.every((key) => typeof key === 'string' || typeof key === 'number')) {
       throw new Error(
         `[defineFetch] make arguments must be either a string or a number. Check calls to the fetch factory "${displayName}" See here https://resift.org/docs/main-concepts/whats-a-fetch#making-a-fetch-and-pulling-data-from-it`,
       );
@@ -139,7 +139,7 @@ export default function defineFetch({
 
       resolvablePayload.getCanceled = () => canceledRef.canceled;
 
-      resolvablePayload.onCancel = callback => {
+      resolvablePayload.onCancel = (callback) => {
         subscribers.push(callback);
       };
 
@@ -172,4 +172,4 @@ export default function defineFetch({
 }
 
 // this is for typescript
-export const typedFetchFactory = () => fetchFactory => fetchFactory;
+export const typedFetchFactory = () => (fetchFactory) => fetchFactory;

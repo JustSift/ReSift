@@ -13,7 +13,7 @@ test('it groups together useStatus and useData', async () => {
 
   const dataService = createDataService({
     services: {},
-    onError: e => {
+    onError: (e) => {
       throw e;
     },
   });
@@ -61,7 +61,7 @@ test('it groups together useStatus and useData', async () => {
     await done;
   });
 
-  expect(dataHandler.mock.calls.map(args => args[0])).toMatchInlineSnapshot(`
+  expect(dataHandler.mock.calls.map((args) => args[0])).toMatchInlineSnapshot(`
     Array [
       null,
       Object {
@@ -69,7 +69,7 @@ test('it groups together useStatus and useData', async () => {
       },
     ]
   `);
-  expect(statusHandler.mock.calls.map(args => args[0])).toMatchInlineSnapshot(`
+  expect(statusHandler.mock.calls.map((args) => args[0])).toMatchInlineSnapshot(`
     Array [
       0,
       2,

@@ -37,7 +37,7 @@ const http = createHttpService({
 
 const dataService = createDataService({
   services: { http },
-  onError: e => {
+  onError: (e) => {
     throw e;
   },
 });
@@ -107,14 +107,14 @@ export const note = createHttpProxy('/notes/:id', async ({ requestParams, match 
   const { id } = match.params;
 
   if (method === 'GET') {
-    const note = noteData.find(note => note.id === id);
+    const note = noteData.find((note) => note.id === id);
     if (!note) throw new Error('Not Found');
 
     return note;
   }
 
   if (method === 'PUT') {
-    const index = noteData.findIndex(note => note.id === id);
+    const index = noteData.findIndex((note) => note.id === id);
     if (index === -1) throw new Error('Not Found');
 
     noteData[index] = data;
@@ -122,10 +122,10 @@ export const note = createHttpProxy('/notes/:id', async ({ requestParams, match 
   }
 
   if (method === 'DELETE') {
-    const note = noteData.find(note => note.id === id);
+    const note = noteData.find((note) => note.id === id);
     if (!note) throw new Error('Not Found');
 
-    noteData = noteData.filter(note => note.id !== id);
+    noteData = noteData.filter((note) => note.id !== id);
     return undefined;
   }
 });

@@ -2,11 +2,11 @@ export default class DeferredPromise {
   constructor() {
     this.state = 'pending';
     this._promise = new Promise((resolve, reject) => {
-      this.resolve = value => {
+      this.resolve = (value) => {
         this.state = 'fulfilled';
         resolve(value);
       };
-      this.reject = reason => {
+      this.reject = (reason) => {
         this.state = 'rejected';
         reject(reason);
       };

@@ -22,7 +22,7 @@ export type Services = ServicesFrom<typeof services>;
 
 const dataService = createDataService({
   services,
-  onError: e => {
+  onError: (e) => {
     throw e;
   },
 });
@@ -99,7 +99,7 @@ function Component({ id }: Props) {
 
   return (
     <Guard fetch={getPerson}>
-      {person => {
+      {(person) => {
         // 👆 typescript knows the shape of this
         return person.name;
       }}

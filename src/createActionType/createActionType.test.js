@@ -10,7 +10,7 @@ test('it takes in a fetch action and returns an action type string', () => {
   const makeActionCreator = defineFetch({
     displayName: 'example fetch',
     make: () => ({
-      request: exampleArg => ({ exampleService }) => exampleService(exampleArg),
+      request: (exampleArg) => ({ exampleService }) => exampleService(exampleArg),
     }),
   });
   const actionCreator = makeActionCreator();

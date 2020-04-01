@@ -132,7 +132,7 @@ The `request` function…
 ```js
 const makeGetPerson = defineFetch({
   displayName: 'Get Person',
-  make: personId => ({
+  make: (personId) => ({
     // 👇👇👇 that's this thing
     request: () => ({ http }) => http(/* */),
     // 👆👆👆
@@ -153,9 +153,9 @@ import { defineFetch } from 'resift';
 
 const makeUpdatePerson = defineFetch({
   displayName: 'Update Person',
-  make: personId => ({
+  make: (personId) => ({
     //    these 👇👇👇
-    request: updatedPerson => ({ http }) =>
+    request: (updatedPerson) => ({ http }) =>
       //        👆👆👆
       // are the request parameters
 
@@ -207,9 +207,9 @@ The inner set of parameters in the curried `request` function is the [data servi
 ```js
 const makeUpdatePerson = defineFetch({
   displayName: 'Update Person',
-  make: personId => ({
+  make: (personId) => ({
     //                     this 👇👇👇
-    request: updatedPerson => ({ http }) =>
+    request: (updatedPerson) => ({ http }) =>
       //                        👆👆👆
       //        is the data service parameter
 
@@ -233,7 +233,7 @@ The `request` function body is the rest of the `request`. It is where you use th
 ```js
 const makeGetPerson = defineFetch({
   displayName: 'Get Person',
-  make: personId => ({
+  make: (personId) => ({
     request: () => async ({ http }) => {
       // 👇👇👇 this is the request body
       const person = await http({
@@ -255,8 +255,8 @@ Placing `async` before the request body allows you to `await` data services. In 
 ```js
 const makeGetResource = defineFetch({
   displayName: 'Get Resource',
-  make: id => ({
-    request: requestArg => async ({ http }) => {
+  make: (id) => ({
+    request: (requestArg) => async ({ http }) => {
       const dataResultOne = await http({
         method: 'GET',
         route: '/one',

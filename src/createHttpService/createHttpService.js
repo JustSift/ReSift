@@ -65,7 +65,7 @@ export default function createHttpService({
   getPrefix: _getPrefix,
   proxies = [],
 }) {
-  return ({ onCancel, getCanceled }) => async requestParams => {
+  return ({ onCancel, getCanceled }) => async (requestParams) => {
     const { route } = requestParams;
     if (process.env.NODE_ENV !== 'production') {
       if (route.includes('?')) {
@@ -85,7 +85,7 @@ export default function createHttpService({
 
       const httpOptions = { headers, prefix, onCancel };
 
-      const proxy = proxies.find(proxy => matchPath(route, proxy.matchParams));
+      const proxy = proxies.find((proxy) => matchPath(route, proxy.matchParams));
 
       if (proxy) {
         const match = matchPath(route, proxy.matchParams);
@@ -95,7 +95,7 @@ export default function createHttpService({
           headers,
           onCancel,
           getCanceled,
-          http: requestParams => http(requestParams, httpOptions),
+          http: (requestParams) => http(requestParams, httpOptions),
         });
       }
 

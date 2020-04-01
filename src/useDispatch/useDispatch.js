@@ -15,7 +15,7 @@ export default function useDispatch() {
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
   return useCallback(
-    action => {
+    (action) => {
       const isFetchInstance = action?.meta?.type === 'FETCH_INSTANCE';
       const isFetchFactory = action?.meta?.type === 'FETCH_INSTANCE_FACTORY';
       const isClearAction = (action?.type || '').startsWith(CLEAR);

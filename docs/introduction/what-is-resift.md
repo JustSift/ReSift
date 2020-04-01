@@ -37,7 +37,7 @@ import { defineFetch } from 'resift';
 //
 const makeGetPerson = defineFetch({
   displayName: 'Get Person',
-  make: personId => ({
+  make: (personId) => ({
     request: () => ({ http }) =>
       http({
         method: 'GET',

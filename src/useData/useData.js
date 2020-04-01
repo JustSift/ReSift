@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import createStoreKey from '../createStoreKey';
 
-const makeDataSelector = fetch => state => {
+const makeDataSelector = (fetch) => (state) => {
   if (!fetch) {
     return null;
   }

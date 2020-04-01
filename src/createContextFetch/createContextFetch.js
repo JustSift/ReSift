@@ -6,8 +6,8 @@ function toSnakeCase(displayName) {
   const split = displayName.split(' ');
 
   return split
-    .map(s => s.replace(/\W/g, ''))
-    .map(s => s.substring(0, 1).toUpperCase() + s.substring(1))
+    .map((s) => s.replace(/\W/g, ''))
+    .map((s) => s.substring(0, 1).toUpperCase() + s.substring(1))
     .join('');
 }
 

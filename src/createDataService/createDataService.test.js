@@ -88,14 +88,14 @@ describe('middleware', () => {
 
     const mockStore = {
       getState: () => ({}),
-      dispatch: action => {
+      dispatch: (action) => {
         dispatchCalled.resolve(action);
       },
     };
 
     const makeFetch = defineFetch({
       displayName: 'example fetch',
-      make: testArg => ({
+      make: (testArg) => ({
         request: () => ({ testService }) => testService(testArg),
       }),
     });
@@ -146,7 +146,7 @@ describe('middleware', () => {
 
     const mockStore = {
       getState: () => ({}),
-      dispatch: action => {
+      dispatch: (action) => {
         dispatchCalled.resolve(action);
       },
     };
@@ -155,7 +155,7 @@ describe('middleware', () => {
 
     const makeActionCreator = defineFetch({
       displayName: 'example fetch',
-      make: testArg => ({
+      make: (testArg) => ({
         request: () => async ({ testService }) => {
           await delay(0);
           throw testError;
@@ -199,7 +199,7 @@ describe('handleAction', () => {
     const exampleServiceCalled = new DeferredPromise();
     const makeActionCreator = defineFetch({
       displayName: 'test action',
-      make: testArg => ({
+      make: (testArg) => ({
         request: () => ({ exampleService }) => exampleService(),
       }),
     });
@@ -267,7 +267,7 @@ describe('handleAction', () => {
   test('conflict ignore', async () => {
     const makeActionCreator = defineFetch({
       displayName: 'action creator',
-      make: testArg => ({
+      make: (testArg) => ({
         request: () => ({ exampleService }) => exampleService(testArg),
       }),
       conflict: 'ignore',
@@ -292,7 +292,7 @@ describe('handleAction', () => {
 
     const repeatAction = actionCreator(testArg);
     const mockDispatch = jest.fn();
-    const exampleServiceHandler = jest.fn(testArg => null);
+    const exampleServiceHandler = jest.fn((testArg) => null);
     const exampleService = ({ onCancel, getCanceled }) => exampleServiceHandler;
 
     await handleAction({
@@ -308,7 +308,7 @@ describe('handleAction', () => {
   test('conflict cancel', async () => {
     const makeActionCreator = defineFetch({
       displayName: 'action creator',
-      make: testArg => ({
+      make: (testArg) => ({
         request: () => ({ exampleService }) => exampleService(testArg),
       }),
     });
@@ -332,7 +332,7 @@ describe('handleAction', () => {
 
     const repeatAction = actionCreator(testArg);
     const mockDispatch = jest.fn();
-    const exampleServiceHandler = jest.fn(testArg => null);
+    const exampleServiceHandler = jest.fn((testArg) => null);
     const exampleService = ({ onCancel, getCanceled }) => exampleServiceHandler;
 
     await handleAction({
@@ -357,7 +357,7 @@ describe('handleAction', () => {
   test('conflict cancel with error', async () => {
     const makeActionCreator = defineFetch({
       displayName: 'action creator',
-      make: testArg => ({
+      make: (testArg) => ({
         request: () => ({ exampleService }) => exampleService(testArg),
       }),
     });
@@ -382,7 +382,7 @@ describe('handleAction', () => {
 
     const repeatAction = actionCreator(testArg);
     const mockDispatch = jest.fn();
-    const exampleService = ({ onCancel, getCanceled }) => async testArg => {
+    const exampleService = ({ onCancel, getCanceled }) => async (testArg) => {
       throw new Error('test error');
     };
 
@@ -417,7 +417,7 @@ describe('handleAction', () => {
   test('conflict cancel with CanceledError', async () => {
     const makeActionCreator = defineFetch({
       displayName: 'action creator',
-      make: testArg => ({
+      make: (testArg) => ({
         request: () => ({ exampleService }) => exampleService(testArg),
       }),
     });
@@ -442,7 +442,7 @@ describe('handleAction', () => {
 
     const repeatAction = actionCreator(testArg);
     const mockDispatch = jest.fn();
-    const exampleService = ({ onCancel, getCanceled }) => async testArg => {
+    const exampleService = ({ onCancel, getCanceled }) => async (testArg) => {
       if (getCanceled()) throw new CanceledError();
       return 'blah';
     };
@@ -490,7 +490,7 @@ describe('isSuccessAction', () => {
   test('must start with the SUCCESS prefix', () => {
     const makeActionCreator = defineFetch({
       displayName: 'test',
-      make: testArg => ({
+      make: (testArg) => ({
         request: () => () => {},
       }),
     });
@@ -512,7 +512,7 @@ describe('isErrorAction', () => {
   test('must start with the ERROR prefix', () => {
     const makeActionCreator = defineFetch({
       displayName: 'test',
-      make: testArg => ({
+      make: (testArg) => ({
         request: () => () => {},
       }),
     });

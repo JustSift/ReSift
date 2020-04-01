@@ -29,8 +29,8 @@ test('createContextFetch hooks', async () => {
 
   const makeFetch = defineFetch({
     displayName: 'Get Example Fetch',
-    make: id => ({
-      request: x => () => ({ exampleValue: x }),
+    make: (id) => ({
+      request: (x) => () => ({ exampleValue: x }),
     }),
   });
 
@@ -126,8 +126,8 @@ test('render props/no hooks API', async () => {
 
   const makeFetch = defineFetch({
     displayName: 'Get Example Fetch',
-    make: id => ({
-      request: x => () => ({ exampleValue: x }),
+    make: (id) => ({
+      request: (x) => () => ({ exampleValue: x }),
     }),
   });
 

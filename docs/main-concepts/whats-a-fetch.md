@@ -33,7 +33,7 @@ function MyComponent() {
 
   return (
     //               👇
-    <Guard fetch={getPerson}>{person => <span>{person.name}</span>}</Guard>
+    <Guard fetch={getPerson}>{(person) => <span>{person.name}</span>}</Guard>
   );
 }
 ```
@@ -57,7 +57,7 @@ import { defineFetch } from 'resift';
 
 const makeGetPerson = defineFetch({
   displayName: 'Get Person',
-  make: personId => ({
+  make: (personId) => ({
     request: () => ({ http }) =>
       http({
         method: 'GET',
@@ -111,7 +111,7 @@ function Person({ personId }) {
 
       {/* pass the fetch to the Guard component to get data */}
       <Guard fetch={getPerson}>
-        {person => (
+        {(person) => (
           // 👆 person will never be null because of the Guard
           <div>Hello, {person.name}!</div>
         )}
@@ -181,7 +181,7 @@ function Person({ personId }) {
   return (
     <div>
       {isLoading(status) && <Spinner />}
-      <Guard fetch={getPerson}>{person => <div>Hello, {person.name}!</div>}</Guard>
+      <Guard fetch={getPerson}>{(person) => <div>Hello, {person.name}!</div>}</Guard>
     </div>
   );
 }
@@ -220,7 +220,7 @@ function Component() {
     };
   }, []);
 
-  return <Guard fetch={getResource}>{resource => <>{/* ... */}</>}</Guard>;
+  return <Guard fetch={getResource}>{(resource) => <>{/* ... */}</>}</Guard>;
 }
 
 export default Component;

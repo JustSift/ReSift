@@ -4,7 +4,7 @@ import Guard from './Guard';
 
 const _makeGetMovie = defineFetch({
   displayName: 'Get Movie',
-  make: movieId => ({
+  make: (movieId) => ({
     request: () => () => ({
       id: 'movie123',
       name: 'test',
@@ -22,5 +22,5 @@ const makeGetMovie = typedFetchFactory<Movie>()(_makeGetMovie);
 function Example() {
   const getMovie = makeGetMovie('movie123');
 
-  return <Guard fetch={getMovie}>{movie => <span>{movie.name}</span>}</Guard>;
+  return <Guard fetch={getMovie}>{(movie) => <span>{movie.name}</span>}</Guard>;
 }

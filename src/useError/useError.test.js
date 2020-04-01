@@ -24,7 +24,7 @@ test('it returns null if the fetch is falsy', async () => {
   const done = new DeferredPromise();
   const dataService = createDataService({
     services: {},
-    onError: e => {
+    onError: (e) => {
       throw e;
     },
   });
@@ -57,7 +57,7 @@ test('it throws if a fetch factory was passed into use error instead of a fetch'
 
   const dataService = createDataService({
     services: {},
-    onError: e => {
+    onError: (e) => {
       throw e;
     },
   });
@@ -173,7 +173,7 @@ test('it returns null if there is no action state', async () => {
 
   const dataService = createDataService({
     services: {},
-    onError: e => {
+    onError: (e) => {
       throw e;
     },
   });
@@ -216,7 +216,7 @@ test('it return null if the errorData is undefined', async () => {
 
   const dataService = createDataService({
     services: {},
-    onError: e => {
+    onError: (e) => {
       throw e;
     },
   });
@@ -281,7 +281,7 @@ test('it returns the error if there is one', async () => {
 
   const dataService = createDataService({
     services: {},
-    onError: e => {},
+    onError: (e) => {},
   });
 
   const getThing = makeGetThing();
