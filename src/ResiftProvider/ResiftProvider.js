@@ -9,7 +9,13 @@ import dataServiceReducer from '../dataServiceReducer';
  */
 function createStore(dataService) {
   const reducer = combineReducers({ dataService: dataServiceReducer });
-  const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
+  const composeEnhancers =
+    typeof __REDUX_DEVTOOLS_EXTENSION_COMPOSE__ !== 'undefined'
+      ? // eslint-disable-next-line no-undef
+        __REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+      : compose;
+
   const enhancers = composeEnhancers(applyMiddleware(dataService));
   const store = createReduxStore(reducer, enhancers);
 
