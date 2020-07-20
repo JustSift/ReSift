@@ -1,26 +1,8 @@
 {
   "name": "resift",
   "version": "0.1.1",
+  "private": true,
   "description": "A state management for data fetches in React",
-  "main": "index.js",
-  "scripts": {
-    "test": "jest",
-    "clean": "rimraf node_modules && npm i",
-    "lint": "eslint src",
-    "build": "node ./scripts/build.js",
-    "check-types": "npx tsc",
-    "publish": "npx jest && npx eslint src && npm run check-types && npm run build && cd build && npm publish && cd ..",
-    "analyze-bundle": "npx webpack --profile --json > stats.json && npx webpack-bundle-analyzer stats.json"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/JustSift/ReSift.git"
-  },
-  "author": "team@justsift.com",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/JustSift/ReSift/issues"
-  },
   "keywords": [
     "react",
     "relay",
@@ -28,22 +10,56 @@
     "fetch"
   ],
   "homepage": "https://resift.org/",
+  "bugs": {
+    "url": "https://github.com/JustSift/ReSift/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JustSift/ReSift.git"
+  },
+  "license": "MIT",
+  "author": "team@justsift.com",
+  "sideEffects": false,
+  "main": "index.js",
+  "scripts": {
+    "analyze-bundle": "npx webpack --profile --json > stats.json && npx webpack-bundle-analyzer stats.json",
+    "build": "node ./scripts/build.js",
+    "check-types": "npx tsc",
+    "clean": "rm -rf node_modules && npm i",
+    "lint": "eslint src",
+    "publish": "npx jest && npx eslint src && npm run check-types && npm run build && cd build && npm publish && cd ..",
+    "test": "jest"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie < 11",
+    "not op_mini all"
+  ],
+  "dependencies": {
+    "@types/superagent": "^4.1.7",
+    "delay": "^4.3.0",
+    "path-to-regexp": "^1.8.0",
+    "shortid": "^2.2.15",
+    "superagent": "^5.2.2"
+  },
   "devDependencies": {
     "@babel/cli": "^7.8.4",
     "@babel/core": "^7.10.2",
     "@babel/plugin-proposal-class-properties": "^7.10.1",
     "@babel/plugin-proposal-optional-chaining": "^7.9.0",
+    "@babel/plugin-transform-runtime": "^7.10.5",
     "@babel/preset-env": "^7.10.4",
-    "@babel/preset-react": "^7.10.1",
+    "@babel/preset-react": "^7.10.4",
     "@babel/preset-typescript": "^7.10.1",
+    "@rollup/plugin-babel": "^5.1.0",
+    "@rollup/plugin-node-resolve": "^8.4.0",
     "@types/react": "^16.8.23",
     "@typescript-eslint/eslint-plugin": "^1.13.0",
     "@typescript-eslint/parser": "^1.13.0",
     "babel-eslint": "^10.1.0",
-    "babel-loader": "^8.1.0",
     "common-tags": "^1.8.0",
-    "coveralls": "^3.1.0",
-    "eslint": "^6.8.0",
+    "eslint": "^7.5.0",
     "eslint-config-react-app": "^5.0.1",
     "eslint-plugin-flowtype": "^3.13.0",
     "eslint-plugin-import": "^2.20.2",
@@ -62,29 +78,13 @@
     "react-redux": "^7.2.0",
     "react-test-renderer": "^16.13.1",
     "redux": "^4.0.5",
-    "rimraf": "^3.0.1",
-    "typescript": "^3.9.3",
-    "webpack": "^4.42.1",
-    "webpack-bundle-analyzer": "^3.8.0",
-    "webpack-cli": "^3.3.11"
-  },
-  "dependencies": {
-    "@types/superagent": "^4.1.7",
-    "delay": "^4.3.0",
-    "shortid": "^2.2.15",
-    "superagent": "^5.2.2"
+    "rollup": "^2.22.1",
+    "typescript": "^3.9.3"
   },
   "peerDependencies": {
     "@types/react": "^16.8.23",
     "react": "^16.8.0",
-    "redux": "^4.0.5",
-    "react-redux": "^7.2.0"
-  },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie < 11",
-    "not op_mini all"
-  ],
-  "private": true
+    "react-redux": "^7.2.0",
+    "redux": "^4.0.5"
+  }
 }
