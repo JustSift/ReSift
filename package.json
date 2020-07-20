@@ -70,7 +70,7 @@
   },
   "dependencies": {
     "@types/superagent": "^4.1.7",
-    "delay": "^4.3.0",
+    "delay": "^4.4.0",
     "shortid": "^2.2.15",
     "superagent": "^5.3.1"
   },
