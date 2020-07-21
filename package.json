@@ -37,6 +37,7 @@
     "not op_mini all"
   ],
   "dependencies": {
+    "@babel/cli": "^7.10.5",
     "@types/superagent": "^4.1.8",
     "delay": "^4.4.0",
     "path-to-regexp": "^1.8.0",
@@ -44,7 +45,6 @@
     "superagent": "^5.2.2"
   },
   "devDependencies": {
-    "@babel/cli": "^7.10.5",
     "@babel/core": "^7.10.5",
     "@babel/plugin-proposal-class-properties": "^7.10.4",
     "@babel/plugin-proposal-optional-chaining": "^7.10.4",
