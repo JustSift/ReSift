@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 import React from 'react';
 import defineFetch, { typedFetchFactory } from '../defineFetch';
 import createContextFetch from './createContextFetch';
@@ -53,7 +54,8 @@ import createContextFetch from './createContextFetch';
     return (
       <>
         {/* No child = expected typing error */}
-        // @ts-ignore
+        {/*
+        // @ts-ignore */}
         <ContextFetchProvider></ContextFetchProvider>
         {/* with child = it's all good */}
         <ContextFetchProvider>
