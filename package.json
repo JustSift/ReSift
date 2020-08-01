@@ -52,7 +52,7 @@
     "eslint-plugin-react": "^7.20.3",
     "eslint-plugin-react-hooks": "^1.7.0",
     "express": "^4.17.1",
-    "jest": "^26.1.0",
+    "jest": "^26.2.2",
     "lodash": "^4.17.19",
     "markdown-table": "^2.0.0",
     "node-fetch": "^2.6.0",
