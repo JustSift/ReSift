@@ -59,7 +59,7 @@
     "prettier": "^2.0.5",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-redux": "^7.2.0",
+    "react-redux": "^7.2.1",
     "react-test-renderer": "^16.13.1",
     "redux": "^4.0.5",
     "rimraf": "^3.0.2",
@@ -78,7 +78,7 @@
     "@types/react": "^16.9.43",
     "react": "^16.8.0",
     "redux": "^4.0.5",
-    "react-redux": "^7.2.0"
+    "react-redux": "^7.2.1"
   },
   "browserslist": [
     ">0.2%",
