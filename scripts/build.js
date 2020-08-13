@@ -41,8 +41,10 @@ async function createPackageJson() {
     homepage: packageJson.homepage,
     peerDependencies: packageJson.peerDependencies,
     dependencies: packageJson.dependencies,
+    sideEffects: false,
     name: 'resift',
-    main: packageJson.main,
+    main: 'index.js',
+    module: 'index.esm.js',
   };
 
   await writeFile(
@@ -63,8 +65,8 @@ async function build() {
   console.log('Checking Types (tsc)…');
   await execute('npx tsc');
 
-  console.log('Compiling (webpack)…');
-  await execute('npx webpack -p');
+  console.log('Compiling (rollup)…');
+  await execute('npx rollup -c');
 
   console.log('Writing package.json…');
   await createPackageJson();
