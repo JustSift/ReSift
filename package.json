@@ -42,7 +42,7 @@
     "@types/superagent": "^4.1.8",
     "delay": "^4.4.0",
     "shortid": "^2.2.15",
-    "superagent": "^5.3.1"
+    "superagent": "^6.0.0"
   },
   "devDependencies": {
     "@babel/plugin-transform-runtime": "^7.10.5",
