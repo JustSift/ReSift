@@ -41,7 +41,7 @@
     "path-to-regexp": "^1.8.0",
     "@types/superagent": "^4.1.10",
     "delay": "^4.4.0",
-    "shortid": "^2.2.15",
+    "shortid": "^2.2.16",
     "superagent": "^6.0.0"
   },
   "devDependencies": {
