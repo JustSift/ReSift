@@ -45,7 +45,7 @@
     "superagent": "^6.0.0"
   },
   "devDependencies": {
-    "@babel/plugin-transform-runtime": "^7.11.5",
+    "@babel/plugin-transform-runtime": "^7.13.8",
     "@rollup/plugin-babel": "^5.2.0",
     "@rollup/plugin-node-resolve": "^9.0.0",
     "@babel/core": "^7.11.5",
