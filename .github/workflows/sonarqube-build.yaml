@@ -1,0 +1,46 @@
+name: sq_build
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    name: sq_build
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@v1
+
+      - name: 'Setup Node'
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: 'Set NPM registry'
+        run: npm set registry=https://registry.npmjs.org/
+
+      - name: 'Test registry connection'
+        run: npm install -g https://tls-test.npmjs.com/tls-test-1.0.0.tgz
+
+      - name: 'Set npmrc file'
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
+
+      - name: 'sonar scanner'
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        run: |
+          npm install -g sonarqube-scanner
+          npm install
+          npm run lint:report
+          npm run sonar:build
+      # If you wish to fail your job when the Quality Gate is red, uncomment the
+      # following lines. This would typically be used to fail a deployment.
+      # - uses: sonarsource/sonarqube-quality-gate-action@master
+      #   timeout-minutes: 5
+      #   env:
+      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
