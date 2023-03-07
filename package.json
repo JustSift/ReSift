@@ -28,7 +28,9 @@
     "clean": "rm -rf node_modules && npm i",
     "lint": "eslint src",
     "publish": "npx jest && npx eslint src && npm run check-types && npm run build && cd build && npm publish && cd ..",
-    "test": "jest"
+    "test": "jest",
+    "sonar:build": "sonar-scanner -Dproject.settings=sonar-project.properties",
+    "lint:report": "eslint --ext .ts -f json -o ./reports/eslint-output.json"
   },
   "browserslist": [
     ">0.2%",
