@@ -38,7 +38,7 @@
   ],
   "dependencies": {
     "@babel/cli": "^7.11.5",
-    "path-to-regexp": "^1.8.0",
+    "path-to-regexp": "^6.2.0",
     "@types/superagent": "^4.1.10",
     "delay": "^4.4.0",
     "shortid": "^2.2.15",
